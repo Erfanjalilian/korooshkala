@@ -1,0 +1,80 @@
+"use client";
+
+import Link from "next/link";
+import { Menu, ShoppingCart, User, X } from "lucide-react";
+import MobileMenu from "@/app/components/header/MobileMenu";
+import MobileBottomNav from "@/app/components/header/MobileBottomNav";
+import MobileCategories from "@/app/components/header/MobileCategories";
+import { useState } from "react";
+import CartCount from "@/app/components/header/CartCount";
+
+interface MobileHeaderProps {
+  isMenuOpen: boolean;
+  onMenuToggle: () => void;
+}
+
+export default function MobileHeader({
+  isMenuOpen,
+  onMenuToggle,
+}: MobileHeaderProps) {
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+
+  return (
+    <div className="lg:hidden">
+      <div className="relative flex h-16 items-center justify-between px-4">
+        {/* Left */}
+        <button
+          type="button"
+          onClick={onMenuToggle}
+          aria-label={isMenuOpen ? "بستن منو" : "باز کردن منو"}
+          aria-expanded={isMenuOpen}
+          className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#111827] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+        >
+          {isMenuOpen ? <X size={21} /> : <Menu size={21} />}
+        </button>
+
+        {/* Center */}
+        <Link
+          href="/"
+          aria-label="صفحه اصلی"
+          className="absolute left-1/2 flex -translate-x-1/2 items-center"
+        >
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-sm font-bold text-white">
+            M
+          </div>
+        </Link>
+
+        {/* Right */}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/auth"
+            aria-label="ورود و ثبت نام"
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#111827] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+          >
+            <User size={19} />
+          </Link>
+
+          <Link
+            href="/cart"
+            aria-label="سبد خرید"
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#111827] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+          >
+            <ShoppingCart size={19} />
+
+            <CartCount />
+          </Link>
+        </div>
+      </div>
+
+      <MobileMenu isOpen={isMenuOpen} onClose={onMenuToggle} />
+      <MobileCategories
+        isOpen={categoriesOpen}
+        onClose={() => setCategoriesOpen(false)}
+      />
+      <MobileBottomNav
+        categoriesOpen={categoriesOpen}
+        onCategoriesToggle={() => setCategoriesOpen((prev) => !prev)}
+      />
+    </div>
+  );
+}
