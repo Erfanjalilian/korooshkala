@@ -6,6 +6,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "فروشگاه من",
   description: "فروشگاه اینترنتی",
+  other: {
+    enamad: "65076408",
+  },
 };
 
 export default function RootLayout({
