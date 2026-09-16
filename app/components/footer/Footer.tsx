@@ -93,6 +93,22 @@ export default function Footer() {
                 <Mail aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
                 erfanjaaliliyan83@gmail.com
               </p>
+              <a
+                referrerPolicy="origin"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://trustseal.enamad.ir/?id=7781646&Code=VXMzZy5jqN38yQL0dTSTEE2FL6cdldXZ"
+                aria-label="مشاهده نماد اعتماد الکترونیکی"
+                className="inline-flex w-fit rounded-lg border border-[#E5E7EB] bg-white p-2 transition hover:border-[#2563EB]"
+              >
+                <img
+                  referrerPolicy="origin"
+                  src="https://trustseal.enamad.ir/logo.aspx?id=7781646&Code=VXMzZy5jqN38yQL0dTSTEE2FL6cdldXZ"
+                  alt="نماد اعتماد الکترونیکی"
+                  style={{ cursor: "pointer" }}
+                  {...({ code: "VXMzZy5jqN38yQL0dTSTEE2FL6cdldXZ" } as Record<string, string>)}
+                />
+              </a>
             </div>
           </div>
         </div>
