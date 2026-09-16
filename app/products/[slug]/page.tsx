@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, Package, ShieldCheck, Star, Truck } from "lucide-react";
-import products from "@/data/products.json";
+import { readProducts } from "@/lib/store";
 import ProductDetailActions from "@/app/components/products/ProductDetailActions";
 import SimilarProducts from "@/app/components/products/SimilarProducts";
 
-type Product = (typeof products)[number];
+export const dynamic = "force-dynamic";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const products = await readProducts();
   return products.map((product) => ({ slug: product.slug }));
 }
 
@@ -20,9 +21,10 @@ export default async function ProductDetailsPage({
 }) {
   const { slug: rawSlug } = await params;
   const slug = decodeURIComponent(rawSlug);
+  const products = await readProducts();
   const product = products.find(
     (item) => item.slug === slug || item.id === slug,
-  ) as Product | undefined;
+  );
 
   if (!product) notFound();
 
@@ -44,9 +46,7 @@ export default async function ProductDetailsPage({
         <div className="relative flex min-h-[22rem] items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#DBEAFE] via-[#EEF2FF] to-[#EDE9FE] sm:min-h-[30rem]">
           <div className="absolute -left-16 -top-16 size-56 rounded-full border border-white/60 bg-white/20" />
           <div className="absolute -bottom-20 right-1/4 size-64 rounded-full border border-white/50 bg-white/20" />
-          <div className="relative flex size-44 items-center justify-center rounded-[2.5rem] bg-white/80 text-[#2563EB] shadow-[0_18px_45px_rgba(37,99,235,0.16)] backdrop-blur-sm sm:size-56">
-            <Package aria-hidden="true" size={92} strokeWidth={1.2} />
-          </div>
+          {product.image ? <img src={product.image} alt={product.name} className="relative h-full w-full object-cover" /> : <div className="relative flex size-44 items-center justify-center rounded-[2.5rem] bg-white/80 text-[#2563EB] shadow-[0_18px_45px_rgba(37,99,235,0.16)] backdrop-blur-sm sm:size-56"><Package aria-hidden="true" size={92} strokeWidth={1.2} /></div>}
           <span className="absolute right-5 top-5 rounded-full bg-[#7C3AED] px-3 py-1.5 text-xs font-bold text-white">
             {product.isDiscounted ? `${discount}٪ تخفیف` : product.isNew ? "جدید" : "محبوب"}
           </span>

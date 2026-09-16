@@ -1,30 +1,13 @@
-import products from "@/data/products.json";
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  compareAtPrice: number;
-  category: string;
-  categorySlug: string;
-  brand: string;
-  stock: number;
-  rating: number;
-  reviewCount: number;
-  tags: string[];
-  featured?: boolean;
-  isNew?: boolean;
-  isHot?: boolean;
-  isDiscounted?: boolean;
-}
-
-const productRecords = products as Product[];
+import { readCategories, readProducts } from "@/lib/store";
 
 const normalizeSearchValue = (value: unknown) =>
   String(value ?? "").trim().toLocaleLowerCase("fa-IR");
 
 export async function GET(request: Request) {
+  const [productRecords, categories] = await Promise.all([
+    readProducts(),
+    readCategories(),
+  ]);
   const { searchParams } = new URL(request.url);
   const query = normalizeSearchValue(searchParams.get("q"));
   const category = searchParams.get("category") ?? "all";
@@ -53,8 +36,6 @@ export async function GET(request: Request) {
   return Response.json({
     products: filteredProducts,
     total: filteredProducts.length,
-    categories: Array.from(
-      new Map(productRecords.map((product) => [product.categorySlug, product.category])).entries(),
-    ).map(([slug, name]) => ({ slug, name })),
+    categories,
   });
 }

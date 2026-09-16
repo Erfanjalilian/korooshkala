@@ -1,20 +1,21 @@
 import { Mail, MapPin, Phone, Clock } from "lucide-react";
 import ContactForm from "@/app/components/contact/ContactForm";
+import { readPages } from "@/lib/store";
 
-const contactItems = [
-  { title: "ایمیل", value: "erfanjaaliliyan83@gmail.com", icon: Mail },
-  { title: "تلفن پشتیبانی", value: "۰۲۱-۱۲۳۴۵۶۷۸", icon: Phone },
-  { title: "نشانی", value: "تهران، خیابان ولیعصر، مرکز خرید جهان", icon: MapPin },
-  { title: "ساعات پاسخ‌گویی", value: "شنبه تا پنجشنبه، ۹ تا ۱۸", icon: Clock },
-];
-
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { contact } = await readPages();
+  const contactItems = [
+    { title: "ایمیل", value: contact.email, icon: Mail },
+    { title: "تلفن پشتیبانی", value: contact.phone, icon: Phone },
+    { title: "نشانی", value: contact.address, icon: MapPin },
+    { title: "ساعات پاسخ‌گویی", value: contact.hours, icon: Clock },
+  ];
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <section className="rounded-[2rem] bg-gradient-to-l from-[#2563EB] to-[#7C3AED] px-6 py-10 text-white shadow-[0_16px_38px_rgba(37,99,235,0.16)] sm:px-10 sm:py-14 lg:px-16">
         <p className="text-sm font-bold text-white/75">پشتیبانی فروشگاه من</p>
-        <h1 className="mt-3 text-3xl font-extrabold sm:text-4xl">با ما در ارتباط باشید</h1>
-        <p className="mt-4 max-w-2xl text-sm leading-8 text-white/80">سوالی دارید یا برای انتخاب محصول به راهنمایی نیاز دارید؟ پیام خود را برای ما بفرستید.</p>
+        <h1 className="mt-3 text-3xl font-extrabold sm:text-4xl">{contact.title}</h1>
+        <p className="mt-4 max-w-2xl text-sm leading-8 text-white/80">{contact.description}</p>
       </section>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">

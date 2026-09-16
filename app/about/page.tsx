@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Check, Heart, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { readPages } from "@/lib/store";
 
 const values = [
   {
@@ -25,7 +26,8 @@ const highlights = [
   "پشتیبانی همراه در مسیر خرید",
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { about } = await readPages();
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-l from-[#2563EB] to-[#7C3AED] px-6 py-10 text-white shadow-[0_16px_38px_rgba(37,99,235,0.16)] sm:px-10 sm:py-14 lg:px-16">
@@ -34,10 +36,10 @@ export default function AboutPage() {
         <div className="relative max-w-2xl">
           <p className="text-sm font-bold text-white/75">داستان فروشگاه من</p>
           <h1 className="mt-3 text-3xl font-extrabold leading-[1.4] sm:text-4xl lg:text-5xl">
-            خرید خوب، از انتخاب درست شروع می‌شود.
+            {about.title}
           </h1>
           <p className="mt-5 max-w-xl text-sm leading-8 text-white/80 sm:text-base">
-            فروشگاه من جایی است برای پیدا کردن محصولاتی کاربردی، دوست‌داشتنی و متناسب با نیازهای روزمره شما؛ با تجربه‌ای ساده و قابل اعتماد.
+            {about.description}
           </p>
         </div>
       </section>

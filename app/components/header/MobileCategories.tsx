@@ -2,29 +2,32 @@
 
 import Link from "next/link";
 import { X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface MobileCategoriesProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const productCategories = [
-  { title: "پوشاک", href: "/products?category=clothing" },
-  { title: "ساعت و اکسسوری", href: "/products?category=watches-accessories" },
-  { title: "لوازم دیجیتال", href: "/products?category=digital" },
-  { title: "مواد غذایی", href: "/products?category=food" },
-  { title: "قهوه و نوشیدنی", href: "/products?category=coffee-drinks" },
-  { title: "لوازم خانه", href: "/products?category=home" },
-  { title: "زیبایی و سلامت", href: "/products?category=beauty-health" },
-  { title: "کتاب و لوازم فرهنگی", href: "/products?category=books" },
-  { title: "ورزش و سفر", href: "/products?category=sport-travel" },
-  { title: "سایر محصولات", href: "/products?category=other" },
-];
+type Category = { slug: string; name: string };
 
 export default function MobileCategories({
   isOpen,
   onClose,
 }: MobileCategoriesProps) {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/categories", { cache: "no-store", signal: controller.signal })
+      .then((response) => response.json() as Promise<{ categories: Category[] }>)
+      .then((data) => setCategories(data.categories))
+      .catch((error: Error) => {
+        if (error.name !== "AbortError") setCategories([]);
+      });
+    return () => controller.abort();
+  }, []);
+
   if (!isOpen) return null;
 
   return (
@@ -55,14 +58,14 @@ export default function MobileCategories({
         </div>
 
         <div className="grid grid-cols-2 gap-2">
-          {productCategories.map((category) => (
+          {categories.map((category) => (
             <Link
-              key={category.href}
-              href={category.href}
+              key={category.slug}
+              href={`/products?category=${encodeURIComponent(category.slug)}`}
               onClick={onClose}
               className="rounded-xl border border-[#E5E7EB] px-3 py-3 text-sm font-medium text-[#111827] transition hover:border-[#7C3AED] hover:bg-[#F8FAFC] hover:text-[#7C3AED]"
             >
-              {category.title}
+              {category.name}
             </Link>
           ))}
         </div>

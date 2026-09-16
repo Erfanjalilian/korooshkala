@@ -1,0 +1,31 @@
+[
+  {
+    "slug": "digital",
+    "name": "لوازم دیجیتال"
+  },
+  {
+    "slug": "watches-accessories",
+    "name": "ساعت و اکسسوری"
+  },
+  {
+    "slug": "home",
+    "name": "لوازم خانه"
+  },
+  {
+    "slug": "clothing",
+    "name": "پوشاک"
+  },
+  {
+    "slug": "coffee-drinks",
+    "name": "قهوه و نوشیدنی"
+  },
+  {
+    "slug": "beauty-health",
+    "name": "زیبایی و سلامت"
+  },
+  {
+    "slug": "دسته-بندی-تستی",
+    "name": "دسته بندی تستی",
+    "image": "/uploads/1789553977465-2fedd074-4f6a-4b1d-bb98-97282cd0c877.png"
+  }
+]

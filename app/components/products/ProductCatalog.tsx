@@ -29,13 +29,14 @@ type Product = {
   rating: number;
   reviewCount: number;
   tags: string[];
+  image?: string;
   featured?: boolean;
   isNew?: boolean;
   isHot?: boolean;
   isDiscounted?: boolean;
 };
 
-type Category = { slug: string; name: string };
+type Category = { slug: string; name: string; image?: string };
 
 type ApiResponse = {
   products: Product[];
@@ -147,7 +148,15 @@ export default function ProductCatalog({
                 : "text-[#6B7280] hover:bg-[#F5F7FA] hover:text-[#2563EB]"
             }`}
           >
-            {Icon ? <Icon aria-hidden="true" size={16} /> : null}
+            {item.image ? (
+              <img
+                src={item.image}
+                alt=""
+                className="size-7 shrink-0 rounded-lg object-cover"
+              />
+            ) : Icon ? (
+              <Icon aria-hidden="true" size={16} />
+            ) : null}
             <span>{item.name}</span>
           </button>
         );
@@ -274,9 +283,7 @@ export default function ProductCatalog({
                   className="group overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white transition duration-200 hover:-translate-y-1 hover:border-[#7C3AED] hover:shadow-[0_10px_24px_rgba(124,58,237,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
                 >
                   <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-[#DBEAFE] to-[#F5F7FA]">
-                    <div className="flex size-24 items-center justify-center rounded-3xl bg-white/80 text-[#2563EB] shadow-sm transition group-hover:text-[#7C3AED]">
-                      <Headphones aria-hidden="true" size={48} strokeWidth={1.4} />
-                    </div>
+                    {product.image ? <img src={product.image} alt={product.name} className="h-full w-full object-cover" /> : <div className="flex size-24 items-center justify-center rounded-3xl bg-white/80 text-[#2563EB] shadow-sm transition group-hover:text-[#7C3AED]"><Headphones aria-hidden="true" size={48} strokeWidth={1.4} /></div>}
                     <span className="absolute right-3 top-3 rounded-full bg-[#7C3AED] px-2.5 py-1 text-[10px] font-bold text-white">
                       {product.isDiscounted ? "پیشنهاد ویژه" : product.isNew ? "جدید" : "محبوب"}
                     </span>
