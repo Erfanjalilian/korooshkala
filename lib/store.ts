@@ -25,7 +25,7 @@ export type Product = {
 };
 
 export type Category = { slug: string; name: string; image?: string };
-export type User = { id: string; email: string; name: string; role: string; createdAt: string };
+export type User = { id: string; phone?: string; email: string; name: string; role: string; createdAt: string };
 export type Order = {
   id: string;
   userId: string;

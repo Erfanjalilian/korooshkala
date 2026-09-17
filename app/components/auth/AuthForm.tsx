@@ -1,8 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { ArrowRight, Check, LockKeyhole, MessageCircle, ShieldCheck } from "lucide-react";
+import { LockKeyhole, MessageCircle, ShieldCheck } from "lucide-react";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 90;
@@ -13,7 +12,7 @@ export default function AuthForm() {
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
@@ -24,19 +23,34 @@ export default function AuthForm() {
     return () => window.clearInterval(timer);
   }, [secondsLeft]);
 
-  const requestCode = (event: FormEvent<HTMLFormElement>) => {
+  const requestCode = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const normalizedPhone = phone.replace(/\D/g, "");
+    const normalizedPhone = phone.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/\D/g, "");
 
     if (normalizedPhone.length < 10) {
       setError("لطفاً شماره موبایل معتبر وارد کنید.");
       return;
     }
 
+    setLoading(true);
     setError("");
-    setStep("otp");
-    setSecondsLeft(RESEND_SECONDS);
-    window.setTimeout(() => otpRefs.current[0]?.focus(), 0);
+    try {
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "request", phone: normalizedPhone }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) throw new Error(result.error || "ارسال کد انجام نشد.");
+      setPhone(normalizedPhone);
+      setStep("otp");
+      setSecondsLeft(RESEND_SECONDS);
+      window.setTimeout(() => otpRefs.current[0]?.focus(), 0);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "ارسال کد انجام نشد.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateOtp = (index: number, value: string) => {
@@ -57,40 +71,36 @@ export default function AuthForm() {
     }
   };
 
-  const verifyCode = (event: FormEvent<HTMLFormElement>) => {
+  const verifyCode = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (otp.join("").length !== OTP_LENGTH) {
       setError("کد تأیید ۶ رقمی را کامل وارد کنید.");
       return;
     }
 
+    setLoading(true);
     setError("");
-    setSuccess(true);
+    try {
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", phone, code: otp.join("") }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) throw new Error(result.error || "کد واردشده صحیح نیست.");
+      window.location.href = "/account";
+    } catch (verificationError) {
+      setError(verificationError instanceof Error ? verificationError.message : "کد واردشده صحیح نیست.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resendCode = () => {
     if (secondsLeft > 0) return;
     setOtp(Array(OTP_LENGTH).fill(""));
-    setSecondsLeft(RESEND_SECONDS);
-    setError("");
-    otpRefs.current[0]?.focus();
+    void requestCode({ preventDefault: () => undefined } as FormEvent<HTMLFormElement>);
   };
-
-  if (success) {
-    return (
-      <div className="text-center">
-        <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#EEF2FF] text-[#2563EB]">
-          <Check aria-hidden="true" size={30} />
-        </div>
-        <h1 className="mt-5 text-2xl font-extrabold text-[#111827]">ورود با موفقیت انجام شد</h1>
-        <p className="mt-3 text-sm leading-7 text-[#6B7280]">این بخش فعلاً نمایشی است و به‌زودی به سرویس پیامک متصل می‌شود.</p>
-        <Link href="/" className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-[#2563EB] px-5 text-sm font-bold text-white hover:bg-[#7C3AED]">
-          بازگشت به فروشگاه
-          <ArrowRight aria-hidden="true" size={17} />
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -120,8 +130,8 @@ export default function AuthForm() {
               className="h-13 rounded-xl border border-[#E5E7EB] bg-[#F5F7FA] px-4 text-left text-sm outline-none transition focus:border-[#2563EB] focus:bg-white focus:ring-4 focus:ring-[#2563EB]/10"
             />
           </label>
-          <button type="submit" className="h-12 rounded-xl bg-[#2563EB] text-sm font-bold text-white transition hover:bg-[#7C3AED] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2563EB]/20">
-            دریافت کد یک‌بارمصرف
+          <button type="submit" disabled={loading} className="h-12 rounded-xl bg-[#2563EB] text-sm font-bold text-white transition hover:bg-[#7C3AED] disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2563EB]/20">
+            {loading ? "در حال ارسال..." : "دریافت کد یک‌بارمصرف"}
           </button>
         </form>
       ) : (
@@ -143,8 +153,8 @@ export default function AuthForm() {
               />
             ))}
           </div>
-          <button type="submit" className="h-12 rounded-xl bg-[#2563EB] text-sm font-bold text-white transition hover:bg-[#7C3AED] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2563EB]/20">
-            تأیید و ورود
+          <button type="submit" disabled={loading} className="h-12 rounded-xl bg-[#2563EB] text-sm font-bold text-white transition hover:bg-[#7C3AED] disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2563EB]/20">
+            {loading ? "در حال بررسی..." : "تأیید و ورود"}
           </button>
           <div className="flex items-center justify-between text-xs">
             <button type="button" onClick={() => { setStep("phone"); setError(""); }} className="font-semibold text-[#2563EB] hover:text-[#7C3AED]">ویرایش شماره</button>
