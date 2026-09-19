@@ -12,7 +12,7 @@ import FinalBanner from "@/app/components/home/FinalBanner";
 import PopularBrands from "@/app/components/home/PopularBrands";
 
 export default function HeroSection() {
-  const heroImage = "/logo/IMG_20260918_171528_557.JPG";
+  const heroImage = "/logo/IMG_20260918_171528_557.jpg";
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
