@@ -25,6 +25,12 @@ const numberValue = (value: FormDataEntryValue | null, fallback = 0) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+const ratingValue = (value: FormDataEntryValue | null, fallback = 0) =>
+  Math.min(5, Math.max(0, numberValue(value, fallback)));
+
+const purchaseCountValue = (value: FormDataEntryValue | null, fallback = 0) =>
+  Math.max(0, Math.floor(numberValue(value, fallback)));
+
 const textValue = (value: FormDataEntryValue | null, fallback = "") =>
   typeof value === "string" ? value.trim() : fallback;
 
@@ -63,9 +69,12 @@ async function readProductForm(formData: FormData, current?: Product): Promise<P
     categorySlug,
     brand: textValue(formData.get("brand"), current?.brand),
     stock: numberValue(formData.get("stock"), current?.stock),
-    rating: current?.rating ?? 0,
+    rating: ratingValue(formData.get("rating"), current?.rating ?? 0),
     reviewCount: current?.reviewCount ?? 0,
-    purchaseCount: current?.purchaseCount ?? 1001,
+    purchaseCount: purchaseCountValue(
+      formData.get("purchaseCount"),
+      current?.purchaseCount ?? 1001,
+    ),
     tags: textValue(formData.get("tags"), current?.tags.join(", ")).split(",").map((tag) => tag.trim()).filter(Boolean),
     image: image ?? current?.image,
     featured: formData.has("featured")

@@ -125,6 +125,27 @@ function ProductFormModal({
               defaultValue={product.tags.join(", ")}
             />
           </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="امتیاز محصول (از ۵)"
+              name="rating"
+              type="number"
+              defaultValue={product.rating}
+              min={0}
+              max={5}
+              step={0.1}
+              required
+            />
+            <Field
+              label="تعداد فروش"
+              name="purchaseCount"
+              type="number"
+              defaultValue={product.purchaseCount}
+              min={0}
+              step={1}
+              required
+            />
+          </div>
           <label className="grid gap-2 text-sm font-semibold text-[#111827]">
             توضیحات
             <textarea
@@ -234,6 +255,7 @@ type Product = {
   categorySlug: string;
   brand: string;
   stock: number;
+  rating: number;
   purchaseCount: number;
   tags: string[];
   image?: string;
@@ -296,6 +318,7 @@ const emptyProduct = (): Product => ({
   categorySlug: "",
   brand: "",
   stock: 0,
+  rating: 0,
   purchaseCount: 1001,
   tags: [],
 });
@@ -703,12 +726,18 @@ function Field({
   defaultValue,
   type = "text",
   required = false,
+  min,
+  max,
+  step,
 }: {
   label: string;
   name: string;
   defaultValue?: string | number;
   type?: string;
   required?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
 }) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-[#111827]">
@@ -718,6 +747,9 @@ function Field({
         type={type}
         defaultValue={defaultValue}
         required={required}
+        min={min}
+        max={max}
+        step={step}
         className={inputClass}
       />
     </label>

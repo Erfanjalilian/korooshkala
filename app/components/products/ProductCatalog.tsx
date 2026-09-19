@@ -56,6 +56,11 @@ const categoryIcons = {
 const formatPrice = (price: number) =>
   `${new Intl.NumberFormat("fa-IR").format(price)} تومان`;
 
+const getDiscountPercent = (price: number, compareAtPrice: number) =>
+  compareAtPrice > price
+    ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
+    : 0;
+
 interface ProductCatalogProps {
   initialCategory?: string;
   initialQuery?: string;
@@ -277,6 +282,13 @@ export default function ProductCatalog({
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
               {products.map((product) => (
+                (() => {
+                  const discountPercent = getDiscountPercent(
+                    product.price,
+                    product.compareAtPrice,
+                  );
+
+                  return (
                 <Link
                   key={product.id}
                   href={`/products/${encodeURIComponent(product.slug)}`}
@@ -285,7 +297,7 @@ export default function ProductCatalog({
                   <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-[#DBEAFE] to-[#F5F7FA]">
                     {product.image ? <img src={product.image} alt={product.name} className="h-full w-full object-cover" /> : <div className="flex size-24 items-center justify-center rounded-3xl bg-white/80 text-[#2563EB] shadow-sm transition group-hover:text-[#7C3AED]"><Headphones aria-hidden="true" size={48} strokeWidth={1.4} /></div>}
                     <span className="absolute right-3 top-3 rounded-full bg-[#7C3AED] px-2.5 py-1 text-[10px] font-bold text-white">
-                      {product.isDiscounted ? "پیشنهاد ویژه" : product.isNew ? "جدید" : "محبوب"}
+                      {discountPercent > 0 ? `${discountPercent}٪ تخفیف` : product.isNew ? "جدید" : "محبوب"}
                     </span>
                   </div>
                   <div className="p-4">
@@ -300,12 +312,14 @@ export default function ProductCatalog({
                     <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#6B7280]">{product.description}</p>
                     <div className="mt-4 flex items-end justify-between gap-3">
                       <span className="text-sm font-extrabold text-[#2563EB]">{formatPrice(product.price)}</span>
-                      {product.compareAtPrice > product.price ? (
-                        <del className="text-[10px] text-[#9CA3AF]">{formatPrice(product.compareAtPrice)}</del>
+                      {discountPercent > 0 ? (
+                        <del className="text-sm font-bold text-red-600">{formatPrice(product.compareAtPrice)}</del>
                       ) : null}
                     </div>
                   </div>
                 </Link>
+                  );
+                })()
               ))}
             </div>
           )}
