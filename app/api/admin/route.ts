@@ -15,7 +15,7 @@ import {
 
 export const runtime = "nodejs";
 
-const publicUploadsDirectory = path.join(process.cwd(), "public", "uploads");
+const publicUploadsDirectory = "/var/lib/korooshkala/uploads";
 
 const slugify = (value: string) =>
   value.trim().toLocaleLowerCase("fa-IR").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || randomUUID();
