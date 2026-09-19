@@ -14,6 +14,7 @@
     "stock": 24,
     "rating": 4.8,
     "reviewCount": 126,
+    "purchaseCount": 1840,
     "tags": [
       "پرفروش",
       "پیشنهاد ویژه"
@@ -36,12 +37,14 @@
     "categorySlug": "watches-accessories",
     "brand": "سونی",
     "stock": 18,
-    "rating": 4.6,
+    "rating": 4.8,
     "reviewCount": 84,
+    "purchaseCount": 1675,
     "tags": [
       "محبوب"
     ],
     "featured": true,
+    "isBestSelling": true,
     "isNew": false,
     "isHot": true,
     "isDiscounted": true
@@ -59,8 +62,9 @@
     "categorySlug": "home",
     "brand": "فیلیپس",
     "stock": 31,
-    "rating": 4.5,
+    "rating": 4.7,
     "reviewCount": 58,
+    "purchaseCount": 1290,
     "tags": [
       "خانه"
     ],
@@ -82,8 +86,9 @@
     "categorySlug": "clothing",
     "brand": "نایکی",
     "stock": 42,
-    "rating": 4.7,
+    "rating": 4.9,
     "reviewCount": 97,
+    "purchaseCount": 2130,
     "tags": [
       "پرفروش",
       "پوشاک"
@@ -108,6 +113,7 @@
     "stock": 55,
     "rating": 4.9,
     "reviewCount": 143,
+    "purchaseCount": 2485,
     "tags": [
       "تازه",
       "محبوب"
@@ -130,8 +136,9 @@
     "categorySlug": "beauty-health",
     "brand": "سامسونگ",
     "stock": 16,
-    "rating": 4.4,
+    "rating": 4.7,
     "reviewCount": 62,
+    "purchaseCount": 1185,
     "tags": [
       "جدید",
       "سلامت"
@@ -156,6 +163,7 @@
     "stock": 9,
     "rating": 4.8,
     "reviewCount": 76,
+    "purchaseCount": 1760,
     "tags": [
       "جدید",
       "دیجیتال"
@@ -178,8 +186,9 @@
     "categorySlug": "watches-accessories",
     "brand": "شیائومی",
     "stock": 14,
-    "rating": 4.6,
+    "rating": 4.8,
     "reviewCount": 111,
+    "purchaseCount": 1540,
     "tags": [
       "ورزشی",
       "جدید"
@@ -200,8 +209,9 @@
     "currency": "IRR",
     "brand": "سونی",
     "stock": 22,
-    "rating": 4.5,
+    "rating": 4.7,
     "reviewCount": 69,
+    "purchaseCount": 1325,
     "tags": [
       "محبوب",
       "دیجیتال"
@@ -224,8 +234,9 @@
     "categorySlug": "home",
     "brand": "فیلیپس",
     "stock": 27,
-    "rating": 4.3,
+    "rating": 4.7,
     "reviewCount": 41,
+    "purchaseCount": 1095,
     "tags": [
       "خانه",
       "پیشنهاد ویژه"

@@ -83,16 +83,14 @@ export default function Footer() {
             <div className="mt-4 grid gap-4 text-sm text-[#6B7280]">
               <p className="flex items-start gap-3">
                 <MapPin aria-hidden="true" size={18} className="mt-0.5 shrink-0 text-[#2563EB]" />
-                تهران، خیابان ولیعصر، مرکز خرید جهان
+                تهران . بازار مبل . شاداباد کوی ۱۷ .شهریور خیابان سر حد جنوبی کوچه ی چوپان
               </p>
               <p className="flex items-center gap-3">
                 <Phone aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
-                ۰۲۱-۱۲۳۴۵۶۷۸
-              </p>
+۰۲۱۶۶۸۱۶۲۸۳              </p>
               <p className="flex items-center gap-3">
                 <Mail aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
-                erfanjaaliliyan83@gmail.com
-              </p>
+Siavash.m2020@gmail.com              </p>
               <a
                 referrerPolicy="origin"
                 target="_blank"
@@ -114,7 +112,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-[#E5E7EB] pt-5 text-xs text-[#9CA3AF] sm:flex-row sm:items-center sm:justify-between">
-          <p>© ۱۴۰۴ فروشگاه من. تمامی حقوق محفوظ است.</p>
+          
           <p>طراحی‌شده توسط عرفان جلیلیان</p>
         </div>
       </div>

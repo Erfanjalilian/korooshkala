@@ -1,5 +1,4 @@
 import { Mail, MapPin, Phone, Clock } from "lucide-react";
-import ContactForm from "@/app/components/contact/ContactForm";
 import { readPages } from "@/lib/store";
 
 export default async function ContactPage() {
@@ -30,11 +29,7 @@ export default async function ContactPage() {
             );
           })}
         </aside>
-        <section className="rounded-3xl border border-[#E5E7EB] bg-white p-6 sm:p-9">
-          <h2 className="text-xl font-extrabold text-[#111827]">پیام خود را ارسال کنید</h2>
-          <p className="mt-2 text-sm leading-7 text-[#6B7280]">فرم زیر فعلاً استاتیک است و برای اتصال به backend آماده شده.</p>
-          <div className="mt-6"><ContactForm /></div>
-        </section>
+       
       </div>
     </div>
   );

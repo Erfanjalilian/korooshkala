@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, Menu, ShoppingCart, User } from "lucide-react";
 import { useState } from "react";
 import CategoryDropdown from "@/app/components/header/CategoryDropdown";
@@ -30,7 +31,7 @@ export default function DesktopHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="hidden h-20 items-center justify-between px-6 lg:flex xl:px-12">
+    <div className="hidden h-24 items-center justify-between px-6 lg:flex xl:px-12">
       {/* Left */}
       <div className="flex items-center gap-3">
         <div className="group/menu relative">
@@ -80,17 +81,17 @@ export default function DesktopHeader() {
       {/* Center */}
       <Link
         href="/"
-        className="absolute left-1/2 flex -translate-x-1/2 items-center"
+        className="absolute left-1/2 flex -translate-x-1/2 items-center py-2"
         aria-label="صفحه اصلی"
       >
         <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-lg font-bold text-white">
-            M
-          </div>
-
-          <span className="hidden text-xl font-extrabold text-[#111827] sm:block">
-            فروشگاه من
-          </span>
+          <Image
+            src="/logo/IMG_20260918_171528_557.jpg"
+            alt="لوگوی فروشگاه"
+            width={80}
+            height={80}
+            className="h-20 w-20 rounded-full object-cover"
+          />
         </div>
       </Link>
 

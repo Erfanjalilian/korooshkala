@@ -59,7 +59,7 @@ export default async function ProductDetailsPage({
             </span>
             <span className="flex items-center gap-1 text-sm font-semibold text-[#6B7280]">
               <Star aria-hidden="true" size={16} className="fill-[#7C3AED] text-[#7C3AED]" />
-              {product.rating} ({product.reviewCount} نظر)
+              {product.rating} ({product.purchaseCount.toLocaleString("fa-IR")} خرید)
             </span>
           </div>
 

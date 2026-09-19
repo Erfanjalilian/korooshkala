@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, ShoppingCart, User, X } from "lucide-react";
 import MobileMenu from "@/app/components/header/MobileMenu";
 import MobileBottomNav from "@/app/components/header/MobileBottomNav";
@@ -21,7 +22,7 @@ export default function MobileHeader({
 
   return (
     <div className="lg:hidden">
-      <div className="relative flex h-16 items-center justify-between px-4">
+      <div className="relative flex h-[88px] items-center justify-between px-4">
         {/* Left */}
         <button
           type="button"
@@ -37,11 +38,15 @@ export default function MobileHeader({
         <Link
           href="/"
           aria-label="صفحه اصلی"
-          className="absolute left-1/2 flex -translate-x-1/2 items-center"
+          className="absolute left-1/2 flex -translate-x-1/2 items-center py-2"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-sm font-bold text-white">
-            M
-          </div>
+          <Image
+            src="/logo/IMG_20260918_171528_557.jpg"
+            alt="لوگوی فروشگاه"
+            width={72}
+            height={72}
+            className="h-[72px] w-[72px] rounded-full object-cover"
+          />
         </Link>
 
         {/* Right */}

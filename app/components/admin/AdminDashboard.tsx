@@ -83,7 +83,7 @@ function ProductFormModal({
               onChange={(event) => setHasDiscount(event.target.checked)}
               className="size-4 accent-[#2563EB]"
             />
-            آیا برای این محصول تخفیف می‌گذارید؟
+            تخفیف‌های ویژه / نمایش در بخش تخفیف‌ها
           </label>
           {hasDiscount ? (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -157,6 +157,28 @@ function ProductFormModal({
               />
             ) : null}
           </label>
+          <fieldset className="grid gap-3 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3">
+            <legend className="px-1 text-sm font-bold text-[#111827]">
+              نمایش در صفحه اصلی
+            </legend>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <FlagCheckbox
+                name="isBestSelling"
+                checked={Boolean(product.isBestSelling)}
+                label="پرفروش‌ترین محصولات"
+              />
+              <FlagCheckbox
+                name="isNew"
+                checked={Boolean(product.isNew)}
+                label="جدیدترین محصولات"
+              />
+              <FlagCheckbox
+                name="isHot"
+                checked={Boolean(product.isHot)}
+                label="داغ‌ترین محصولات"
+              />
+            </div>
+          </fieldset>
           <div className="flex gap-2 pt-2">
             <button
               type="submit"
@@ -212,9 +234,11 @@ type Product = {
   categorySlug: string;
   brand: string;
   stock: number;
+  purchaseCount: number;
   tags: string[];
   image?: string;
   featured?: boolean;
+  isBestSelling?: boolean;
   isNew?: boolean;
   isHot?: boolean;
   isDiscounted?: boolean;
@@ -272,6 +296,7 @@ const emptyProduct = (): Product => ({
   categorySlug: "",
   brand: "",
   stock: 0,
+  purchaseCount: 1001,
   tags: [],
 });
 const numberFormat = (value: number) =>
@@ -646,6 +671,29 @@ function Products({
         </Panel>
       )}
     </div>
+  );
+}
+
+function FlagCheckbox({
+  name,
+  checked,
+  label,
+}: {
+  name: string;
+  checked: boolean;
+  label: string;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[#111827]">
+      <input
+        type="checkbox"
+        name={name}
+        value="true"
+        defaultChecked={checked}
+        className="size-4 accent-[#2563EB]"
+      />
+      {label}
+    </label>
   );
 }
 

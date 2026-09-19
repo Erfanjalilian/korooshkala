@@ -14,7 +14,7 @@ import PopularBrands from "@/app/components/home/PopularBrands";
 export default function HeroSection() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-      <section className="relative isolate overflow-hidden rounded-[2rem] bg-gradient-to-l from-[#2563EB] to-[#7C3AED] px-6 py-10 text-white shadow-[0_18px_45px_rgba(37,99,235,0.18)] sm:px-10 sm:py-14 lg:min-h-[25rem] lg:px-16 lg:py-16">
+      <section className="relative isolate overflow-hidden rounded-[2rem] bg-gradient-to-l from-[#2563EB] to-[#7C3AED] px-6 py-5 text-white shadow-[0_18px_45px_rgba(37,99,235,0.18)] sm:px-10 sm:py-7 lg:min-h-[12.5rem] lg:px-16 lg:py-8">
         <div className="pointer-events-none absolute inset-0 -z-10 opacity-20 [background-image:radial-gradient(circle_at_15%_20%,white_0,transparent_28%),radial-gradient(circle_at_90%_80%,white_0,transparent_32%)]" />
         <div className="pointer-events-none absolute -left-16 -top-20 -z-10 size-56 rounded-full border border-white/15 bg-white/5 sm:size-72" />
         <div className="pointer-events-none absolute -bottom-32 right-1/3 -z-10 size-72 rounded-full border border-white/10 bg-white/5" />

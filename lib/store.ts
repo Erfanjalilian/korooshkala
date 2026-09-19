@@ -16,9 +16,11 @@ export type Product = {
   stock: number;
   rating: number;
   reviewCount: number;
+  purchaseCount: number;
   tags: string[];
   image?: string;
   featured?: boolean;
+  isBestSelling?: boolean;
   isNew?: boolean;
   isHot?: boolean;
   isDiscounted?: boolean;
@@ -75,9 +77,9 @@ export const defaultPages: PageContent = {
     description: "فروشگاه من جایی است برای پیدا کردن محصولاتی کاربردی، دوست‌داشتنی و متناسب با نیازهای روزمره شما؛ با تجربه‌ای ساده و قابل اعتماد.",
   },
   contact: {
-    email: "erfanjaaliliyan83@gmail.com",
-    phone: "۰۲۱-۱۲۳۴۵۶۷۸",
-    address: "تهران، خیابان ولیعصر، مرکز خرید جهان",
+    email: "Siavash.m2020@gmail.com",
+    phone: "۰۲۱۶۶۸۱۶۲۸۳",
+    address: "تهران،خیابان شاد آباد خ سر حدی جنوبی کوچه ی چوپان",
     hours: "شنبه تا پنجشنبه، ۹ تا ۱۸",
     title: "با ما در ارتباط باشید",
     description: "سوالی دارید یا برای انتخاب محصول به راهنمایی نیاز دارید؟ پیام خود را برای ما بفرستید.",

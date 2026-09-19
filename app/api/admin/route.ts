@@ -65,11 +65,15 @@ async function readProductForm(formData: FormData, current?: Product): Promise<P
     stock: numberValue(formData.get("stock"), current?.stock),
     rating: current?.rating ?? 0,
     reviewCount: current?.reviewCount ?? 0,
+    purchaseCount: current?.purchaseCount ?? 1001,
     tags: textValue(formData.get("tags"), current?.tags.join(", ")).split(",").map((tag) => tag.trim()).filter(Boolean),
     image: image ?? current?.image,
-    featured: formData.get("featured") === "true" || current?.featured,
-    isNew: formData.get("isNew") === "true" || current?.isNew,
-    isHot: formData.get("isHot") === "true" || current?.isHot,
+    featured: formData.has("featured")
+      ? formData.get("featured") === "true"
+      : current?.featured,
+    isBestSelling: formData.get("isBestSelling") === "true",
+    isNew: formData.get("isNew") === "true",
+    isHot: formData.get("isHot") === "true",
     isDiscounted: formData.get("isDiscounted") === "true",
   };
 }
