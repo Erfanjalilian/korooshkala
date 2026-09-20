@@ -10,6 +10,11 @@ interface SimilarProductsProps {
 const formatPrice = (price: number) =>
   `${new Intl.NumberFormat("fa-IR").format(price)} تومان`;
 
+const getDiscountPercent = (price: number, compareAtPrice: number) =>
+  compareAtPrice > price
+    ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
+    : 0;
+
 export default async function SimilarProducts({
   productId,
   categorySlug,
@@ -49,6 +54,13 @@ export default async function SimilarProducts({
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
         {similarProducts.map((similarProduct) => (
+          (() => {
+            const discountPercent = getDiscountPercent(
+              similarProduct.price,
+              similarProduct.compareAtPrice,
+            );
+
+            return (
           <Link
             key={similarProduct.id}
             href={`/products/${encodeURIComponent(similarProduct.slug)}`}
@@ -57,7 +69,7 @@ export default async function SimilarProducts({
             <div className="relative flex h-32 items-center justify-center bg-gradient-to-br from-[#DBEAFE] to-[#F5F7FA] sm:h-36">
               {similarProduct.image ? <img src={similarProduct.image} alt={similarProduct.name} className="h-full w-full object-cover" /> : <div className="flex size-16 items-center justify-center rounded-2xl bg-white/80 text-[#2563EB] shadow-sm transition group-hover:text-[#7C3AED] sm:size-20"><Package aria-hidden="true" size={38} strokeWidth={1.4} /></div>}
               <span className="absolute right-2 top-2 rounded-full bg-[#7C3AED] px-2 py-1 text-[10px] font-bold text-white">
-                {similarProduct.isDiscounted ? "ویژه" : "محبوب"}
+                {discountPercent > 0 ? `${discountPercent}٪ تخفیف` : "محبوب"}
               </span>
             </div>
             <div className="p-3 sm:p-4">
@@ -71,6 +83,11 @@ export default async function SimilarProducts({
                 <span className="text-xs font-extrabold text-[#2563EB]">
                   {formatPrice(similarProduct.price)}
                 </span>
+                {discountPercent > 0 ? (
+                  <del className="text-sm font-bold text-red-600">
+                    {formatPrice(similarProduct.compareAtPrice)}
+                  </del>
+                ) : null}
                 <span className="flex items-center gap-1 text-[10px] text-[#6B7280]">
                   <Star aria-hidden="true" size={12} className="fill-[#7C3AED] text-[#7C3AED]" />
                   {similarProduct.rating}
@@ -78,6 +95,8 @@ export default async function SimilarProducts({
               </div>
             </div>
           </Link>
+            );
+          })()
         ))}
       </div>
     </section>

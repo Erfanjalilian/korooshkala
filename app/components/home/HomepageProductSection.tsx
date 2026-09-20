@@ -25,6 +25,11 @@ type ProductFlag = "isBestSelling" | "isDiscounted" | "isNew" | "isHot";
 const formatPrice = (price: number) =>
   `${new Intl.NumberFormat("fa-IR").format(price)} تومان`;
 
+const getDiscountPercent = (price: number, compareAtPrice: number) =>
+  compareAtPrice > price
+    ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
+    : 0;
+
 export default function HomepageProductSection({
   flag,
   eyebrow,
@@ -113,6 +118,13 @@ export default function HomepageProductSection({
           className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-3 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {products.map((product) => (
+            (() => {
+              const discountPercent = getDiscountPercent(
+                product.price,
+                product.compareAtPrice,
+              );
+
+              return (
             <Link
               key={product.id}
               href={`/products/${encodeURIComponent(product.slug)}`}
@@ -132,7 +144,7 @@ export default function HomepageProductSection({
                   </div>
                 )}
                 <span className="absolute right-3 top-3 rounded-full bg-[#7C3AED] px-2.5 py-1 text-[10px] font-bold text-white">
-                  {badge}
+                  {discountPercent > 0 ? `${discountPercent}٪ تخفیف` : badge}
                 </span>
               </div>
               <div className="p-4">
@@ -146,14 +158,16 @@ export default function HomepageProductSection({
                   <span className="text-sm font-extrabold text-[#2563EB]">
                     {formatPrice(product.price)}
                   </span>
-                  {flag === "isDiscounted" ? (
-                    <del className="text-[10px] text-[#9CA3AF]">
+                  {discountPercent > 0 ? (
+                    <del className="text-sm font-bold text-red-600">
                       {formatPrice(product.compareAtPrice)}
                     </del>
                   ) : null}
                 </div>
               </div>
             </Link>
+              );
+            })()
           ))}
         </div>
 

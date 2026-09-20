@@ -73,7 +73,7 @@ export default async function ProductDetailsPage({
               {new Intl.NumberFormat("fa-IR").format(product.price)} تومان
             </span>
             {product.compareAtPrice > product.price ? (
-              <del className="text-sm text-[#9CA3AF]">
+              <del className="text-lg font-bold text-red-600">
                 {new Intl.NumberFormat("fa-IR").format(product.compareAtPrice)} تومان
               </del>
             ) : null}
