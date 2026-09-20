@@ -313,7 +313,7 @@ export default function ProductCatalog({
                     <div className="mt-4 flex items-end justify-between gap-3">
                       <span className="text-sm font-extrabold text-[#2563EB]">{formatPrice(product.price)}</span>
                       {discountPercent > 0 ? (
-                        <del className="text-sm font-bold text-red-600">{formatPrice(product.compareAtPrice)}</del>
+                        <del className="text-base font-extrabold text-red-600 sm:text-lg">{formatPrice(product.compareAtPrice)}</del>
                       ) : null}
                     </div>
                   </div>

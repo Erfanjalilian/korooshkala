@@ -98,7 +98,7 @@ function ProductFormModal({
                 label="قیمت بعد از تخفیف"
                 name="price"
                 type="number"
-                defaultValue={product.isDiscounted ? product.price : 0}
+                defaultValue={product.price}
                 required
               />
             </div>
@@ -319,7 +319,7 @@ const emptyProduct = (): Product => ({
   brand: "",
   stock: 0,
   rating: 0,
-  purchaseCount: 1001,
+  purchaseCount: 0,
   tags: [],
 });
 const numberFormat = (value: number) =>

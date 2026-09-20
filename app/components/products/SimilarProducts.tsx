@@ -84,7 +84,7 @@ export default async function SimilarProducts({
                   {formatPrice(similarProduct.price)}
                 </span>
                 {discountPercent > 0 ? (
-                  <del className="text-sm font-bold text-red-600">
+                  <del className="text-base font-extrabold text-red-600 sm:text-lg">
                     {formatPrice(similarProduct.compareAtPrice)}
                   </del>
                 ) : null}

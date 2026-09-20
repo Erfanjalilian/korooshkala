@@ -116,7 +116,7 @@ export default function DesktopHeader() {
         >
           <User size={19} />
 
-          <span>ورود / ثبت نام</span>
+          <span>ورود به فروشگاه</span>
         </Link>
       </div>
     </div>

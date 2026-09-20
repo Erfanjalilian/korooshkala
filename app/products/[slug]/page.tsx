@@ -28,9 +28,12 @@ export default async function ProductDetailsPage({
 
   if (!product) notFound();
 
-  const discount = Math.round(
-    ((product.compareAtPrice - product.price) / product.compareAtPrice) * 100,
-  );
+  const discount =
+    product.compareAtPrice > product.price
+      ? Math.round(
+          ((product.compareAtPrice - product.price) / product.compareAtPrice) * 100,
+        )
+      : 0;
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -48,7 +51,7 @@ export default async function ProductDetailsPage({
           <div className="absolute -bottom-20 right-1/4 size-64 rounded-full border border-white/50 bg-white/20" />
           {product.image ? <img src={product.image} alt={product.name} className="relative h-full w-full object-cover" /> : <div className="relative flex size-44 items-center justify-center rounded-[2.5rem] bg-white/80 text-[#2563EB] shadow-[0_18px_45px_rgba(37,99,235,0.16)] backdrop-blur-sm sm:size-56"><Package aria-hidden="true" size={92} strokeWidth={1.2} /></div>}
           <span className="absolute right-5 top-5 rounded-full bg-[#7C3AED] px-3 py-1.5 text-xs font-bold text-white">
-            {product.isDiscounted ? `${discount}٪ تخفیف` : product.isNew ? "جدید" : "محبوب"}
+            {discount > 0 ? `${discount}٪ تخفیف` : product.isNew ? "جدید" : "محبوب"}
           </span>
         </div>
 
@@ -73,7 +76,7 @@ export default async function ProductDetailsPage({
               {new Intl.NumberFormat("fa-IR").format(product.price)} تومان
             </span>
             {product.compareAtPrice > product.price ? (
-              <del className="text-lg font-bold text-red-600">
+              <del className="text-xl font-extrabold text-red-600 sm:text-2xl">
                 {new Intl.NumberFormat("fa-IR").format(product.compareAtPrice)} تومان
               </del>
             ) : null}
