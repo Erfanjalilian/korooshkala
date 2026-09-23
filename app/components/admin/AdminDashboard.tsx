@@ -279,6 +279,19 @@ type Order = {
   status: string;
   total: number;
   createdAt: string;
+  shipping?: {
+    fullName?: string;
+    postalCode?: string;
+    address?: string;
+    province?: string;
+    city?: string;
+  };
+  items?: Array<{ name: string; quantity: number; price: number }>;
+  payment?: {
+    gateway?: string;
+    status?: string;
+    referenceId?: string;
+  };
 };
 type Pages = {
   about: { title: string; description: string };
@@ -898,31 +911,61 @@ function OrdersPanel({
         {data.orders.map((order) => (
           <div
             key={order.id}
-            className="flex flex-col gap-3 rounded-xl border border-[#E5E7EB] p-4 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 rounded-xl border border-[#E5E7EB] p-4"
           >
-            <div>
-              <p className="font-bold text-[#111827]">{order.id}</p>
-              <p className="mt-1 text-xs text-[#6B7280]">
-                کاربر: {order.userId} |{" "}
-                {new Date(order.createdAt).toLocaleDateString("fa-IR")}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-bold text-[#111827]">{order.id}</p>
+                <p className="mt-1 text-xs text-[#6B7280]">
+                  کاربر: {order.userId} |{" "}
+                  {new Date(order.createdAt).toLocaleDateString("fa-IR")}
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <strong className="text-sm text-[#2563EB]">
+                  {numberFormat(order.total)} تومان
+                </strong>
+                <select
+                  value={order.status}
+                  onChange={(event) => void update(order.id, event.target.value)}
+                  className="rounded-lg border border-[#E5E7EB] bg-white px-2 py-2 text-xs"
+                >
+                  <option value="pending_payment">در انتظار پرداخت</option>
+                  <option value="paid">پرداخت شده</option>
+                  <option value="processing">در حال پردازش</option>
+                  <option value="shipped">ارسال شده</option>
+                  <option value="completed">تکمیل شده</option>
+                  <option value="cancelled">لغو شده</option>
+                </select>
+              </div>
+            </div>
+
+            {order.shipping ? (
+              <div className="rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#475569]">
+                <p><span className="font-bold text-[#111827]">نام تحویل گیرنده:</span> {order.shipping.fullName}</p>
+                <p><span className="font-bold text-[#111827]">استان/شهر:</span> {order.shipping.province} / {order.shipping.city}</p>
+                <p><span className="font-bold text-[#111827]">کد پستی:</span> {order.shipping.postalCode}</p>
+                <p><span className="font-bold text-[#111827]">آدرس:</span> {order.shipping.address}</p>
+              </div>
+            ) : null}
+
+            {order.items && order.items.length > 0 ? (
+              <div className="space-y-1 text-xs text-[#475569]">
+                {order.items.map((item, index) => (
+                  <div key={`${order.id}-item-${index}`} className="flex items-center justify-between gap-3 border-b border-[#F1F5F9] pb-1">
+                    <span>{item.name}</span>
+                    <span>{item.quantity} × {numberFormat(item.price)} تومان</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            {order.payment ? (
+              <p className="text-xs text-[#6B7280]">
+                درگاه: {order.payment.gateway === "zarinpal" ? "زرین‌پال" : order.payment.gateway} | وضعیت پرداخت: {order.payment.status}
+                {order.payment.referenceId ? ` | کد پیگیری: ${order.payment.referenceId}` : ""}
               </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <strong className="text-sm text-[#2563EB]">
-                {numberFormat(order.total)} تومان
-              </strong>
-              <select
-                value={order.status}
-                onChange={(event) => void update(order.id, event.target.value)}
-                className="rounded-lg border border-[#E5E7EB] bg-white px-2 py-2 text-xs"
-              >
-                <option value="pending">در انتظار</option>
-                <option value="processing">در حال پردازش</option>
-                <option value="shipped">ارسال شده</option>
-                <option value="completed">تکمیل شده</option>
-                <option value="cancelled">لغو شده</option>
-              </select>
-            </div>
+            ) : null}
           </div>
         ))}
       </div>

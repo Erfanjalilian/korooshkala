@@ -88,7 +88,8 @@ export default function AuthForm() {
       });
       const result = (await response.json()) as { error?: string };
       if (!response.ok) throw new Error(result.error || "کد واردشده صحیح نیست.");
-      window.location.href = "/account";
+      const redirectTarget = new URLSearchParams(window.location.search).get("redirect") || "/account";
+      window.location.href = redirectTarget;
     } catch (verificationError) {
       setError(verificationError instanceof Error ? verificationError.message : "کد واردشده صحیح نیست.");
     } finally {

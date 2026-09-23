@@ -1,12 +1,12 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
+import { clearSession, createSession, getSessionUserId } from "@/lib/session";
 import { readOrders, readUsers, writeJson } from "@/lib/store";
 
 export const runtime = "nodejs";
 
 type PendingCode = { code: string; expiresAt: number };
 const pendingCodes = new Map<string, PendingCode>();
-const sessions = new Map<string, string>();
 const normalizePhone = (value: string) => value.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/\D/g, "");
 
 async function sendSms(phone: string, code: string) {
@@ -50,16 +50,14 @@ export async function POST(request: Request) {
     user = { id: `usr-${randomUUID().slice(0, 8)}`, phone, email: "", name: "کاربر جدید", role: "customer", createdAt: new Date().toISOString() };
     await writeJson("users.json", [...users, user]);
   }
-  const sessionId = randomUUID();
-  sessions.set(sessionId, user.id);
+  const sessionId = createSession(user.id);
   const response = NextResponse.json({ ok: true });
   response.cookies.set("jk_session", sessionId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 30, path: "/" });
   return response;
 }
 
 export async function GET(request: Request) {
-  const sessionId = request.headers.get("cookie")?.match(/(?:^|;\s*)jk_session=([^;]+)/)?.[1];
-  const userId = sessionId ? sessions.get(sessionId) : undefined;
+  const userId = getSessionUserId(request.headers.get("cookie"));
   if (!userId) return NextResponse.json({ error: "وارد حساب کاربری نشده‌اید." }, { status: 401 });
   const users = await readUsers();
   const user = users.find((item) => item.id === userId);
@@ -69,8 +67,7 @@ export async function GET(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const sessionId = request.headers.get("cookie")?.match(/(?:^|;\s*)jk_session=([^;]+)/)?.[1];
-  if (sessionId) sessions.delete(sessionId);
+  clearSession(request.headers.get("cookie"));
   const response = NextResponse.json({ ok: true });
   response.cookies.delete("jk_session");
   return response;

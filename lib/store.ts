@@ -28,14 +28,29 @@ export type Product = {
 
 export type Category = { slug: string; name: string; image?: string };
 export type User = { id: string; phone?: string; email: string; name: string; role: string; createdAt: string };
+export type OrderItem = { productId: string; name: string; price: number; quantity: number };
+export type ShippingDetails = {
+  fullName: string;
+  postalCode: string;
+  address: string;
+  province: string;
+  city: string;
+};
 export type Order = {
   id: string;
   userId: string;
   status: string;
-  items: unknown[];
+  items: OrderItem[];
   total: number;
   currency?: string;
   createdAt: string;
+  shipping?: ShippingDetails;
+  payment?: {
+    gateway: string;
+    status: string;
+    authority?: string;
+    referenceId?: string;
+  };
 };
 
 const dataDirectory = path.join(process.cwd(), "data");

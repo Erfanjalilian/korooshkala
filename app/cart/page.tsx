@@ -18,14 +18,31 @@ const formatPrice = (price: number) => `${new Intl.NumberFormat("fa-IR").format(
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const loadCart = () => {
+    const loadCart = async () => {
       const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
       setItems(storedCart ? JSON.parse(storedCart) : []);
-      setLoaded(true);
+
+      try {
+        const response = await fetch("/api/auth", { cache: "no-store" });
+        if (!response.ok) {
+          window.location.href = "/auth?redirect=/cart";
+          return;
+        }
+      } catch {
+        window.location.href = "/auth?redirect=/cart";
+        return;
+      } finally {
+        setCheckingAuth(false);
+        setLoaded(true);
+      }
     };
-    const timeoutId = window.setTimeout(loadCart, 0);
+
+    const timeoutId = window.setTimeout(() => {
+      void loadCart();
+    }, 0);
 
     return () => window.clearTimeout(timeoutId);
   }, []);
@@ -38,7 +55,7 @@ export default function CartPage() {
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  if (!loaded) {
+  if (!loaded || checkingAuth) {
     return <div className="mx-auto max-w-7xl px-4 py-16 text-center text-sm text-[#6B7280]">در حال آماده‌سازی سبد خرید...</div>;
   }
 
@@ -53,7 +70,7 @@ export default function CartPage() {
       {items.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-[#E5E7EB] bg-white p-12 text-center">
           <ShoppingBag aria-hidden="true" size={42} className="mx-auto text-[#2563EB]" />
-          <h2 className="mt-4 text-lg font-bold text-[#111827]">سبد خرید شما خالی است</h2>
+          <h2 className="mt-4 text-lg font-bold text-[#111827]">سبد خرید شما خخی است</h2>
           <Link href="/products" className="mt-5 inline-flex rounded-xl bg-[#2563EB] px-5 py-3 text-sm font-bold text-white hover:bg-[#7C3AED]">مشاهده محصولات</Link>
         </div>
       ) : (
@@ -79,7 +96,7 @@ export default function CartPage() {
           <aside className="h-fit rounded-2xl border border-[#E5E7EB] bg-white p-5">
             <h2 className="font-extrabold text-[#111827]">خلاصه سفارش</h2>
             <div className="mt-5 flex items-center justify-between text-sm text-[#6B7280]"><span>مجموع</span><strong className="text-[#2563EB]">{formatPrice(total)}</strong></div>
-            <button type="button" className="mt-5 h-12 w-full rounded-xl bg-[#2563EB] text-sm font-bold text-white hover:bg-[#7C3AED]">ادامه ثبت سفارش</button>
+            <Link href="/checkout" className="mt-5 flex h-12 w-full items-center justify-center rounded-xl bg-[#2563EB] text-sm font-bold text-white hover:bg-[#7C3AED]">ادامه ثبت سفارش</Link>
           </aside>
         </div>
       )}

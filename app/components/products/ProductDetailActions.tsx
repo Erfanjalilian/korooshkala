@@ -21,7 +21,18 @@ export default function ProductDetailActions({
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
-  const addToCart = () => {
+  const addToCart = async () => {
+    try {
+      const authResponse = await fetch("/api/auth", { cache: "no-store" });
+      if (!authResponse.ok) {
+        window.location.href = `/auth?redirect=${encodeURIComponent(window.location.pathname)}`;
+        return;
+      }
+    } catch {
+      window.location.href = `/auth?redirect=${encodeURIComponent(window.location.pathname)}`;
+      return;
+    }
+
     const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
     const cart = storedCart ? JSON.parse(storedCart) : [];
     const existingItem = cart.find(
