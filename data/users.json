@@ -13,5 +13,13 @@
     "name": "کاربر جدید",
     "role": "customer",
     "createdAt": "2026-09-17T10:54:35.235Z"
+  },
+  {
+    "id": "usr-a5b473cf",
+    "phone": "09127006986",
+    "email": "",
+    "name": "کاربر جدید",
+    "role": "customer",
+    "createdAt": "2026-09-20T22:08:00.956Z"
   }
 ]
