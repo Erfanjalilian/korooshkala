@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     await writeJson("users.json", [...users, user]);
   }
   const sessionId = createSession(user.id);
-  const response = NextResponse.json({ ok: true });
+  const response = NextResponse.json({ ok: true, user: { id: user.id, phone: user.phone, name: user.name } });
   response.cookies.set("jk_session", sessionId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 30, path: "/" });
   return response;
 }

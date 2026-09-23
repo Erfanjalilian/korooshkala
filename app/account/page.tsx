@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LogOut, Package, Phone, UserRound } from "lucide-react";
+import { clearStoredAuthUser, getStoredAuthUser } from "@/app/components/auth/auth-storage";
 
 type AccountData = {
   user: { name: string; phone?: string; createdAt: string };
@@ -27,6 +28,10 @@ export default function AccountPage() {
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!getStoredAuthUser()) {
+      window.location.href = "/auth";
+      return;
+    }
     const search = new URLSearchParams(window.location.search);
     const payment = search.get("payment");
     const nextPaymentStatus = payment === "success"
@@ -45,6 +50,7 @@ export default function AccountPage() {
 
   const logout = async () => {
     await fetch("/api/auth", { method: "DELETE" });
+    clearStoredAuthUser();
     window.location.href = "/auth";
   };
 

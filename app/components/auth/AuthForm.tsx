@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { LockKeyhole, MessageCircle, ShieldCheck } from "lucide-react";
+import { getStoredAuthUser, storeAuthUser } from "./auth-storage";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 90;
@@ -14,6 +15,10 @@ export default function AuthForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  useEffect(() => {
+    if (getStoredAuthUser()) window.location.replace("/account");
+  }, []);
 
   useEffect(() => {
     if (secondsLeft === 0) return;
@@ -86,8 +91,10 @@ export default function AuthForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "verify", phone, code: otp.join("") }),
       });
-      const result = (await response.json()) as { error?: string };
+      const result = (await response.json()) as { error?: string; user?: { id: string; phone: string; name: string } };
       if (!response.ok) throw new Error(result.error || "کد واردشده صحیح نیست.");
+      if (!result.user) throw new Error("اطلاعات حساب کاربری دریافت نشد.");
+      storeAuthUser(result.user);
       const redirectTarget = new URLSearchParams(window.location.search).get("redirect") || "/account";
       window.location.href = redirectTarget;
     } catch (verificationError) {
