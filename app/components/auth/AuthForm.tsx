@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { LockKeyhole, MessageCircle, ShieldCheck } from "lucide-react";
-import { getStoredAuthUser, storeAuthUser } from "./auth-storage";
+import { clearStoredAuthUser, storeAuthUser } from "./auth-storage";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 90;
@@ -17,7 +17,10 @@ export default function AuthForm() {
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
-    if (getStoredAuthUser()) window.location.replace("/account");
+    fetch("/api/auth", { cache: "no-store" }).then((response) => {
+      if (response.ok) window.location.replace("/account");
+      else clearStoredAuthUser();
+    }).catch(() => clearStoredAuthUser());
   }, []);
 
   useEffect(() => {

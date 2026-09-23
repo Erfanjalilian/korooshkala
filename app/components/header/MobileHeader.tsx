@@ -8,6 +8,7 @@ import MobileBottomNav from "@/app/components/header/MobileBottomNav";
 import MobileCategories from "@/app/components/header/MobileCategories";
 import { useState } from "react";
 import CartCount from "@/app/components/header/CartCount";
+import { useStoredAuthUser } from "@/app/components/auth/auth-storage";
 
 interface MobileHeaderProps {
   isMenuOpen: boolean;
@@ -19,6 +20,7 @@ export default function MobileHeader({
   onMenuToggle,
 }: MobileHeaderProps) {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const authUser = useStoredAuthUser();
 
   return (
     <div className="lg:hidden">
@@ -52,11 +54,12 @@ export default function MobileHeader({
         {/* Right */}
         <div className="flex items-center gap-2">
           <Link
-            href="/auth"
-            aria-label="ورود و ثبت نام"
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#111827] transition hover:border-[#2563EB] hover:text-[#2563EB]"
+            href={authUser ? "/account" : "/auth"}
+            aria-label={authUser?.phone || "ورود و ثبت نام"}
+            className="relative flex h-10 items-center justify-center gap-2 rounded-xl border border-[#E5E7EB] px-3 text-[#111827] transition hover:border-[#2563EB] hover:text-[#2563EB]"
           >
             <User size={19} />
+            {authUser ? <span dir="ltr" className="text-xs font-semibold">{authUser.phone}</span> : null}
           </Link>
 
           <Link

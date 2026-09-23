@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/session";
 import { readOrders, writeJson } from "@/lib/store";
+import { tomanToRial } from "@/lib/currency";
 
 export const runtime = "nodejs";
 
@@ -39,7 +40,7 @@ export async function GET(request: Request) {
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         merchant_id: merchantId,
-        amount: Number(order.total),
+        amount: tomanToRial(Number(order.total)),
         callback_url: callbackUrl,
         description: `سفارش ${order.id}`,
         metadata: { order_id: order.id, user_id: userId },

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { readOrders, writeJson } from "@/lib/store";
+import { tomanToRial } from "@/lib/currency";
 
 export const runtime = "nodejs";
 
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
     const verifyResponse = await fetch(`${zarinpalBase}/verify.json`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ merchant_id: merchantId, amount: Number(order.total), authority }),
+      body: JSON.stringify({ merchant_id: merchantId, amount: tomanToRial(Number(order.total)), authority }),
     });
 
     const json = await verifyResponse.json() as { data?: { code?: number; ref_id?: number }; errors?: { message?: string } };

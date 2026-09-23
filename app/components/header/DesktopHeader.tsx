@@ -6,6 +6,7 @@ import { ChevronLeft, Menu, ShoppingCart, User } from "lucide-react";
 import { useState } from "react";
 import CategoryDropdown from "@/app/components/header/CategoryDropdown";
 import CartCount from "@/app/components/header/CartCount";
+import { useStoredAuthUser } from "@/app/components/auth/auth-storage";
 
 const navigationItems = [
   {
@@ -29,6 +30,7 @@ const navigationItems = [
 
 export default function DesktopHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const authUser = useStoredAuthUser();
 
   return (
     <div className="hidden h-24 items-center justify-between px-6 lg:flex xl:px-12">
@@ -110,13 +112,13 @@ export default function DesktopHeader() {
         </Link>
 
         <Link
-          href="/auth"
+          href={authUser ? "/account" : "/auth"}
           aria-label="ورود و ثبت نام"
           className="flex h-11 items-center gap-2 rounded-xl bg-[#2563EB] px-4 text-sm font-semibold text-white transition hover:bg-[#7C3AED]"
         >
           <User size={19} />
 
-          <span>ورود به فروشگاه</span>
+          <span>{authUser?.phone || "ورود به فروشگاه"}</span>
         </Link>
       </div>
     </div>

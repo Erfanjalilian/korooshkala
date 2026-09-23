@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     status: "pending_payment",
     items: orderItems,
     total,
-    currency: "IRR",
+    currency: "IRT",
     createdAt: new Date().toISOString(),
     shipping: { fullName, postalCode, address, province, city },
     payment: { gateway: "zarinpal", status: "pending_payment" },

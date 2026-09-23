@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LogOut, Package, Phone, UserRound } from "lucide-react";
-import { clearStoredAuthUser, getStoredAuthUser } from "@/app/components/auth/auth-storage";
+import { clearStoredAuthUser } from "@/app/components/auth/auth-storage";
 
 type AccountData = {
   user: { name: string; phone?: string; createdAt: string };
@@ -28,10 +28,6 @@ export default function AccountPage() {
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!getStoredAuthUser()) {
-      window.location.href = "/auth";
-      return;
-    }
     const search = new URLSearchParams(window.location.search);
     const payment = search.get("payment");
     const nextPaymentStatus = payment === "success"
@@ -41,11 +37,19 @@ export default function AccountPage() {
         : null;
     window.setTimeout(() => setPaymentStatus(nextPaymentStatus), 0);
 
-    fetch("/api/auth", { cache: "no-store" }).then(async (response) => {
-      if (response.ok) setData((await response.json()) as AccountData);
-      else window.location.href = "/auth";
-      setLoading(false);
-    });
+    fetch("/api/auth", { cache: "no-store" })
+      .then(async (response) => {
+        if (response.ok) setData((await response.json()) as AccountData);
+        else {
+          clearStoredAuthUser();
+          window.location.href = "/auth";
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        clearStoredAuthUser();
+        window.location.href = "/auth";
+      });
   }, []);
 
   const logout = async () => {
