@@ -11,6 +11,9 @@ const quickLinks = [
 const customerLinks = [
   { title: "پیگیری سفارش", href: "/orders" },
   { title: "راهنمای خرید", href: "/guide" },
+  { title: "شرایط و روش پرداخت", href: "/payment" },
+  { title: "شرایط و روش ارسال", href: "/shipping" },
+  { title: "تست و مرجوعی کالا", href: "/returns" },
   { title: "پرسش‌های متداول", href: "/faq" },
   { title: "قوانین و مقررات", href: "/terms" },
 ];

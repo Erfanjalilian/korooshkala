@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, HelpCircle, PackageSearch, ShieldCheck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CreditCard, HelpCircle, PackageSearch, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 
 interface CustomerPageProps {
   eyebrow: string;
   title: string;
   description: string;
-  icon: "order" | "guide" | "faq" | "terms";
+  icon: "order" | "guide" | "faq" | "terms" | "payment" | "shipping" | "returns";
   children: React.ReactNode;
 }
 
@@ -14,6 +14,9 @@ const icons = {
   guide: CheckCircle2,
   faq: HelpCircle,
   terms: ShieldCheck,
+  payment: CreditCard,
+  shipping: Truck,
+  returns: RotateCcw,
 };
 
 export default function CustomerPage({
