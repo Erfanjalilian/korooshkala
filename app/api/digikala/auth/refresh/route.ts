@@ -20,7 +20,10 @@ export async function POST() {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ refreshToken }),
+      body: JSON.stringify({
+        access_token: state.accessToken ?? "",
+        refresh_token: refreshToken,
+      }),
     });
 
     const payload = (await response.json().catch(() => ({}))) as Record<string, unknown>;
@@ -28,8 +31,18 @@ export async function POST() {
       throw new Error(`Digikala refresh failed with status ${response.status}.`);
     }
 
-    const nextAccessToken = typeof payload.accessToken === "string" ? payload.accessToken : "";
-    const nextRefreshToken = typeof payload.refreshToken === "string" ? payload.refreshToken : refreshToken;
+    const data =
+      payload.data && typeof payload.data === "object"
+        ? (payload.data as Record<string, unknown>)
+        : {};
+
+    const nextAccessToken =
+      typeof data.access_token === "string" ? data.access_token : "";
+
+    const nextRefreshToken =
+      typeof data.refresh_token === "string"
+        ? data.refresh_token
+        : refreshToken;
 
     await writeDigikalaAuthState({
       ...state,

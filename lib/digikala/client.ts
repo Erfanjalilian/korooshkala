@@ -109,10 +109,15 @@ export class DigikalaClient {
     }
 
     const refreshToken = tokenState.refreshToken ?? this.config.refreshToken;
+    const accessToken = tokenState.accessToken ?? this.config.accessToken ?? "";
+
     const response = await fetch(this.buildUrl("/open-api/v1/auth/refresh-token"), {
       method: "POST",
       headers: this.buildHeaders(undefined, { "Content-Type": "application/json" }),
-      body: JSON.stringify({ refreshToken }),
+      body: JSON.stringify({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      }),
     });
 
     if (!response.ok) {
@@ -121,10 +126,30 @@ export class DigikalaClient {
       throw error;
     }
 
-    const payload = (await response.json()) as { accessToken?: string; refreshToken?: string; expiresIn?: number };
-    tokenState.accessToken = payload.accessToken ?? tokenState.accessToken;
-    tokenState.refreshToken = payload.refreshToken ?? refreshToken;
-    tokenState.expiresAt = Date.now() + (Number(payload.expiresIn ?? 3600) * 1000);
+    const payload = (await response.json()) as {
+      data?: {
+        access_token?: string;
+        refresh_token?: string;
+        access_token_expires_at?: { date?: string };
+      };
+    };
+
+    const data = payload.data ?? {};
+    const nextAccessToken = data.access_token ?? tokenState.accessToken;
+    const nextRefreshToken = data.refresh_token ?? refreshToken;
+
+    tokenState.accessToken = nextAccessToken;
+    tokenState.refreshToken = nextRefreshToken;
+
+    const expiresAt = data.access_token_expires_at?.date
+      ? Date.parse(data.access_token_expires_at.date)
+      : NaN;
+
+    tokenState.expiresAt =
+      Number.isFinite(expiresAt)
+        ? expiresAt
+        : Date.now() + 3600 * 1000;
+
     return payload;
   }
 
@@ -137,10 +162,27 @@ export class DigikalaClient {
       retryable: false,
     });
 
-    const payload = (await response.json()) as { accessToken?: string; refreshToken?: string; expiresIn?: number };
-    tokenState.accessToken = payload.accessToken ?? tokenState.accessToken;
-    tokenState.refreshToken = payload.refreshToken ?? tokenState.refreshToken;
-    tokenState.expiresAt = Date.now() + (Number(payload.expiresIn ?? 3600) * 1000);
+    const payload = (await response.json()) as {
+      data?: {
+        access_token?: string;
+        refresh_token?: string;
+        access_token_expires_at?: { date?: string };
+      };
+    };
+
+    const data = payload.data ?? {};
+    tokenState.accessToken = data.access_token ?? tokenState.accessToken;
+    tokenState.refreshToken = data.refresh_token ?? tokenState.refreshToken;
+
+    const expiresAt = data.access_token_expires_at?.date
+      ? Date.parse(data.access_token_expires_at.date)
+      : NaN;
+
+    tokenState.expiresAt =
+      Number.isFinite(expiresAt)
+        ? expiresAt
+        : Date.now() + 3600 * 1000;
+
     return payload;
   }
 }

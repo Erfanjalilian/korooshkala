@@ -72,40 +72,17 @@ export const decryptValidationCode = (validationCode: string, privateKeyPem?: st
   return decrypted.toString("utf8");
 };
 
-const interpolateTemplate = (template: string, values: Record<string, string>) => {
-  let output = template;
-  for (const [key, value] of Object.entries(values)) {
-    output = output.replaceAll(`{{${key}}}`, value);
-    output = output.replaceAll(`{{ ${key} }}`, value);
-  }
-  return output;
-};
-
 export const buildDigikalaAuthTokenBody = ({
-  clientCode,
   validationCode,
-  requestBody,
 }: DigikalaAuthTokenBodyInput) => {
-  const normalizedClientCode = String(clientCode ?? "").trim();
-  const normalizedValidationCode = String(validationCode ?? "").trim();
+  const authorizationCode = String(validationCode ?? "").trim();
 
-  if (requestBody && typeof requestBody === "object") {
-    return requestBody;
-  }
-
-  const exactTemplate = process.env.DIGIKALA_AUTH_TOKEN_BODY_TEMPLATE?.trim();
-  if (exactTemplate) {
-    return JSON.parse(
-      interpolateTemplate(exactTemplate, {
-        clientCode: normalizedClientCode,
-        validationCode: normalizedValidationCode,
-      }),
-    ) as Record<string, unknown>;
+  if (!authorizationCode) {
+    throw new Error("Decrypted authorization code is required.");
   }
 
   return {
-    clientCode: normalizedClientCode,
-    validationCode: normalizedValidationCode,
+    authorization_code: authorizationCode,
   };
 };
 
@@ -124,9 +101,7 @@ export const activateDigikalaToken = async ({
   const privateKeyPem = getDigikalaPrivateKeyPem();
   const decryptedValidationValue = decryptValidationCode(normalizedValidationCode, privateKeyPem);
   const body = buildDigikalaAuthTokenBody({
-    clientCode: normalizedClientCode,
     validationCode: decryptedValidationValue,
-    requestBody,
   });
 
   const baseUrl = getDigikalaConfig().baseUrl.replace(/\/+$/, "");
@@ -145,8 +120,15 @@ export const activateDigikalaToken = async ({
     throw new Error(`Digikala token activation failed with status ${response.status}.`);
   }
 
-  const accessToken = typeof payload.accessToken === "string" ? payload.accessToken : "";
-  const refreshToken = typeof payload.refreshToken === "string" ? payload.refreshToken : "";
+  const data =
+    payload.data && typeof payload.data === "object"
+      ? (payload.data as Record<string, unknown>)
+      : {};
+
+  const accessToken =
+    typeof data.access_token === "string" ? data.access_token : "";
+  const refreshToken =
+    typeof data.refresh_token === "string" ? data.refresh_token : "";
 
   const state = await readDigikalaAuthState();
   const nextState = {

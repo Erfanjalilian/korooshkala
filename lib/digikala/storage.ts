@@ -52,7 +52,16 @@ async function readJson<T>(fileName: string, fallback: T): Promise<T> {
 
 async function writeJson<T>(fileName: string, value: T) {
   await ensureDirectory();
-  await writeFile(path.join(dataDirectory, fileName), `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  const filePath = path.join(dataDirectory, fileName);
+  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, {
+    encoding: "utf8",
+    mode: fileName === "auth-state.json" ? 0o600 : 0o644,
+  });
+
+  if (fileName === "auth-state.json") {
+    const { chmod } = await import("node:fs/promises");
+    await chmod(filePath, 0o600);
+  }
 }
 
 export const readDigikalaProductMappings = () =>
