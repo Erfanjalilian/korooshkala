@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, Package, ShieldCheck, Star, Truck } from "lucide-react";
 import { readProducts } from "@/lib/store";
@@ -13,6 +14,72 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
+
+function getAbsoluteImageUrl(image?: string) {
+  if (!image?.trim()) return undefined;
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://korooshkala.ir";
+    const imageUrl = new URL(image, baseUrl);
+    return imageUrl.protocol === "http:" || imageUrl.protocol === "https:"
+      ? imageUrl.toString()
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> },
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { slug: rawSlug } = await params;
+  const slug = decodeURIComponent(rawSlug);
+  const products = await readProducts();
+  const product = products.find(
+    (item) => item.slug === slug || item.id === slug,
+  );
+
+  if (!product) return {};
+
+  const parentMetadata = await parent;
+  const other: NonNullable<Metadata["other"]> = { ...parentMetadata.other };
+  const isNonEmptyString = (value: unknown): value is string =>
+    typeof value === "string" && value.trim().length > 0;
+
+  if (isNonEmptyString(product.id)) other.product_id = product.id;
+  if (isNonEmptyString(product.name)) other.product_name = product.name;
+  if (typeof product.price === "number" && Number.isFinite(product.price)) {
+    other.product_price = String(product.price);
+    other.product_old_price = String(
+      typeof product.compareAtPrice === "number" &&
+        Number.isFinite(product.compareAtPrice) &&
+        product.compareAtPrice > product.price
+        ? product.compareAtPrice
+        : product.price,
+    );
+  }
+  if (typeof product.stock === "number" && Number.isFinite(product.stock)) {
+    other.availability = product.stock > 0 ? "instock" : "outofstock";
+  }
+  if (isNonEmptyString(product.guarantee)) {
+    other.guarantee = product.guarantee;
+  }
+
+  const imageUrl = getAbsoluteImageUrl(product.image);
+
+  return {
+    other,
+    ...(imageUrl
+      ? {
+          openGraph: {
+            ...parentMetadata.openGraph,
+            images: [imageUrl, ...(parentMetadata.openGraph?.images ?? [])],
+          },
+        }
+      : {}),
+  };
+}
 
 export default async function ProductDetailsPage({
   params,

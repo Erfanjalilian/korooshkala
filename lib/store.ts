@@ -9,6 +9,7 @@ export type Product = {
   description: string;
   price: number;
   compareAtPrice: number;
+  guarantee?: string;
   currency?: string;
   category: string;
   categorySlug: string;
