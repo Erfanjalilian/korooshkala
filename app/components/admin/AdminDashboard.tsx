@@ -238,6 +238,7 @@ import {
   Save,
   ShoppingBag,
   Trash2,
+  Truck,
   Upload,
   Users,
   X,
@@ -278,6 +279,7 @@ type Order = {
   userId: string;
   status: string;
   total: number;
+  packagingFee?: number;
   createdAt: string;
   shipping?: {
     fullName?: string;
@@ -285,6 +287,7 @@ type Order = {
     address?: string;
     province?: string;
     city?: string;
+    shippingMethod?: "tipax" | "bus";
   };
   items?: Array<{ name: string; quantity: number; price: number }>;
   payment?: {
@@ -310,6 +313,7 @@ type DashboardData = {
   users: User[];
   orders: Order[];
   pages: Pages;
+  settings: { silentBoxPackagingFee: number };
 };
 type Tab =
   | "overview"
@@ -317,6 +321,7 @@ type Tab =
   | "categories"
   | "users"
   | "orders"
+  | "shipping"
   | "pages";
 
 const emptyProduct = (): Product => ({
@@ -346,6 +351,7 @@ const tabs: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
   { id: "categories", label: "دسته‌بندی‌ها", icon: ListPlus },
   { id: "users", label: "کاربران", icon: Users },
   { id: "orders", label: "سفارش‌ها", icon: ShoppingBag },
+  { id: "shipping", label: "هزینه‌ها", icon: Truck },
   { id: "pages", label: "صفحه‌ها", icon: BookOpenText },
 ];
 
@@ -483,12 +489,59 @@ export default function AdminDashboard() {
           {activeTab === "orders" ? (
             <OrdersPanel data={data} onRefresh={loadData} />
           ) : null}
+          {activeTab === "shipping" ? (
+            <ShippingSettings key={data.settings.silentBoxPackagingFee} settings={data.settings} onRefresh={loadData} onSaved={() => setMessage("هزینه نایلون ضربه‌گیر ذخیره شد.")} />
+          ) : null}
           {activeTab === "pages" ? (
             <PagesPanel data={data} onRefresh={loadData} />
           ) : null}
         </main>
       </div>
     </div>
+  );
+}
+
+function ShippingSettings({
+  settings,
+  onRefresh,
+  onSaved,
+}: {
+  settings: DashboardData["settings"];
+  onRefresh: () => Promise<void>;
+  onSaved: () => void;
+}) {
+  const [fee, setFee] = useState(settings.silentBoxPackagingFee);
+  const [saving, setSaving] = useState(false);
+
+  const save = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSaving(true);
+    const response = await fetch("/api/admin?resource=settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ silentBoxPackagingFee: fee }),
+    });
+    setSaving(false);
+    if (response.ok) {
+      onSaved();
+      await onRefresh();
+    }
+  };
+
+  return (
+    <Panel title="هزینه نایلون ضربه‌گیر">
+      <form onSubmit={save} className="grid max-w-xl gap-4">
+        <p className="text-sm leading-6 text-[#6B7280]">این مبلغ برای هر محصول از دسته‌بندی سایلنت باکس به سفارش اضافه می‌شود.</p>
+        <label className="grid gap-2 text-sm font-semibold text-[#111827]">
+          مبلغ به تومان
+          <input type="number" min={0} step={1} required value={fee} onChange={(event) => setFee(Number(event.target.value))} className={inputClass} />
+        </label>
+        <button type="submit" disabled={saving} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#2563EB] text-sm font-bold text-white disabled:opacity-60">
+          <Save size={17} />
+          {saving ? "در حال ذخیره..." : "ذخیره هزینه"}
+        </button>
+      </form>
+    </Panel>
   );
 }
 
@@ -944,6 +997,7 @@ function OrdersPanel({
               <div className="rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#475569]">
                 <p><span className="font-bold text-[#111827]">نام تحویل گیرنده:</span> {order.shipping.fullName}</p>
                 <p><span className="font-bold text-[#111827]">استان/شهر:</span> {order.shipping.province} / {order.shipping.city}</p>
+                <p><span className="font-bold text-[#111827]">روش ارسال:</span> {order.shipping.shippingMethod === "bus" ? "اتوبوس فوری" : order.shipping.shippingMethod === "tipax" ? "تیپاکس" : "ثبت نشده"}</p>
                 <p><span className="font-bold text-[#111827]">کد پستی:</span> {order.shipping.postalCode}</p>
                 <p><span className="font-bold text-[#111827]">آدرس:</span> {order.shipping.address}</p>
               </div>
@@ -958,6 +1012,10 @@ function OrdersPanel({
                   </div>
                 ))}
               </div>
+            ) : null}
+
+            {order.packagingFee ? (
+              <p className="text-xs text-[#6B7280]">هزینه نایلون ضربه‌گیر: {numberFormat(order.packagingFee)} تومان</p>
             ) : null}
 
             {order.payment ? (

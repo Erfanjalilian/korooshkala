@@ -27,6 +27,7 @@ export type Product = {
 };
 
 export type Category = { slug: string; name: string; image?: string };
+export type StoreSettings = { silentBoxPackagingFee: number };
 export type User = { id: string; phone?: string; email: string; name: string; role: string; createdAt: string };
 export type OrderItem = { productId: string; name: string; price: number; quantity: number };
 export type ShippingDetails = {
@@ -35,6 +36,7 @@ export type ShippingDetails = {
   address: string;
   province: string;
   city: string;
+  shippingMethod?: "tipax" | "bus";
 };
 export type Order = {
   id: string;
@@ -71,6 +73,19 @@ export async function writeJson(fileName: string, value: unknown) {
 export const readProducts = () => readJson<Product[]>("products.json", []);
 export const readUsers = () => readJson<User[]>("users.json", []);
 export const readOrders = () => readJson<Order[]>("orders.json", []);
+export const defaultStoreSettings: StoreSettings = { silentBoxPackagingFee: 350_000 };
+export const readStoreSettings = () => readJson<StoreSettings>("settings.json", defaultStoreSettings);
+
+export function calculateSilentBoxPackagingFee(
+  items: Array<{ productId: string; quantity: number }>,
+  products: Product[],
+  unitFee: number,
+) {
+  return items.reduce((total, item) => {
+    const product = products.find((current) => current.id === item.productId);
+    return total + (product?.categorySlug === "سایلنت-باکس" ? item.quantity * unitFee : 0);
+  }, 0);
+}
 
 export async function readCategories(): Promise<Category[]> {
   const savedCategories = await readJson<Category[]>("categories.json", []);

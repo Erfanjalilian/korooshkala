@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/session";
-import { readOrders, readProducts, writeJson } from "@/lib/store";
+import { calculateSilentBoxPackagingFee, readOrders, readProducts, readStoreSettings, writeJson } from "@/lib/store";
 
 export const runtime = "nodejs";
 
@@ -20,6 +20,7 @@ type ShippingInfo = {
   address?: string;
   province?: string;
   city?: string;
+  shippingMethod?: string;
 };
 
 export async function POST(request: Request) {
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
   }
 
   const products = await readProducts();
+  const settings = await readStoreSettings();
   const requestedQuantities = new Map<string, number>();
   for (const item of items) {
     const quantity = Math.floor(Number(item.quantity));
@@ -63,12 +65,20 @@ export async function POST(request: Request) {
   const address = (shipping.address ?? "").trim();
   const province = (shipping.province ?? "").trim();
   const city = (shipping.city ?? "").trim();
+  const shippingMethod = (shipping.shippingMethod ?? "").trim();
 
   if (!fullName || !postalCode || !address || !province || !city) {
     return NextResponse.json({ error: "اطلاعات ارسال ناقص است." }, { status: 400 });
   }
+  if (shippingMethod !== "tipax" && shippingMethod !== "bus") {
+    return NextResponse.json({ error: "روش ارسال معتبر انتخاب کنید." }, { status: 400 });
+  }
+  if (shippingMethod === "bus" && province === "تهران") {
+    return NextResponse.json({ error: "ارسال فوری با اتوبوس فقط برای مقصدهای خارج از تهران امکان‌پذیر است." }, { status: 400 });
+  }
 
-  const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const packagingFee = calculateSilentBoxPackagingFee(orderItems, products, settings.silentBoxPackagingFee);
+  const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + packagingFee;
   const orderId = `ord-${randomUUID().slice(0, 8)}`;
 
   const order = {
@@ -76,10 +86,11 @@ export async function POST(request: Request) {
     userId: sessionUserId,
     status: "pending_payment",
     items: orderItems,
+    packagingFee,
     total,
     currency: "IRT",
     createdAt: new Date().toISOString(),
-    shipping: { fullName, postalCode, address, province, city },
+    shipping: { fullName, postalCode, address, province, city, shippingMethod },
     payment: { gateway: "zarinpal", status: "pending_payment" },
   };
 

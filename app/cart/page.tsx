@@ -19,6 +19,26 @@ export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number } | null>(null);
+  const estimateKey = JSON.stringify(items.map(({ productId, quantity }) => [productId, quantity]));
+
+  useEffect(() => {
+    if (!loaded || items.length === 0) return;
+
+    const controller = new AbortController();
+    void fetch("/api/shipping/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: items.map(({ productId, quantity }) => ({ productId, quantity })) }),
+      signal: controller.signal,
+    }).then(async (response) => {
+      if (!response.ok) return;
+      const estimate = await response.json() as { packagingFee: number; packagingQuantity: number };
+      setPackagingEstimate({ key: estimateKey, fee: estimate.packagingFee, quantity: estimate.packagingQuantity });
+    }).catch(() => undefined);
+
+    return () => controller.abort();
+  }, [items, estimateKey, loaded]);
 
   useEffect(() => {
     const loadCart = async () => {
@@ -54,6 +74,9 @@ export default function CartPage() {
   };
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const currentEstimate = packagingEstimate?.key === estimateKey ? packagingEstimate : null;
+  const packagingFee = currentEstimate?.fee ?? 0;
+  const packagingQuantity = currentEstimate?.quantity ?? 0;
 
   if (!loaded || checkingAuth) {
     return <div className="mx-auto max-w-7xl px-4 py-16 text-center text-sm text-[#6B7280]">در حال آماده‌سازی سبد خرید...</div>;
@@ -92,10 +115,20 @@ export default function CartPage() {
                 </div>
               </div>
             ))}
+            <section className="rounded-xl border border-[#E5E7EB] bg-white p-4 text-sm leading-7 text-[#475569]">
+              <h2 className="font-bold text-[#111827]">روش‌های ارسال</h2>
+              <p className="mt-2">تیپاکس برای تهران و سایر شهرها؛ ارسال فوری با اتوبوس فقط برای مقصدهای خارج از تهران.</p>
+              <p className="mt-2 font-semibold text-[#111827]">هزینه ارسال در هر دو روش بر عهده مشتری است. هزینه حمل محصول تا ترمینال نیز به‌صورت پس‌کرایه دریافت می‌شود.</p>
+            </section>
           </div>
           <aside className="h-fit rounded-2xl border border-[#E5E7EB] bg-white p-5">
             <h2 className="font-extrabold text-[#111827]">خلاصه سفارش</h2>
             <div className="mt-5 flex items-center justify-between text-sm text-[#6B7280]"><span>مجموع</span><strong className="text-[#2563EB]">{formatPrice(total)}</strong></div>
+            {packagingQuantity > 0 ? <>
+              <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>نایلون ضربه‌گیر ({packagingQuantity} عدد)</span><strong className="text-[#111827]">{formatPrice(packagingFee)}</strong></div>
+              <p className="mt-3 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#6B7280]">برای هر محصول سایلنت باکس، مبلغ {formatPrice(packagingFee / packagingQuantity)} بابت نایلون ضربه‌گیر دریافت می‌شود.</p>
+            </> : null}
+            <div className="mt-3 flex items-center justify-between border-t border-[#E5E7EB] pt-3 text-sm font-bold text-[#111827]"><span>مبلغ قابل پرداخت</span><strong className="text-[#2563EB]">{formatPrice(total + packagingFee)}</strong></div>
             <Link href="/checkout" className="mt-5 flex h-12 w-full items-center justify-center rounded-xl bg-[#2563EB] text-sm font-bold text-white hover:bg-[#7C3AED]">ادامه ثبت سفارش</Link>
           </aside>
         </div>

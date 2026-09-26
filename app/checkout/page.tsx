@@ -54,11 +54,18 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [paymentUrl, setPaymentUrl] = useState("");
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [shippingMethod, setShippingMethod] = useState<"tipax" | "bus">("tipax");
+  const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number } | null>(null);
+  const estimateKey = JSON.stringify(items.map(({ productId, quantity }) => [productId, quantity]));
 
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [items],
   );
+  const currentEstimate = packagingEstimate?.key === estimateKey ? packagingEstimate : null;
+  const packagingFee = currentEstimate?.fee ?? 0;
+  const packagingQuantity = currentEstimate?.quantity ?? 0;
 
   useEffect(() => {
     const loadCart = async () => {
@@ -87,6 +94,24 @@ export default function CheckoutPage() {
     return () => window.clearTimeout(timeoutId);
   }, []);
 
+  useEffect(() => {
+    if (!loaded || items.length === 0) return;
+
+    const controller = new AbortController();
+    void fetch("/api/shipping/estimate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: items.map(({ productId, quantity }) => ({ productId, quantity })) }),
+      signal: controller.signal,
+    }).then(async (response) => {
+      if (!response.ok) return;
+      const estimate = await response.json() as { packagingFee: number; packagingQuantity: number };
+      setPackagingEstimate({ key: estimateKey, fee: estimate.packagingFee, quantity: estimate.packagingQuantity });
+    }).catch(() => undefined);
+
+    return () => controller.abort();
+  }, [items, estimateKey, loaded]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!items.length) {
@@ -102,10 +127,15 @@ export default function CheckoutPage() {
       address: String(formData.get("address") ?? "").trim(),
       province: String(formData.get("province") ?? "").trim(),
       city: String(formData.get("city") ?? "").trim(),
+      shippingMethod,
     };
 
     if (!shipping.firstName || !shipping.lastName || !shipping.postalCode || !shipping.address || !shipping.province || !shipping.city) {
       setError("لطفاً تمام فیلدهای اطلاعات ارسال را کامل وارد کنید.");
+      return;
+    }
+    if (shipping.shippingMethod === "bus" && shipping.province === "تهران") {
+      setError("ارسال فوری با اتوبوس فقط برای مقصدهای خارج از تهران امکان‌پذیر است.");
       return;
     }
 
@@ -183,13 +213,30 @@ export default function CheckoutPage() {
             </label>
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
               استان
-              <select name="province" required className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white">
+              <select name="province" required value={selectedProvince} onChange={(event) => {
+                const province = event.target.value;
+                setSelectedProvince(province);
+                if (province === "تهران") setShippingMethod("tipax");
+              }} className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white">
                 <option value="">انتخاب کنید</option>
                 {provinceOptions.map((province) => (
                   <option key={province} value={province}>{province}</option>
                 ))}
               </select>
             </label>
+            <fieldset className="grid gap-2 sm:col-span-2">
+              <legend className="mb-2 text-sm font-semibold text-[#111827]">روش ارسال</legend>
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#E5E7EB] p-3 text-sm">
+                <input type="radio" name="shippingMethod" value="tipax" checked={shippingMethod === "tipax"} onChange={() => setShippingMethod("tipax")} className="mt-1 accent-[#2563EB]" />
+                <span><strong className="text-[#111827]">تیپاکس</strong><span className="block text-xs text-[#6B7280]">قابل انتخاب برای تهران و سایر شهرها</span></span>
+              </label>
+              {selectedProvince && selectedProvince !== "تهران" ? (
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#E5E7EB] p-3 text-sm">
+                  <input type="radio" name="shippingMethod" value="bus" checked={shippingMethod === "bus"} onChange={() => setShippingMethod("bus")} className="mt-1 accent-[#2563EB]" />
+                  <span><strong className="text-[#111827]">ارسال فوری با اتوبوس</strong><span className="block text-xs text-[#6B7280]">فقط برای مقصدهای خارج از تهران</span></span>
+                </label>
+              ) : null}
+            </fieldset>
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
               شهر
               <input name="city" required className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
@@ -199,6 +246,8 @@ export default function CheckoutPage() {
               <input name="postalCode" required inputMode="numeric" className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
             </label>
           </div>
+
+          <p className="mt-5 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#475569]">هزینه ارسال در هر دو روش بر عهده مشتری است. هزینه حمل محصول تا ترمینال نیز به‌صورت پس‌کرایه دریافت می‌شود.</p>
 
           {error ? (
             <div className="mt-5 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700">
@@ -240,11 +289,22 @@ export default function CheckoutPage() {
             </div>
             <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]">
               <span>هزینه ارسال</span>
-              <strong className="text-[#111827]">رایگان</strong>
+              <strong className="text-[#111827]">به عهده مشتری</strong>
             </div>
+            <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]">
+              <span>روش ارسال</span>
+              <strong className="text-[#111827]">{shippingMethod === "bus" ? "اتوبوس فوری" : "تیپاکس"}</strong>
+            </div>
+            {packagingQuantity > 0 ? <>
+              <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]">
+                <span>نایلون ضربه‌گیر ({packagingQuantity} عدد)</span>
+                <strong className="text-[#111827]">{formatPrice(packagingFee)}</strong>
+              </div>
+              <p className="mt-3 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#6B7280]">برای هر محصول سایلنت باکس، مبلغ {formatPrice(packagingFee / packagingQuantity)} بابت نایلون ضربه‌گیر دریافت می‌شود.</p>
+            </> : null}
             <div className="mt-5 flex items-center justify-between border-t border-[#E5E7EB] pt-4 text-lg font-extrabold text-[#111827]">
               <span>مبلغ نهایی</span>
-              <span className="text-[#2563EB]">{formatPrice(total)}</span>
+              <span className="text-[#2563EB]">{formatPrice(total + packagingFee)}</span>
             </div>
           </div>
         </aside>

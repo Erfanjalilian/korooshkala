@@ -8,6 +8,7 @@ import {
   readOrders,
   readPages,
   readProducts,
+  readStoreSettings,
   readUsers,
   writeJson,
   type Product,
@@ -88,14 +89,15 @@ async function readProductForm(formData: FormData, current?: Product): Promise<P
 }
 
 export async function GET() {
-  const [products, categories, users, orders, pages] = await Promise.all([
+  const [products, categories, users, orders, pages, settings] = await Promise.all([
     readProducts(),
     readCategories(),
     readUsers(),
     readOrders(),
     readPages(),
+    readStoreSettings(),
   ]);
-  return NextResponse.json({ products, categories, users, orders, pages });
+  return NextResponse.json({ products, categories, users, orders, pages, settings });
 }
 
 export async function POST(request: Request) {
@@ -178,6 +180,16 @@ export async function PATCH(request: Request) {
     };
     await writeJson("pages.json", nextPages);
     return NextResponse.json(nextPages);
+  }
+
+  if (resource === "settings") {
+    const packagingFee = Number(body.silentBoxPackagingFee);
+    if (!Number.isSafeInteger(packagingFee) || packagingFee < 0) {
+      return NextResponse.json({ error: "هزینه باید عدد صحیح و نامنفی باشد." }, { status: 400 });
+    }
+    const settings = { ...(await readStoreSettings()), silentBoxPackagingFee: packagingFee };
+    await writeJson("settings.json", settings);
+    return NextResponse.json(settings);
   }
 
   return NextResponse.json({ error: "درخواست نامعتبر است." }, { status: 400 });
