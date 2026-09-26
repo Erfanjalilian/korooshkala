@@ -62,9 +62,10 @@ export async function generateMetadata(
   if (typeof product.stock === "number" && Number.isFinite(product.stock)) {
     other.availability = product.stock > 0 ? "instock" : "outofstock";
   }
-  if (isNonEmptyString(product.guarantee)) {
-    other.guarantee = product.guarantee;
-  }
+  const guarantee = isNonEmptyString(product.guarantee)
+    ? product.guarantee.trim()
+    : product.description.match(/[0-9۰-۹]+\s*(?:ماه|سال)\s*گارانتی/u)?.[0];
+  if (guarantee) other.guarantee = guarantee;
 
   const imageUrl = getAbsoluteImageUrl(product.image);
 

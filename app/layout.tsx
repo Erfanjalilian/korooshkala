@@ -4,8 +4,8 @@ import Footer from "@/app/components/footer/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "فروشگاه من",
-  description: "فروشگاه اینترنتی",
+  title: "کوروش کالا",
+  description: "فروشگاه اینترنتی کوروش کالا",
   other: {
     enamad: "65076408",
   },
