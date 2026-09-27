@@ -17,10 +17,28 @@ const formatPrice = (price: number) => `${new Intl.NumberFormat("fa-IR").format(
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [compareAtPrices, setCompareAtPrices] = useState<Record<string, number>>({});
+  const [discountsLoaded, setDiscountsLoaded] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number } | null>(null);
   const estimateKey = JSON.stringify(items.map(({ productId, quantity }) => [productId, quantity]));
+
+  useEffect(() => {
+    if (!loaded || items.length === 0) return;
+
+    const controller = new AbortController();
+    void fetch("/api/products", { cache: "no-store", signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const data = await response.json() as { products: Array<{ id: string; compareAtPrice: number }> };
+        setCompareAtPrices(Object.fromEntries(data.products.map((product) => [product.id, product.compareAtPrice])));
+      })
+      .catch(() => undefined)
+      .finally(() => setDiscountsLoaded(true));
+
+    return () => controller.abort();
+  }, [items.length, loaded]);
 
   useEffect(() => {
     if (!loaded || items.length === 0) return;
@@ -74,6 +92,10 @@ export default function CartPage() {
   };
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const discountTotal = items.reduce((sum, item) => {
+    const compareAtPrice = compareAtPrices[item.productId] ?? item.price;
+    return sum + Math.max(compareAtPrice - item.price, 0) * item.quantity;
+  }, 0);
   const currentEstimate = packagingEstimate?.key === estimateKey ? packagingEstimate : null;
   const packagingFee = currentEstimate?.fee ?? 0;
   const packagingQuantity = currentEstimate?.quantity ?? 0;
@@ -124,6 +146,7 @@ export default function CartPage() {
           <aside className="h-fit rounded-2xl border border-[#E5E7EB] bg-white p-5">
             <h2 className="font-extrabold text-[#111827]">خلاصه سفارش</h2>
             <div className="mt-5 flex items-center justify-between text-sm text-[#6B7280]"><span>مجموع</span><strong className="text-[#2563EB]">{formatPrice(total)}</strong></div>
+            <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>مجموع تخفیف شما</span><strong className="text-green-700">{discountsLoaded ? formatPrice(discountTotal) : "در حال محاسبه..."}</strong></div>
             {packagingQuantity > 0 ? <>
               <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>نایلون ضربه‌گیر ({packagingQuantity} عدد)</span><strong className="text-[#111827]">{formatPrice(packagingFee)}</strong></div>
               <p className="mt-3 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#6B7280]">برای هر محصول سایلنت باکس، مبلغ {formatPrice(packagingFee / packagingQuantity)} بابت نایلون ضربه‌گیر دریافت می‌شود.</p>

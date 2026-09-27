@@ -296,8 +296,8 @@ export default function ProductCatalog({
                 >
                   <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-[#DBEAFE] to-[#F5F7FA]">
                     {product.image ? <img src={product.image} alt={product.name} className="h-full w-full object-cover" /> : <div className="flex size-24 items-center justify-center rounded-3xl bg-white/80 text-[#2563EB] shadow-sm transition group-hover:text-[#7C3AED]"><Headphones aria-hidden="true" size={48} strokeWidth={1.4} /></div>}
-                    <span className="absolute right-3 top-3 rounded-full bg-[#7C3AED] px-2.5 py-1 text-[10px] font-bold text-white">
-                      {discountPercent > 0 ? `${discountPercent}٪ تخفیف` : product.isNew ? "جدید" : "محبوب"}
+                    <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold text-white ${product.stock <= 0 ? "bg-red-600" : "bg-[#7C3AED]"}`}>
+                      {product.stock <= 0 ? "ناموجود" : discountPercent > 0 ? `${discountPercent}٪ تخفیف` : product.isNew ? "جدید" : "محبوب"}
                     </span>
                   </div>
                   <div className="p-4">
