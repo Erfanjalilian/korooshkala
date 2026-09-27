@@ -11,6 +11,15 @@ const normalizeOtpDigits = (value: string) => value
   .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
   .replace(/\D/g, "");
 
+async function readAuthResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
+  const body = await response.text();
+  try {
+    return JSON.parse(body) as T;
+  } catch {
+    throw new Error(body ? fallbackMessage : `${fallbackMessage} (پاسخ خالی از سرور)`);
+  }
+}
+
 export default function AuthForm() {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
@@ -81,7 +90,7 @@ export default function AuthForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "request", phone: normalizedPhone }),
       });
-      const result = (await response.json()) as { error?: string };
+      const result = await readAuthResponse<{ error?: string }>(response, "پاسخ سرور برای ارسال کد معتبر نیست.");
       if (!response.ok) throw new Error(result.error || "ارسال کد انجام نشد.");
       setPhone(normalizedPhone);
       setStep("otp");
@@ -117,7 +126,7 @@ export default function AuthForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "verify", phone, code: otp.join("") }),
       });
-      const result = (await response.json()) as { error?: string; user?: { id: string; phone: string; name: string } };
+      const result = await readAuthResponse<{ error?: string; user?: { id: string; phone: string; name: string } }>(response, "پاسخ سرور برای تأیید کد معتبر نیست.");
       if (!response.ok) throw new Error(result.error || "کد واردشده صحیح نیست.");
       if (!result.user) throw new Error("اطلاعات حساب کاربری دریافت نشد.");
       storeAuthUser(result.user);
@@ -171,26 +180,20 @@ export default function AuthForm() {
       ) : (
         <form onSubmit={verifyCode} className="grid gap-5">
           <div className="flex justify-center" dir="ltr">
-            <div className="relative flex gap-2 rounded-xl focus-within:ring-4 focus-within:ring-[#2563EB]/10">
+            <div className="w-full max-w-[340px]">
               <input
                 ref={otpInputRef}
                 value={otp.join("")}
                 onChange={(event) => updateOtp(event.target.value)}
+                type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 maxLength={OTP_LENGTH}
                 aria-label="کد تأیید ۶ رقمی"
-                className="absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
+                dir="ltr"
+                spellCheck={false}
+                className="h-12 w-full rounded-xl border border-[#E5E7EB] bg-[#F5F7FA] px-4 text-center text-xl font-extrabold tracking-[0.35em] text-[#111827] outline-none transition focus:border-[#2563EB] focus:bg-white focus:ring-4 focus:ring-[#2563EB]/10"
               />
-              {otp.map((digit, index) => (
-                <span
-                  key={`otp-${index}`}
-                  aria-hidden="true"
-                  className="flex size-11 items-center justify-center rounded-xl border border-[#E5E7EB] bg-[#F5F7FA] text-lg font-extrabold text-[#111827] sm:size-12"
-                >
-                  {digit}
-                </span>
-              ))}
             </div>
           </div>
           <button type="submit" disabled={loading} className="h-12 rounded-xl bg-[#2563EB] text-sm font-bold text-white transition hover:bg-[#7C3AED] disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2563EB]/20">

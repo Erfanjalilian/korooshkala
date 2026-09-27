@@ -26,7 +26,7 @@ async function sendSms(phone: string, code: string) {
   if (!response.ok) throw new Error("ارسال پیامک با خطا روبه‌رو شد.");
 }
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   const body = await request.json() as { action?: string; phone?: string; code?: string };
   const phone = normalizePhone(body.phone || "");
   if (!/^09\d{9}$/.test(phone)) return NextResponse.json({ error: "شماره موبایل معتبر وارد کنید." }, { status: 400 });
@@ -57,6 +57,18 @@ export async function POST(request: Request) {
   const response = NextResponse.json({ ok: true, user: { id: user.id, phone: user.phone, name: user.name } });
   response.cookies.set("jk_session", sessionId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: SESSION_LIFETIME_SECONDS, path: "/" });
   return response;
+}
+
+export async function POST(request: Request) {
+  try {
+    return await handlePost(request);
+  } catch (error) {
+    console.error("Authentication request failed:", error);
+    return NextResponse.json(
+      { error: "در پردازش ورود خطایی رخ داد. لطفاً دوباره تلاش کنید." },
+      { status: 500 },
+    );
+  }
 }
 
 export async function PATCH(request: Request) {
