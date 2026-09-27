@@ -64,8 +64,15 @@ export async function POST(request: Request) {
     return await handlePost(request);
   } catch (error) {
     console.error("Authentication request failed:", error);
+    const message = error instanceof Error ? error.message : "";
+    const errorCode = error instanceof Error && "code" in error ? String(error.code) : "";
+    const publicMessage = message.startsWith("SESSION_SECRET")
+      ? "تنظیم SESSION_SECRET روی سرور ناقص است؛ یک مقدار تصادفیِ حداقل ۳۲ بایتی تنظیم و برنامه را راه‌اندازی مجدد کنید."
+      : ["EACCES", "EPERM", "EROFS", "ENOSPC"].includes(errorCode)
+        ? "سرور اجازهٔ ذخیرهٔ اطلاعات کاربر را ندارد؛ دسترسی نوشتن پوشهٔ data را بررسی کنید."
+        : "در پردازش ورود خطایی رخ داد. لطفاً گزارش خطای سرور را بررسی کنید.";
     return NextResponse.json(
-      { error: "در پردازش ورود خطایی رخ داد. لطفاً دوباره تلاش کنید." },
+      { error: publicMessage },
       { status: 500 },
     );
   }
