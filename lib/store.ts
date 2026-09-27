@@ -29,7 +29,16 @@ export type Product = {
 
 export type Category = { slug: string; name: string; image?: string };
 export type StoreSettings = { silentBoxPackagingFee: number };
-export type User = { id: string; phone?: string; email: string; name: string; role: string; createdAt: string };
+export type ShippingProfile = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  postalCode: string;
+  address: string;
+  province: string;
+  city: string;
+};
+export type User = { id: string; phone?: string; email: string; name: string; role: string; createdAt: string; shippingProfile?: ShippingProfile };
 export type OrderItem = { productId: string; name: string; price: number; quantity: number };
 export type ShippingDetails = {
   fullName: string;
@@ -37,6 +46,7 @@ export type ShippingDetails = {
   address: string;
   province: string;
   city: string;
+  phone?: string;
   shippingMethod?: "tipax" | "bus";
 };
 export type Order = {
@@ -105,7 +115,7 @@ export type PageContent = {
 export const defaultPages: PageContent = {
   about: {
     title: "خرید خوب، از انتخاب درست شروع می‌شود.",
-    description: "فروشگاه من جایی است برای پیدا کردن محصولاتی کاربردی، دوست‌داشتنی و متناسب با نیازهای روزمره شما؛ با تجربه‌ای ساده و قابل اعتماد.",
+    description: "فروشگاه کوروش کالا جایی است برای پیدا کردن محصولاتی کاربردی، دوست‌داشتنی و متناسب با نیازهای روزمره شما؛ با تجربه‌ای ساده و قابل اعتماد.",
   },
   contact: {
     email: "Siavash.m2020@gmail.com",

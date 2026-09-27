@@ -28,7 +28,7 @@ export default function Footer() {
               <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-lg font-bold text-white">
                 M
               </span>
-              <span className="text-xl font-extrabold text-[#111827]">فروشگاه من</span>
+              <span className="text-xl font-extrabold text-[#111827]">فروشگاه کوروش کالا</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-7 text-[#6B7280]">
               تجربه‌ای ساده، سریع و مطمئن برای پیدا کردن محصولاتی که دوستشان دارید.

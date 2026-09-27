@@ -1,13 +1,16 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { clearSession, createSession, getSessionUserId } from "@/lib/session";
-import { readOrders, readUsers, writeJson } from "@/lib/store";
+import { createSession, getSessionUserId, SESSION_LIFETIME_SECONDS } from "@/lib/session";
+import { readOrders, readUsers, writeJson, type ShippingProfile } from "@/lib/store";
 
 export const runtime = "nodejs";
 
 type PendingCode = { code: string; expiresAt: number };
 const pendingCodes = new Map<string, PendingCode>();
-const normalizePhone = (value: string) => value.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/\D/g, "");
+const normalizeDigits = (value: string) => value
+  .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+  .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
+const normalizePhone = (value: string) => normalizeDigits(value).replace(/\D/g, "");
 
 async function sendSms(phone: string, code: string) {
   const apiKey = process.env.SMS_IR_API_KEY;
@@ -52,8 +55,47 @@ export async function POST(request: Request) {
   }
   const sessionId = createSession(user.id);
   const response = NextResponse.json({ ok: true, user: { id: user.id, phone: user.phone, name: user.name } });
-  response.cookies.set("jk_session", sessionId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 30, path: "/" });
+  response.cookies.set("jk_session", sessionId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: SESSION_LIFETIME_SECONDS, path: "/" });
   return response;
+}
+
+export async function PATCH(request: Request) {
+  const userId = getSessionUserId(request.headers.get("cookie"));
+  if (!userId) return NextResponse.json({ error: "برای ویرایش اطلاعات وارد حساب کاربری شوید." }, { status: 401 });
+
+  const body = await request.json() as { shippingProfile?: Partial<ShippingProfile> };
+  const submitted = body.shippingProfile ?? {};
+  const shippingProfile: ShippingProfile = {
+    firstName: String(submitted.firstName ?? "").trim(),
+    lastName: String(submitted.lastName ?? "").trim(),
+    phone: normalizePhone(String(submitted.phone ?? "")),
+    postalCode: normalizeDigits(String(submitted.postalCode ?? "")).replace(/\D/g, ""),
+    address: String(submitted.address ?? "").trim(),
+    province: String(submitted.province ?? "").trim(),
+    city: String(submitted.city ?? "").trim(),
+  };
+
+  if (Object.values(shippingProfile).some((value) => !value)) {
+    return NextResponse.json({ error: "لطفاً تمام اطلاعات ارسال را کامل کنید." }, { status: 400 });
+  }
+  if (!/^09\d{9}$/.test(shippingProfile.phone)) {
+    return NextResponse.json({ error: "شماره تماس گیرنده معتبر نیست." }, { status: 400 });
+  }
+  if (!/^\d{10}$/.test(shippingProfile.postalCode)) {
+    return NextResponse.json({ error: "کد پستی باید ۱۰ رقم باشد." }, { status: 400 });
+  }
+
+  const users = await readUsers();
+  const userIndex = users.findIndex((user) => user.id === userId);
+  if (userIndex < 0) return NextResponse.json({ error: "کاربر پیدا نشد." }, { status: 404 });
+
+  users[userIndex] = {
+    ...users[userIndex],
+    name: `${shippingProfile.firstName} ${shippingProfile.lastName}`,
+    shippingProfile,
+  };
+  await writeJson("users.json", users);
+  return NextResponse.json({ ok: true, shippingProfile });
 }
 
 export async function GET(request: Request) {
@@ -66,8 +108,7 @@ export async function GET(request: Request) {
   return NextResponse.json({ user, orders });
 }
 
-export async function DELETE(request: Request) {
-  clearSession(request.headers.get("cookie"));
+export async function DELETE() {
   const response = NextResponse.json({ ok: true });
   response.cookies.delete("jk_session");
   return response;

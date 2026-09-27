@@ -172,7 +172,7 @@ export default function ProductCatalog({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <div className="rounded-[2rem] bg-gradient-to-l from-[#2563EB] to-[#7C3AED] px-6 py-8 text-white shadow-[0_16px_38px_rgba(37,99,235,0.16)] sm:px-10 sm:py-10">
-        <p className="text-sm font-semibold text-white/80">فروشگاه من</p>
+        <p className="text-sm font-semibold text-white/80">فروشگاه کوروش کالا</p>
         <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">همه محصولات</h1>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-white/80">
           از میان محصولات متنوع، گزینه مناسب خودت را پیدا کن و با خیال راحت سفارش بده.

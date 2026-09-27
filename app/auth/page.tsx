@@ -11,7 +11,7 @@ export default function AuthPage() {
           <div className="pointer-events-none absolute -bottom-24 right-0 size-72 rounded-full border border-white/15 bg-white/5" />
           <Link href="/" className="relative inline-flex items-center gap-2 text-sm font-bold">
             <span className="flex size-10 items-center justify-center rounded-xl bg-white/15 text-lg">M</span>
-            فروشگاه من
+            فروشگاه کوروش کالا
           </Link>
           <div className="relative">
             <p className="text-sm font-semibold text-white/75">خرید ساده و امن</p>

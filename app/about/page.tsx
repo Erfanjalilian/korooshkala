@@ -34,7 +34,7 @@ export default async function AboutPage() {
         <div className="pointer-events-none absolute -left-20 -top-24 size-72 rounded-full border border-white/15 bg-white/5" />
         <div className="pointer-events-none absolute -bottom-32 right-1/3 size-80 rounded-full border border-white/10 bg-white/5" />
         <div className="relative max-w-2xl">
-          <p className="text-sm font-bold text-white/75">داستان فروشگاه من</p>
+          <p className="text-sm font-bold text-white/75">داستان فروشگاه کوروش کالا</p>
           <h1 className="mt-3 text-3xl font-extrabold leading-[1.4] sm:text-4xl lg:text-5xl">
             {about.title}
           </h1>

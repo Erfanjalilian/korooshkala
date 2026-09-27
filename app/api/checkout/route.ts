@@ -1,9 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/session";
-import { calculateSilentBoxPackagingFee, readOrders, readProducts, readStoreSettings, writeJson } from "@/lib/store";
+import { calculateSilentBoxPackagingFee, readOrders, readProducts, readStoreSettings, readUsers, writeJson, type ShippingProfile } from "@/lib/store";
 
 export const runtime = "nodejs";
+
+const normalizeDigits = (value: string) => value
+  .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+  .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
 
 type CartItem = {
   productId: string;
@@ -16,6 +20,7 @@ type ShippingInfo = {
   firstName?: string;
   lastName?: string;
   fullName?: string;
+  phone?: string;
   postalCode?: string;
   address?: string;
   province?: string;
@@ -62,6 +67,7 @@ export async function POST(request: Request) {
   const lastName = (shipping.lastName ?? "").trim();
   const fullName = (shipping.fullName ?? [firstName, lastName].filter(Boolean).join(" ")).trim();
   const postalCode = (shipping.postalCode ?? "").trim();
+  const normalizedPostalCode = normalizeDigits(postalCode).replace(/\D/g, "");
   const address = (shipping.address ?? "").trim();
   const province = (shipping.province ?? "").trim();
   const city = (shipping.city ?? "").trim();
@@ -77,6 +83,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "ارسال فوری با اتوبوس فقط برای مقصدهای خارج از تهران امکان‌پذیر است." }, { status: 400 });
   }
 
+  const users = await readUsers();
+  const userIndex = users.findIndex((user) => user.id === sessionUserId);
+  if (userIndex < 0) return NextResponse.json({ error: "کاربر پیدا نشد." }, { status: 404 });
+  const contactPhone = normalizeDigits((shipping.phone ?? users[userIndex].shippingProfile?.phone ?? users[userIndex].phone ?? "").trim()).replace(/\D/g, "");
+  if (!/^09\d{9}$/.test(contactPhone)) {
+    return NextResponse.json({ error: "شماره تماس گیرنده معتبر نیست." }, { status: 400 });
+  }
+  if (!/^\d{10}$/.test(normalizedPostalCode)) {
+    return NextResponse.json({ error: "کد پستی باید ۱۰ رقم باشد." }, { status: 400 });
+  }
+
+  const shippingProfile: ShippingProfile = {
+    firstName,
+    lastName,
+    phone: contactPhone,
+    postalCode: normalizedPostalCode,
+    address,
+    province,
+    city,
+  };
+  users[userIndex] = { ...users[userIndex], name: fullName, shippingProfile };
+  await writeJson("users.json", users);
+
   const packagingFee = calculateSilentBoxPackagingFee(orderItems, products, settings.silentBoxPackagingFee);
   const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + packagingFee;
   const orderId = `ord-${randomUUID().slice(0, 8)}`;
@@ -90,7 +119,7 @@ export async function POST(request: Request) {
     total,
     currency: "IRT",
     createdAt: new Date().toISOString(),
-    shipping: { fullName, postalCode, address, province, city, shippingMethod },
+    shipping: { fullName, phone: contactPhone, postalCode: normalizedPostalCode, address, province, city, shippingMethod },
     payment: { gateway: "zarinpal", status: "pending_payment" },
   };
 

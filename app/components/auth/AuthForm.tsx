@@ -6,6 +6,10 @@ import { clearStoredAuthUser, storeAuthUser } from "./auth-storage";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 90;
+const normalizeOtpDigits = (value: string) => value
+  .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+  .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+  .replace(/\D/g, "");
 
 export default function AuthForm() {
   const [step, setStep] = useState<"phone" | "otp">("phone");
@@ -15,6 +19,9 @@ export default function AuthForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const otpAbortController = useRef<AbortController | null>(null);
+
+  useEffect(() => () => otpAbortController.current?.abort(), []);
 
   useEffect(() => {
     fetch("/api/auth", { cache: "no-store" }).then((response) => {
@@ -31,6 +38,31 @@ export default function AuthForm() {
     return () => window.clearInterval(timer);
   }, [secondsLeft]);
 
+  const startOtpAutofill = () => {
+    if (!("OTPCredential" in window)) return;
+
+    otpAbortController.current?.abort();
+    const controller = new AbortController();
+    otpAbortController.current = controller;
+    const getOtp = navigator.credentials.get as unknown as (
+      options: CredentialRequestOptions & { otp: { transport: ["sms"] } },
+    ) => Promise<(Credential & { code: string }) | null>;
+
+    void getOtp.call(navigator.credentials, {
+      otp: { transport: ["sms"] },
+      signal: controller.signal,
+    }).then((credential) => {
+      if (!credential) return;
+      const code = normalizeOtpDigits(credential.code).slice(0, OTP_LENGTH);
+      if (code.length === OTP_LENGTH) {
+        setOtp(code.split(""));
+        setError("");
+      }
+    }).catch(() => {
+      // Unsupported browsers and declined prompts continue with manual entry.
+    });
+  };
+
   const requestCode = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedPhone = phone.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/\D/g, "");
@@ -40,6 +72,7 @@ export default function AuthForm() {
       return;
     }
 
+    startOtpAutofill();
     setLoading(true);
     setError("");
     try {
@@ -55,6 +88,7 @@ export default function AuthForm() {
       setSecondsLeft(RESEND_SECONDS);
       window.setTimeout(() => otpRefs.current[0]?.focus(), 0);
     } catch (requestError) {
+      otpAbortController.current?.abort();
       setError(requestError instanceof Error ? requestError.message : "ارسال کد انجام نشد.");
     } finally {
       setLoading(false);
@@ -62,13 +96,20 @@ export default function AuthForm() {
   };
 
   const updateOtp = (index: number, value: string) => {
-    const digit = value.replace(/\D/g, "").slice(-1);
+    const digits = normalizeOtpDigits(value).slice(0, OTP_LENGTH);
     const nextOtp = [...otp];
-    nextOtp[index] = digit;
+    const startIndex = digits.length === OTP_LENGTH ? 0 : index;
+    digits.split("").slice(0, OTP_LENGTH - startIndex).forEach((digit, offset) => {
+      nextOtp[startIndex + offset] = digit;
+    });
+    if (!digits) nextOtp[index] = "";
     setOtp(nextOtp);
     setError("");
+    otpAbortController.current?.abort();
 
-    if (digit && index < OTP_LENGTH - 1) {
+    if (digits.length > 1) {
+      otpRefs.current[Math.min(startIndex + digits.length, OTP_LENGTH) - 1]?.focus();
+    } else if (digits && index < OTP_LENGTH - 1) {
       otpRefs.current[index + 1]?.focus();
     }
   };
@@ -158,7 +199,8 @@ export default function AuthForm() {
                 onChange={(event) => updateOtp(index, event.target.value)}
                 onKeyDown={(event) => handleOtpKeyDown(index, event.key)}
                 inputMode="numeric"
-                maxLength={1}
+                autoComplete={index === 0 ? "one-time-code" : "off"}
+                maxLength={index === 0 ? OTP_LENGTH : 1}
                 aria-label={`رقم ${index + 1} کد تأیید`}
                 className="size-11 rounded-xl border border-[#E5E7EB] bg-[#F5F7FA] text-center text-lg font-extrabold text-[#111827] outline-none transition focus:border-[#2563EB] focus:bg-white focus:ring-4 focus:ring-[#2563EB]/10 sm:size-12"
               />

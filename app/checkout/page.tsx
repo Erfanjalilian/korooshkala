@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, CheckCircle2, ShoppingBag } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle2, Pencil, ShoppingBag } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type CartItem = {
@@ -9,6 +9,26 @@ type CartItem = {
   name: string;
   price: number;
   quantity: number;
+};
+
+type ShippingProfile = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  postalCode: string;
+  address: string;
+  province: string;
+  city: string;
+};
+
+const emptyShippingProfile: ShippingProfile = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  postalCode: "",
+  address: "",
+  province: "",
+  city: "",
 };
 
 const CART_STORAGE_KEY = "jahankala-cart";
@@ -55,6 +75,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [paymentUrl, setPaymentUrl] = useState("");
   const [selectedProvince, setSelectedProvince] = useState("");
+  const [shippingProfile, setShippingProfile] = useState<ShippingProfile>(emptyShippingProfile);
   const [shippingMethod, setShippingMethod] = useState<"tipax" | "bus">("tipax");
   const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number } | null>(null);
   const estimateKey = JSON.stringify(items.map(({ productId, quantity }) => [productId, quantity]));
@@ -78,6 +99,17 @@ export default function CheckoutPage() {
           window.location.href = "/auth?redirect=/checkout";
           return;
         }
+        const account = await authResponse.json() as {
+          user?: { phone?: string; shippingProfile?: Partial<ShippingProfile> };
+        };
+        const savedProfile = account.user?.shippingProfile;
+        const profile = {
+          ...emptyShippingProfile,
+          ...savedProfile,
+          phone: savedProfile?.phone || account.user?.phone || "",
+        };
+        setShippingProfile(profile);
+        setSelectedProvince(profile.province);
       } catch {
         window.location.href = "/auth?redirect=/checkout";
         return;
@@ -119,14 +151,8 @@ export default function CheckoutPage() {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
     const shipping = {
-      firstName: String(formData.get("firstName") ?? "").trim(),
-      lastName: String(formData.get("lastName") ?? "").trim(),
-      postalCode: String(formData.get("postalCode") ?? "").trim(),
-      address: String(formData.get("address") ?? "").trim(),
-      province: String(formData.get("province") ?? "").trim(),
-      city: String(formData.get("city") ?? "").trim(),
+      ...shippingProfile,
       shippingMethod,
     };
 
@@ -197,25 +223,36 @@ export default function CheckoutPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <form onSubmit={handleSubmit} className="rounded-3xl border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-7">
-          <h2 className="text-lg font-extrabold text-[#111827]">اطلاعات ارسال</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-extrabold text-[#111827]">اطلاعات ارسال</h2>
+            <Link href="/account#shipping-profile" className="inline-flex h-10 items-center gap-2 rounded-lg border border-[#E5E7EB] px-3 text-xs font-bold text-[#2563EB] transition hover:border-[#2563EB]">
+              <Pencil aria-hidden="true" size={15} />
+              ویرایش اطلاعات ارسال
+            </Link>
+          </div>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
               نام
-              <input name="firstName" required className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
+              <input name="firstName" required value={shippingProfile.firstName} onChange={(event) => setShippingProfile((current) => ({ ...current, firstName: event.target.value }))} className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
             </label>
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
               نام خانوادگی
-              <input name="lastName" required className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
+              <input name="lastName" required value={shippingProfile.lastName} onChange={(event) => setShippingProfile((current) => ({ ...current, lastName: event.target.value }))} className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
+            </label>
+            <label className="grid gap-2 text-sm font-semibold text-[#111827] sm:col-span-2">
+              شماره تماس گیرنده
+              <input name="phone" type="tel" inputMode="tel" autoComplete="tel" dir="ltr" required value={shippingProfile.phone} onChange={(event) => setShippingProfile((current) => ({ ...current, phone: event.target.value }))} className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-left text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
             </label>
             <label className="grid gap-2 text-sm font-semibold text-[#111827] sm:col-span-2">
               آدرس کامل
-              <textarea name="address" required rows={4} className="resize-none rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
+              <textarea name="address" required rows={4} value={shippingProfile.address} onChange={(event) => setShippingProfile((current) => ({ ...current, address: event.target.value }))} className="resize-none rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
             </label>
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
               استان
               <select name="province" required value={selectedProvince} onChange={(event) => {
                 const province = event.target.value;
                 setSelectedProvince(province);
+                setShippingProfile((current) => ({ ...current, province }));
                 if (province === "تهران") setShippingMethod("tipax");
               }} className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white">
                 <option value="">انتخاب کنید</option>
@@ -239,11 +276,11 @@ export default function CheckoutPage() {
             </fieldset>
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
               شهر
-              <input name="city" required className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
+              <input name="city" required value={shippingProfile.city} onChange={(event) => setShippingProfile((current) => ({ ...current, city: event.target.value }))} className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
             </label>
             <label className="grid gap-2 text-sm font-semibold text-[#111827] sm:col-span-2">
               کد پستی
-              <input name="postalCode" required inputMode="numeric" className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
+              <input name="postalCode" required inputMode="numeric" dir="ltr" value={shippingProfile.postalCode} onChange={(event) => setShippingProfile((current) => ({ ...current, postalCode: event.target.value }))} className="h-12 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-left text-sm outline-none focus:border-[#2563EB] focus:bg-white" />
             </label>
           </div>
 
