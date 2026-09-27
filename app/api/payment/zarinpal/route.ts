@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   }
 
   const cookieHeader = request.headers.get("cookie");
-  const userId = getSessionUserId(cookieHeader);
+  const userId = await getSessionUserId(cookieHeader);
   if (!userId) {
     return NextResponse.json({ error: "برای پرداخت باید وارد حساب کاربری شوید." }, { status: 401 });
   }

@@ -1,6 +1,6 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { createSession, getSessionUserId, SESSION_LIFETIME_SECONDS } from "@/lib/session";
+import { clearSession, createSession, getSessionUserId, SESSION_LIFETIME_SECONDS } from "@/lib/session";
 import { readOrders, readUsers, writeJson, type ShippingProfile } from "@/lib/store";
 
 export const runtime = "nodejs";
@@ -53,7 +53,7 @@ async function handlePost(request: Request) {
     user = { id: `usr-${randomUUID().slice(0, 8)}`, phone, email: "", name: "کاربر جدید", role: "customer", createdAt: new Date().toISOString() };
     await writeJson("users.json", [...users, user]);
   }
-  const sessionId = createSession(user.id);
+  const sessionId = await createSession(user.id);
   const response = NextResponse.json({ ok: true, user: { id: user.id, phone: user.phone, name: user.name } });
   response.cookies.set("jk_session", sessionId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: SESSION_LIFETIME_SECONDS, path: "/" });
   return response;
@@ -64,13 +64,10 @@ export async function POST(request: Request) {
     return await handlePost(request);
   } catch (error) {
     console.error("Authentication request failed:", error);
-    const message = error instanceof Error ? error.message : "";
     const errorCode = error instanceof Error && "code" in error ? String(error.code) : "";
-    const publicMessage = message.startsWith("SESSION_SECRET")
-      ? "تنظیم SESSION_SECRET روی سرور ناقص است؛ یک مقدار تصادفیِ حداقل ۳۲ بایتی تنظیم و برنامه را راه‌اندازی مجدد کنید."
-      : ["EACCES", "EPERM", "EROFS", "ENOSPC"].includes(errorCode)
-        ? "سرور اجازهٔ ذخیرهٔ اطلاعات کاربر را ندارد؛ دسترسی نوشتن پوشهٔ data را بررسی کنید."
-        : "در پردازش ورود خطایی رخ داد. لطفاً گزارش خطای سرور را بررسی کنید.";
+    const publicMessage = ["EACCES", "EPERM", "EROFS", "ENOSPC"].includes(errorCode)
+      ? "سرور اجازهٔ ذخیرهٔ اطلاعات کاربر یا نشست را ندارد؛ دسترسی نوشتن پوشهٔ data را بررسی کنید."
+      : "در پردازش ورود خطایی رخ داد. لطفاً گزارش خطای سرور را بررسی کنید.";
     return NextResponse.json(
       { error: publicMessage },
       { status: 500 },
@@ -79,7 +76,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const userId = getSessionUserId(request.headers.get("cookie"));
+  const userId = await getSessionUserId(request.headers.get("cookie"));
   if (!userId) return NextResponse.json({ error: "برای ویرایش اطلاعات وارد حساب کاربری شوید." }, { status: 401 });
 
   const body = await request.json() as { shippingProfile?: Partial<ShippingProfile> };
@@ -118,7 +115,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const userId = getSessionUserId(request.headers.get("cookie"));
+  const userId = await getSessionUserId(request.headers.get("cookie"));
   if (!userId) return NextResponse.json({ error: "وارد حساب کاربری نشده‌اید." }, { status: 401 });
   const users = await readUsers();
   const user = users.find((item) => item.id === userId);
@@ -127,7 +124,8 @@ export async function GET(request: Request) {
   return NextResponse.json({ user, orders });
 }
 
-export async function DELETE() {
+export async function DELETE(request: Request) {
+  await clearSession(request.headers.get("cookie"));
   const response = NextResponse.json({ ok: true });
   response.cookies.delete("jk_session");
   return response;

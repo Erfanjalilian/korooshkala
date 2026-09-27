@@ -30,7 +30,7 @@ type ShippingInfo = {
 
 export async function POST(request: Request) {
   const cookieHeader = request.headers.get("cookie");
-  const sessionUserId = getSessionUserId(cookieHeader);
+  const sessionUserId = await getSessionUserId(cookieHeader);
   if (!sessionUserId) {
     return NextResponse.json({ error: "برای ثبت سفارش باید وارد حساب کاربری شوید." }, { status: 401 });
   }

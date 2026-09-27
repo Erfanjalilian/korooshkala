@@ -1,58 +1,71 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 export const SESSION_LIFETIME_SECONDS = 60 * 60 * 24 * 30;
-const DEVELOPMENT_SECRET = "korooshkala-local-session-secret-only";
 
-function getSessionSecret() {
-  const secret = process.env.SESSION_SECRET;
-  if (secret) {
-    if (Buffer.byteLength(secret) < 32) {
-      throw new Error("SESSION_SECRET must be at least 32 bytes.");
-    }
-    return secret;
+type StoredSession = {
+  tokenHash: string;
+  userId: string;
+  expiresAt: number;
+};
+
+const dataDirectory = path.join(process.cwd(), "data");
+const sessionsFile = path.join(dataDirectory, "sessions.json");
+let sessionWriteQueue: Promise<void> = Promise.resolve();
+
+const hashToken = (token: string) => createHash("sha256").update(token).digest("hex");
+
+function getCookieToken(cookieHeader: string | null | undefined) {
+  return cookieHeader?.match(/(?:^|;\s*)jk_session=([^;]+)/)?.[1];
+}
+
+async function readSessions(): Promise<StoredSession[]> {
+  try {
+    const sessions = JSON.parse(await readFile(sessionsFile, "utf8")) as unknown;
+    return Array.isArray(sessions) ? sessions as StoredSession[] : [];
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return [];
+    throw error;
   }
-  if (process.env.NODE_ENV !== "production") return DEVELOPMENT_SECRET;
-  throw new Error("SESSION_SECRET must be configured in production.");
 }
 
-function sign(payload: string) {
-  return createHmac("sha256", getSessionSecret()).update(payload).digest("base64url");
+async function updateSessions(update: (sessions: StoredSession[]) => StoredSession[]) {
+  const operation = sessionWriteQueue.then(async () => {
+    const nextSessions = update(await readSessions());
+    await mkdir(dataDirectory, { recursive: true });
+    const temporaryFile = `${sessionsFile}.${randomBytes(8).toString("hex")}.tmp`;
+    await writeFile(temporaryFile, `${JSON.stringify(nextSessions, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+    await rename(temporaryFile, sessionsFile);
+  });
+  sessionWriteQueue = operation.catch(() => undefined);
+  await operation;
 }
 
-export function getSessionUserId(cookieHeader: string | null | undefined) {
-  const match = cookieHeader?.match(/(?:^|;\s*)jk_session=([^;]+)/);
-  const token = match?.[1];
+export async function getSessionUserId(cookieHeader: string | null | undefined) {
+  const token = getCookieToken(cookieHeader);
   if (!token) return undefined;
 
-  const [encodedPayload, signature] = token.split(".");
-  if (!encodedPayload || !signature) return undefined;
-
-  try {
-    const expectedSignature = Buffer.from(sign(encodedPayload));
-    const actualSignature = Buffer.from(signature);
-    if (actualSignature.length !== expectedSignature.length || !timingSafeEqual(actualSignature, expectedSignature)) {
-      return undefined;
-    }
-
-    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf8")) as {
-      userId?: unknown;
-      expiresAt?: unknown;
-    };
-    if (typeof payload.userId !== "string" || typeof payload.expiresAt !== "number" || payload.expiresAt <= Date.now()) {
-      return undefined;
-    }
-    return payload.userId;
-  } catch {
-    return undefined;
-  }
+  const tokenHash = hashToken(token);
+  const session = (await readSessions()).find((item) => item.tokenHash === tokenHash);
+  if (!session || session.expiresAt <= Date.now()) return undefined;
+  return session.userId;
 }
 
-export function createSession(userId: string) {
-  const encodedPayload = Buffer.from(JSON.stringify({
-    userId,
-    expiresAt: Date.now() + SESSION_LIFETIME_SECONDS * 1000,
-  })).toString("base64url");
-  return `${encodedPayload}.${sign(encodedPayload)}`;
+export async function createSession(userId: string) {
+  const token = randomBytes(32).toString("base64url");
+  const now = Date.now();
+  await updateSessions((sessions) => [
+    ...sessions.filter((session) => session.expiresAt > now),
+    { tokenHash: hashToken(token), userId, expiresAt: now + SESSION_LIFETIME_SECONDS * 1000 },
+  ]);
+  return token;
 }
 
+export async function clearSession(cookieHeader: string | null | undefined) {
+  const token = getCookieToken(cookieHeader);
+  if (!token) return;
 
+  const tokenHash = hashToken(token);
+  await updateSessions((sessions) => sessions.filter((session) => session.tokenHash !== tokenHash));
+}
