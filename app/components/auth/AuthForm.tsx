@@ -28,7 +28,10 @@ export default function AuthForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const otpInputRef = useRef<HTMLInputElement | null>(null);
+  const otpAbortController = useRef<AbortController | null>(null);
   const verificationInProgress = useRef(false);
+
+  useEffect(() => () => otpAbortController.current?.abort(), []);
 
   useEffect(() => {
     fetch("/api/auth", { cache: "no-store" }).then((response) => {
@@ -54,6 +57,7 @@ export default function AuthForm() {
       return;
     }
 
+    startOtpAutofill(normalizedPhone);
     setLoading(true);
     setError("");
     try {
@@ -69,13 +73,14 @@ export default function AuthForm() {
       setSecondsLeft(RESEND_SECONDS);
       window.setTimeout(() => otpInputRef.current?.focus(), 0);
     } catch (requestError) {
+      otpAbortController.current?.abort();
       setError(requestError instanceof Error ? requestError.message : "ارسال کد انجام نشد.");
     } finally {
       setLoading(false);
     }
   };
 
-  const verifyOtp = async (code: string) => {
+  const verifyOtp = async (phoneNumber: string, code: string) => {
     if (verificationInProgress.current) return;
     verificationInProgress.current = true;
     setLoading(true);
@@ -84,7 +89,7 @@ export default function AuthForm() {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify", phone, code }),
+        body: JSON.stringify({ action: "verify", phone: phoneNumber, code }),
       });
       const result = await readAuthResponse<{ error?: string; user?: { id: string; phone: string; name: string } }>(response, "پاسخ سرور برای تأیید کد معتبر نیست.");
       if (!response.ok) throw new Error(result.error || "کد واردشده صحیح نیست.");
@@ -100,11 +105,38 @@ export default function AuthForm() {
     }
   };
 
+  const startOtpAutofill = (phoneNumber: string) => {
+    if (!window.isSecureContext || !("OTPCredential" in window) || !("credentials" in navigator)) return;
+
+    otpAbortController.current?.abort();
+    const controller = new AbortController();
+    otpAbortController.current = controller;
+    const getOtp = navigator.credentials.get as unknown as (
+      options: CredentialRequestOptions & { otp: { transport: ["sms"] } },
+    ) => Promise<(Credential & { code: string }) | null>;
+
+    void getOtp.call(navigator.credentials, {
+      otp: { transport: ["sms"] },
+      signal: controller.signal,
+    }).then((credential) => {
+      if (!credential) return;
+      const code = normalizeOtpDigits(credential.code).slice(0, OTP_LENGTH);
+      if (code.length === OTP_LENGTH) {
+        setOtp(code.split(""));
+        setError("");
+        void verifyOtp(phoneNumber, code);
+      }
+    }).catch(() => {
+      // Unsupported browsers and declined prompts continue with manual entry.
+    });
+  };
+
   const updateOtp = (value: string) => {
     const digits = normalizeOtpDigits(value).slice(0, OTP_LENGTH);
     setOtp(Array.from({ length: OTP_LENGTH }, (_, index) => digits[index] ?? ""));
     setError("");
-    if (digits.length === OTP_LENGTH) void verifyOtp(digits);
+    if (digits.length > 0) otpAbortController.current?.abort();
+    if (digits.length === OTP_LENGTH) void verifyOtp(phone, digits);
   };
 
   const verifyCode = async (event: FormEvent<HTMLFormElement>) => {
@@ -114,7 +146,7 @@ export default function AuthForm() {
       setError("کد تأیید ۶ رقمی را کامل وارد کنید.");
       return;
     }
-    await verifyOtp(code);
+    await verifyOtp(phone, code);
   };
 
   const resendCode = () => {
@@ -178,7 +210,7 @@ export default function AuthForm() {
             {loading ? "در حال بررسی..." : "تأیید و ورود"}
           </button>
           <div className="flex items-center justify-between text-xs">
-            <button type="button" onClick={() => { setStep("phone"); setError(""); }} className="font-semibold text-[#2563EB] hover:text-[#7C3AED]">ویرایش شماره</button>
+            <button type="button" onClick={() => { otpAbortController.current?.abort(); setStep("phone"); setError(""); }} className="font-semibold text-[#2563EB] hover:text-[#7C3AED]">ویرایش شماره</button>
             <button type="button" onClick={resendCode} disabled={secondsLeft > 0} className="font-semibold text-[#6B7280] disabled:cursor-not-allowed disabled:text-[#9CA3AF]">
               {secondsLeft > 0 ? `ارسال مجدد تا ${secondsLeft} ثانیه` : "ارسال مجدد کد"}
             </button>
