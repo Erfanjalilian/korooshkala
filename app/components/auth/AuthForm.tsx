@@ -18,7 +18,7 @@ export default function AuthForm() {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const otpRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const otpInputRef = useRef<HTMLInputElement | null>(null);
   const otpAbortController = useRef<AbortController | null>(null);
 
   useEffect(() => () => otpAbortController.current?.abort(), []);
@@ -86,7 +86,7 @@ export default function AuthForm() {
       setPhone(normalizedPhone);
       setStep("otp");
       setSecondsLeft(RESEND_SECONDS);
-      window.setTimeout(() => otpRefs.current[0]?.focus(), 0);
+      window.setTimeout(() => otpInputRef.current?.focus(), 0);
     } catch (requestError) {
       otpAbortController.current?.abort();
       setError(requestError instanceof Error ? requestError.message : "ارسال کد انجام نشد.");
@@ -95,29 +95,11 @@ export default function AuthForm() {
     }
   };
 
-  const updateOtp = (index: number, value: string) => {
+  const updateOtp = (value: string) => {
     const digits = normalizeOtpDigits(value).slice(0, OTP_LENGTH);
-    const nextOtp = [...otp];
-    const startIndex = digits.length === OTP_LENGTH ? 0 : index;
-    digits.split("").slice(0, OTP_LENGTH - startIndex).forEach((digit, offset) => {
-      nextOtp[startIndex + offset] = digit;
-    });
-    if (!digits) nextOtp[index] = "";
-    setOtp(nextOtp);
+    setOtp(Array.from({ length: OTP_LENGTH }, (_, index) => digits[index] ?? ""));
     setError("");
     otpAbortController.current?.abort();
-
-    if (digits.length > 1) {
-      otpRefs.current[Math.min(startIndex + digits.length, OTP_LENGTH) - 1]?.focus();
-    } else if (digits && index < OTP_LENGTH - 1) {
-      otpRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleOtpKeyDown = (index: number, key: string) => {
-    if (key === "Backspace" && !otp[index] && index > 0) {
-      otpRefs.current[index - 1]?.focus();
-    }
   };
 
   const verifyCode = async (event: FormEvent<HTMLFormElement>) => {
@@ -188,23 +170,28 @@ export default function AuthForm() {
         </form>
       ) : (
         <form onSubmit={verifyCode} className="grid gap-5">
-          <div className="flex justify-center gap-2" dir="ltr">
-            {otp.map((digit, index) => (
+          <div className="flex justify-center" dir="ltr">
+            <div className="relative flex gap-2 rounded-xl focus-within:ring-4 focus-within:ring-[#2563EB]/10">
               <input
-                key={`otp-${index}`}
-                ref={(element) => {
-                  otpRefs.current[index] = element;
-                }}
-                value={digit}
-                onChange={(event) => updateOtp(index, event.target.value)}
-                onKeyDown={(event) => handleOtpKeyDown(index, event.key)}
+                ref={otpInputRef}
+                value={otp.join("")}
+                onChange={(event) => updateOtp(event.target.value)}
                 inputMode="numeric"
-                autoComplete={index === 0 ? "one-time-code" : "off"}
-                maxLength={index === 0 ? OTP_LENGTH : 1}
-                aria-label={`رقم ${index + 1} کد تأیید`}
-                className="size-11 rounded-xl border border-[#E5E7EB] bg-[#F5F7FA] text-center text-lg font-extrabold text-[#111827] outline-none transition focus:border-[#2563EB] focus:bg-white focus:ring-4 focus:ring-[#2563EB]/10 sm:size-12"
+                autoComplete="one-time-code"
+                maxLength={OTP_LENGTH}
+                aria-label="کد تأیید ۶ رقمی"
+                className="absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
               />
-            ))}
+              {otp.map((digit, index) => (
+                <span
+                  key={`otp-${index}`}
+                  aria-hidden="true"
+                  className="flex size-11 items-center justify-center rounded-xl border border-[#E5E7EB] bg-[#F5F7FA] text-lg font-extrabold text-[#111827] sm:size-12"
+                >
+                  {digit}
+                </span>
+              ))}
+            </div>
           </div>
           <button type="submit" disabled={loading} className="h-12 rounded-xl bg-[#2563EB] text-sm font-bold text-white transition hover:bg-[#7C3AED] disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#2563EB]/20">
             {loading ? "در حال بررسی..." : "تأیید و ورود"}
