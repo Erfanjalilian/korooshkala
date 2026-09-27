@@ -28,9 +28,7 @@ export default function AuthForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const otpInputRef = useRef<HTMLInputElement | null>(null);
-  const otpAbortController = useRef<AbortController | null>(null);
-
-  useEffect(() => () => otpAbortController.current?.abort(), []);
+  const verificationInProgress = useRef(false);
 
   useEffect(() => {
     fetch("/api/auth", { cache: "no-store" }).then((response) => {
@@ -47,31 +45,6 @@ export default function AuthForm() {
     return () => window.clearInterval(timer);
   }, [secondsLeft]);
 
-  const startOtpAutofill = () => {
-    if (!("OTPCredential" in window)) return;
-
-    otpAbortController.current?.abort();
-    const controller = new AbortController();
-    otpAbortController.current = controller;
-    const getOtp = navigator.credentials.get as unknown as (
-      options: CredentialRequestOptions & { otp: { transport: ["sms"] } },
-    ) => Promise<(Credential & { code: string }) | null>;
-
-    void getOtp.call(navigator.credentials, {
-      otp: { transport: ["sms"] },
-      signal: controller.signal,
-    }).then((credential) => {
-      if (!credential) return;
-      const code = normalizeOtpDigits(credential.code).slice(0, OTP_LENGTH);
-      if (code.length === OTP_LENGTH) {
-        setOtp(code.split(""));
-        setError("");
-      }
-    }).catch(() => {
-      // Unsupported browsers and declined prompts continue with manual entry.
-    });
-  };
-
   const requestCode = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedPhone = phone.replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))).replace(/\D/g, "");
@@ -81,7 +54,6 @@ export default function AuthForm() {
       return;
     }
 
-    startOtpAutofill();
     setLoading(true);
     setError("");
     try {
@@ -97,34 +69,22 @@ export default function AuthForm() {
       setSecondsLeft(RESEND_SECONDS);
       window.setTimeout(() => otpInputRef.current?.focus(), 0);
     } catch (requestError) {
-      otpAbortController.current?.abort();
       setError(requestError instanceof Error ? requestError.message : "ارسال کد انجام نشد.");
     } finally {
       setLoading(false);
     }
   };
 
-  const updateOtp = (value: string) => {
-    const digits = normalizeOtpDigits(value).slice(0, OTP_LENGTH);
-    setOtp(Array.from({ length: OTP_LENGTH }, (_, index) => digits[index] ?? ""));
-    setError("");
-    otpAbortController.current?.abort();
-  };
-
-  const verifyCode = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (otp.join("").length !== OTP_LENGTH) {
-      setError("کد تأیید ۶ رقمی را کامل وارد کنید.");
-      return;
-    }
-
+  const verifyOtp = async (code: string) => {
+    if (verificationInProgress.current) return;
+    verificationInProgress.current = true;
     setLoading(true);
     setError("");
     try {
       const response = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify", phone, code: otp.join("") }),
+        body: JSON.stringify({ action: "verify", phone, code }),
       });
       const result = await readAuthResponse<{ error?: string; user?: { id: string; phone: string; name: string } }>(response, "پاسخ سرور برای تأیید کد معتبر نیست.");
       if (!response.ok) throw new Error(result.error || "کد واردشده صحیح نیست.");
@@ -134,9 +94,27 @@ export default function AuthForm() {
       window.location.href = redirectTarget;
     } catch (verificationError) {
       setError(verificationError instanceof Error ? verificationError.message : "کد واردشده صحیح نیست.");
+      verificationInProgress.current = false;
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateOtp = (value: string) => {
+    const digits = normalizeOtpDigits(value).slice(0, OTP_LENGTH);
+    setOtp(Array.from({ length: OTP_LENGTH }, (_, index) => digits[index] ?? ""));
+    setError("");
+    if (digits.length === OTP_LENGTH) void verifyOtp(digits);
+  };
+
+  const verifyCode = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const code = otp.join("");
+    if (code.length !== OTP_LENGTH) {
+      setError("کد تأیید ۶ رقمی را کامل وارد کنید.");
+      return;
+    }
+    await verifyOtp(code);
   };
 
   const resendCode = () => {
