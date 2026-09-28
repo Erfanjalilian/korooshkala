@@ -1,6 +1,7 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { clearSession, createSession, getSessionUserId, SESSION_LIFETIME_SECONDS } from "@/lib/session";
+import { sendOtpSms } from "@/lib/sms-ir";
 import { readOrders, readUsers, writeJson, type ShippingProfile } from "@/lib/store";
 
 export const runtime = "nodejs";
@@ -12,20 +13,6 @@ const normalizeDigits = (value: string) => value
   .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
 const normalizePhone = (value: string) => normalizeDigits(value).replace(/\D/g, "");
 
-async function sendSms(phone: string, code: string) {
-  const apiKey = process.env.SMS_IR_API_KEY;
-  const templateId = process.env.SMS_IR_TEMPLATE_ID || "323089";
-  const parameterName = process.env.SMS_IR_TEMPLATE_PARAMETER || "Code";
-  if (!apiKey) throw new Error("کلید سرویس پیامک در تنظیمات سرور ثبت نشده است.");
-
-  const response = await fetch("https://api.sms.ir/v1/send/verify", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json", "X-API-KEY": apiKey },
-    body: JSON.stringify({ mobile: phone, templateId: Number(templateId), parameters: [{ name: parameterName, value: code }] }),
-  });
-  if (!response.ok) throw new Error("ارسال پیامک با خطا روبه‌رو شد.");
-}
-
 async function handlePost(request: Request) {
   const body = await request.json() as { action?: string; phone?: string; code?: string };
   const phone = normalizePhone(body.phone || "");
@@ -33,7 +20,7 @@ async function handlePost(request: Request) {
 
   if (body.action === "request") {
     const code = String(randomInt(100000, 1000000));
-    await sendSms(phone, code);
+    await sendOtpSms(phone, code);
     pendingCodes.set(phone, { code, expiresAt: Date.now() + 2 * 60 * 1000 });
     return NextResponse.json({ ok: true });
   }

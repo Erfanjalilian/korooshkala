@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ORDER_NOTIFICATION_SMS, sendOrderNotificationSms } from "@/lib/sms-ir";
 import { readOrders, writeJson } from "@/lib/store";
 import { tomanToRial } from "@/lib/currency";
 
@@ -29,6 +30,10 @@ export async function GET(request: Request) {
     redirectTarget.searchParams.set("payment", "failed");
     return NextResponse.redirect(redirectTarget);
   }
+  if (order.status === "paid") {
+    redirectTarget.searchParams.set("payment", "success");
+    return NextResponse.redirect(redirectTarget);
+  }
 
   if (status !== "OK") {
     const updatedOrders = orders.map((item) => item.id === order.id ? { ...item, status: "cancelled", payment: { ...(item.payment ?? {}), status: "cancelled" } } : item);
@@ -57,9 +62,19 @@ export async function GET(request: Request) {
           status: isVerified ? "paid" : "pending_payment",
           referenceId: json.data?.ref_id ? String(json.data.ref_id) : item.payment?.referenceId,
         },
+        notificationSmsAttemptedAt: isVerified ? new Date().toISOString() : item.notificationSmsAttemptedAt,
       };
     });
     await writeJson("orders.json", updatedOrders);
+
+    if (isVerified && !order.notificationSmsAttemptedAt) {
+      try {
+        await sendOrderNotificationSms();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "SMS.ir request failed.";
+        console.warn("Order notification SMS failed.", { templateId: ORDER_NOTIFICATION_SMS.templateId, error: message });
+      }
+    }
 
     redirectTarget.searchParams.set("payment", isVerified ? "success" : "failed");
     return NextResponse.redirect(redirectTarget);

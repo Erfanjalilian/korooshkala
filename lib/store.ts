@@ -57,6 +57,7 @@ export type Order = {
   total: number;
   currency?: string;
   createdAt: string;
+  notificationSmsAttemptedAt?: string;
   shipping?: ShippingDetails;
   payment?: {
     gateway: string;
