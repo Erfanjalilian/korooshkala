@@ -125,7 +125,12 @@ export default function CartPage() {
               <div key={item.productId} className="flex items-center justify-between gap-4 rounded-2xl border border-[#E5E7EB] bg-white p-4">
                 <div className="min-w-0">
                   <h2 className="truncate text-sm font-bold text-[#111827]">{item.name}</h2>
-                  <p className="mt-1 text-sm font-semibold text-[#2563EB]">{formatPrice(item.price)}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <p className="text-sm font-semibold text-[#2563EB]">{formatPrice(item.price)}</p>
+                    {(compareAtPrices[item.productId] ?? item.price) > item.price ? (
+                      <del className="text-xs text-[#9CA3AF]">{formatPrice(compareAtPrices[item.productId])}</del>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center rounded-xl border border-[#E5E7EB]">
