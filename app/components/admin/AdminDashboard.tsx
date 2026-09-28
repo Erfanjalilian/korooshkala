@@ -232,6 +232,7 @@ import {
   LayoutDashboard,
   ListPlus,
   LoaderCircle,
+  MessageCircle,
   Package,
   Pencil,
   Plus,
@@ -313,7 +314,7 @@ type DashboardData = {
   users: User[];
   orders: Order[];
   pages: Pages;
-  settings: { silentBoxPackagingFee: number };
+  settings: { silentBoxPackagingFee: number; rubikaId: string; whatsappId: string };
 };
 type Tab =
   | "overview"
@@ -322,6 +323,7 @@ type Tab =
   | "users"
   | "orders"
   | "shipping"
+  | "social"
   | "pages";
 
 const emptyProduct = (): Product => ({
@@ -352,6 +354,7 @@ const tabs: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
   { id: "users", label: "کاربران", icon: Users },
   { id: "orders", label: "سفارش‌ها", icon: ShoppingBag },
   { id: "shipping", label: "هزینه‌ها", icon: Truck },
+  { id: "social", label: "شبکه‌های اجتماعی", icon: MessageCircle },
   { id: "pages", label: "صفحه‌ها", icon: BookOpenText },
 ];
 
@@ -492,12 +495,85 @@ export default function AdminDashboard() {
           {activeTab === "shipping" ? (
             <ShippingSettings key={data.settings.silentBoxPackagingFee} settings={data.settings} onRefresh={loadData} onSaved={() => setMessage("هزینه نایلون ضربه‌گیر ذخیره شد.")} />
           ) : null}
+          {activeTab === "social" ? (
+            <SocialSettings
+              key={`${data.settings.rubikaId}:${data.settings.whatsappId}`}
+              settings={data.settings}
+              onRefresh={loadData}
+              onSaved={() => setMessage("آیدی‌های شبکه‌های اجتماعی ذخیره شدند.")}
+            />
+          ) : null}
           {activeTab === "pages" ? (
             <PagesPanel data={data} onRefresh={loadData} />
           ) : null}
         </main>
       </div>
     </div>
+  );
+}
+
+function SocialSettings({
+  settings,
+  onRefresh,
+  onSaved,
+}: {
+  settings: DashboardData["settings"];
+  onRefresh: () => Promise<void>;
+  onSaved: () => void;
+}) {
+  const [rubikaId, setRubikaId] = useState(settings.rubikaId);
+  const [whatsappId, setWhatsappId] = useState(settings.whatsappId);
+  const [saving, setSaving] = useState(false);
+
+  const save = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSaving(true);
+    const response = await fetch("/api/admin?resource=settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rubikaId, whatsappId }),
+    });
+    setSaving(false);
+    if (response.ok) {
+      onSaved();
+      await onRefresh();
+    }
+  };
+
+  return (
+    <Panel title="راه‌های ارتباط در پیام‌رسان‌ها">
+      <form onSubmit={save} className="grid max-w-xl gap-4">
+        <label className="grid gap-2 text-sm font-semibold text-[#111827]">
+          آیدی روبیکا
+          <input
+            type="text"
+            autoComplete="off"
+            value={rubikaId}
+            onChange={(event) => setRubikaId(event.target.value)}
+            placeholder="مثال: korooshkala"
+            maxLength={100}
+            className={inputClass}
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-[#111827]">
+          شماره واتساپ با کد کشور
+          <input
+            type="tel"
+            autoComplete="tel"
+            dir="ltr"
+            value={whatsappId}
+            onChange={(event) => setWhatsappId(event.target.value)}
+            placeholder="مثال: +989121234567"
+            maxLength={100}
+            className={inputClass}
+          />
+        </label>
+        <button type="submit" disabled={saving} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#2563EB] text-sm font-bold text-white disabled:opacity-60">
+          <Save size={17} />
+          {saving ? "در حال ذخیره..." : "ذخیره آیدی‌ها"}
+        </button>
+      </form>
+    </Panel>
   );
 }
 

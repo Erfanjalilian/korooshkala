@@ -1,5 +1,28 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Mail, MapPin, Phone, Send, Star } from "lucide-react";
+import { readStoreSettings } from "@/lib/store";
+
+const toEnglishDigits = (value: string) =>
+  value.replace(/[۰-۹٠-٩]/g, (digit) =>
+    String.fromCharCode(digit.charCodeAt(0) - (digit >= "٠" && digit <= "٩" ? 0x0660 : 0x06f0) + 48),
+  );
+
+function RubikaMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-[19px]">
+      <path d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm-3.7 4h4.3a3.2 3.2 0 0 1 0 6.4h-1.8v4.6H8.3V6.5Zm2.5 2.2v2h1.8a1 1 0 1 0 0-2h-1.8Z" />
+    </svg>
+  );
+}
+
+function WhatsAppMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-[19px]">
+      <path d="M12 2.2a9.7 9.7 0 0 0-8.3 14.7L2.4 22l5.2-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.5a7.7 7.7 0 0 1-3.9-1.1l-.3-.2-3 .8.8-2.9-.2-.3A7.8 7.8 0 1 1 12 19.7Zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.4-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.2 0-.3 0-.4 0-.1-.5-1.3-.7-1.8-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.4 3.8 3.3.5.2.9.4 1.2.4.5.2 1 .1 1.4.1.4-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.4-.3Z" />
+    </svg>
+  );
+}
 
 const quickLinks = [
   { title: "صفحه اصلی", href: "/" },
@@ -18,7 +41,12 @@ const customerLinks = [
   { title: "قوانین و مقررات", href: "/terms" },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  await connection();
+  const settings = await readStoreSettings();
+  const rubikaId = settings.rubikaId.trim().replace(/^@/, "");
+  const whatsappNumber = toEnglishDigits(settings.whatsappId).replace(/\D/g, "");
+
   return (
     <footer className="mt-16 border-t border-[#E5E7EB] bg-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -48,6 +76,28 @@ export default function Footer() {
               >
                 <Send aria-hidden="true" size={17} />
               </Link>
+              {rubikaId ? (
+                <a
+                  href={`https://rubika.ir/${encodeURIComponent(rubikaId)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="پیام در روبیکا"
+                  className="flex size-10 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#6B7280] transition hover:border-[#168B5A] hover:text-[#168B5A]"
+                >
+                  <RubikaMark />
+                </a>
+              ) : null}
+              {whatsappNumber ? (
+                <a
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="پیام در واتساپ"
+                  className="flex size-10 items-center justify-center rounded-xl border border-[#E5E7EB] text-[#6B7280] transition hover:border-[#25D366] hover:text-[#25D366]"
+                >
+                  <WhatsAppMark />
+                </a>
+              ) : null}
             </div>
           </div>
 

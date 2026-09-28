@@ -183,13 +183,32 @@ export async function PATCH(request: Request) {
   }
 
   if (resource === "settings") {
-    const packagingFee = Number(body.silentBoxPackagingFee);
-    if (!Number.isSafeInteger(packagingFee) || packagingFee < 0) {
-      return NextResponse.json({ error: "هزینه باید عدد صحیح و نامنفی باشد." }, { status: 400 });
+    const currentSettings = await readStoreSettings();
+    const nextSettings = { ...currentSettings };
+
+    if ("silentBoxPackagingFee" in body) {
+      const packagingFee = Number(body.silentBoxPackagingFee);
+      if (!Number.isSafeInteger(packagingFee) || packagingFee < 0) {
+        return NextResponse.json({ error: "هزینه باید عدد صحیح و نامنفی باشد." }, { status: 400 });
+      }
+      nextSettings.silentBoxPackagingFee = packagingFee;
     }
-    const settings = { ...(await readStoreSettings()), silentBoxPackagingFee: packagingFee };
-    await writeJson("settings.json", settings);
-    return NextResponse.json(settings);
+
+    for (const key of ["rubikaId", "whatsappId"] as const) {
+      if (!(key in body)) continue;
+      const value = body[key];
+      if (typeof value !== "string" || value.trim().length > 100) {
+        return NextResponse.json({ error: "آیدی شبکه اجتماعی معتبر نیست." }, { status: 400 });
+      }
+      nextSettings[key] = value.trim().replace(/^@/, "");
+    }
+
+    if (Object.keys(body).length === 0) {
+      return NextResponse.json({ error: "تنظیمی برای ذخیره ارسال نشده است." }, { status: 400 });
+    }
+
+    await writeJson("settings.json", nextSettings);
+    return NextResponse.json(nextSettings);
   }
 
   return NextResponse.json({ error: "درخواست نامعتبر است." }, { status: 400 });

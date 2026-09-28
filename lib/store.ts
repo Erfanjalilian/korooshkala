@@ -28,7 +28,11 @@ export type Product = {
 };
 
 export type Category = { slug: string; name: string; image?: string };
-export type StoreSettings = { silentBoxPackagingFee: number };
+export type StoreSettings = {
+  silentBoxPackagingFee: number;
+  rubikaId: string;
+  whatsappId: string;
+};
 export type ShippingProfile = {
   firstName: string;
   lastName: string;
@@ -85,8 +89,14 @@ export async function writeJson(fileName: string, value: unknown) {
 export const readProducts = () => readJson<Product[]>("products.json", []);
 export const readUsers = () => readJson<User[]>("users.json", []);
 export const readOrders = () => readJson<Order[]>("orders.json", []);
-export const defaultStoreSettings: StoreSettings = { silentBoxPackagingFee: 350_000 };
-export const readStoreSettings = () => readJson<StoreSettings>("settings.json", defaultStoreSettings);
+export const defaultStoreSettings: StoreSettings = {
+  silentBoxPackagingFee: 350_000,
+  rubikaId: "",
+  whatsappId: "",
+};
+export async function readStoreSettings(): Promise<StoreSettings> {
+  return { ...defaultStoreSettings, ...(await readJson<Partial<StoreSettings>>("settings.json", {})) };
+}
 
 export function calculateSilentBoxPackagingFee(
   items: Array<{ productId: string; quantity: number }>,
