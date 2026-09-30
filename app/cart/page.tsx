@@ -158,7 +158,7 @@ export default function CartPage() {
               <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>نایلون ضربه‌گیر ({packagingQuantity} عدد)</span><strong className="text-[#111827]">{formatPrice(packagingFee)}</strong></div>
               <p className="mt-3 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#6B7280]">برای هر محصول سایلنت باکس، مبلغ {formatPrice(packagingFee / packagingQuantity)} بابت نایلون ضربه‌گیر دریافت می‌شود.</p>
             </> : null}
-            {otherProductsQuantity > 0 ? <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>هزینه دسته‌بندی ({otherProductsQuantity} محصول)</span><strong className="text-[#111827]">{formatPrice(otherProductsFee)}</strong></div> : null}
+            {otherProductsQuantity > 0 ? <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>هزینه بسته‌بندی ({otherProductsQuantity} محصول)</span><strong className="text-[#111827]">{formatPrice(otherProductsFee)}</strong></div> : null}
             <div className="mt-3 flex items-center justify-between border-t border-[#E5E7EB] pt-3 text-sm font-bold text-[#111827]"><span>مبلغ قابل پرداخت</span><strong className="text-[#2563EB]">{formatPrice(total + packagingFee + otherProductsFee)}</strong></div>
             <Link href="/checkout" className="mt-5 flex h-12 w-full items-center justify-center rounded-xl bg-[#2563EB] text-sm font-bold text-white hover:bg-[#7C3AED]">ادامه ثبت سفارش</Link>
           </aside>
