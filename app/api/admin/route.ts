@@ -202,7 +202,7 @@ export async function PATCH(request: Request) {
       nextSettings.otherProductsShippingFee = shippingFee;
     }
 
-    for (const key of ["rubikaId", "whatsappId"] as const) {
+    for (const key of ["rubikaId", "whatsappId", "telegramId"] as const) {
       if (!(key in body)) continue;
       const value = body[key];
       if (typeof value !== "string" || value.trim().length > 100) {

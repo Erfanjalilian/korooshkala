@@ -39,6 +39,7 @@ export default async function Footer() {
   const settings = await readStoreSettings();
   const rubikaId = settings.rubikaId.trim().replace(/^@/, "");
   const whatsappNumber = toEnglishDigits(settings.whatsappId).replace(/\D/g, "");
+  const telegramId = settings.telegramId.trim().replace(/^@/, "");
 
   return (
     <footer className="mt-16 border-t border-[#E5E7EB] bg-white">
@@ -72,6 +73,18 @@ export default async function Footer() {
                 className="flex size-14 items-center justify-center rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] text-[#16A34A] transition hover:bg-[#DCFCE7]"
               >
                 <WhatsAppMark />
+              </a>
+              <a
+                href={telegramId ? `https://t.me/${encodeURIComponent(telegramId)}` : "/contact"}
+                target={telegramId ? "_blank" : undefined}
+                rel={telegramId ? "noopener noreferrer" : undefined}
+                aria-label="تلگرام"
+                className="flex size-14 items-center justify-center rounded-xl border border-[#BAE6FD] bg-[#E0F2FE] text-[#0284C7] transition hover:bg-[#BAE6FD]"
+              >
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="size-9">
+                  <circle cx="12" cy="12" r="10" fill="currentColor" />
+                  <path d="m18.4 6.2-2.8 12.1c-.2.9-.7 1.1-1.4.7l-3.9-2.9-1.9 1.8c-.2.2-.4.4-.8.4l.3-4 7.3-6.6c.3-.3-.1-.4-.5-.2l-9 5.7-3.9-1.2c-.9-.3-.9-.9.2-1.4l15.2-5.9c.7-.3 1.3.2 1.2 1.5Z" fill="white" />
+                </svg>
               </a>
             </div>
           </div>

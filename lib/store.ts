@@ -33,6 +33,7 @@ export type StoreSettings = {
   otherProductsShippingFee: number;
   rubikaId: string;
   whatsappId: string;
+  telegramId: string;
 };
 export type ShippingProfile = {
   firstName: string;
@@ -95,6 +96,7 @@ export const defaultStoreSettings: StoreSettings = {
   otherProductsShippingFee: 150_000,
   rubikaId: "",
   whatsappId: "",
+  telegramId: "",
 };
 export async function readStoreSettings(): Promise<StoreSettings> {
   return { ...defaultStoreSettings, ...(await readJson<Partial<StoreSettings>>("settings.json", {})) };
@@ -116,10 +118,12 @@ export function calculateOtherProductsShippingFee(
   products: Product[],
   unitFee: number,
 ) {
-  return items.reduce((total, item) => {
+  const otherProductsQuantity = items.reduce((total, item) => {
     const product = products.find((current) => current.id === item.productId);
-    return total + (product && product.categorySlug !== "سایلنت-باکس" ? item.quantity * unitFee : 0);
+    return total + (product && product.categorySlug !== "سایلنت-باکس" ? item.quantity : 0);
   }, 0);
+
+  return Math.ceil(otherProductsQuantity / 5) * unitFee;
 }
 
 export async function readCategories(): Promise<Category[]> {

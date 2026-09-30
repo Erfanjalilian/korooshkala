@@ -342,7 +342,7 @@ export default function CheckoutPage() {
               <p className="mt-3 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#6B7280]">برای هر محصول سایلنت باکس، مبلغ {formatPrice(packagingFee / packagingQuantity)} بابت نایلون ضربه‌گیر دریافت می‌شود.</p>
             </> : null}
             {otherProductsQuantity > 0 ? <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]">
-              <span>هزینه ارسال سایر محصولات ({otherProductsQuantity} عدد)</span>
+              <span>هزینه دسته‌بندی ({otherProductsQuantity} محصول)</span>
               <strong className="text-[#111827]">{formatPrice(otherProductsFee)}</strong>
             </div> : null}
             <div className="mt-5 flex items-center justify-between border-t border-[#E5E7EB] pt-4 text-lg font-extrabold text-[#111827]">
