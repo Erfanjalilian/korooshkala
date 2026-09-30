@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/session";
-import { calculateSilentBoxPackagingFee, readOrders, readProducts, readStoreSettings, readUsers, writeJson, type ShippingProfile } from "@/lib/store";
+import { calculateOtherProductsShippingFee, calculateSilentBoxPackagingFee, readOrders, readProducts, readStoreSettings, readUsers, writeJson, type ShippingProfile } from "@/lib/store";
 
 export const runtime = "nodejs";
 
@@ -107,7 +107,8 @@ export async function POST(request: Request) {
   await writeJson("users.json", users);
 
   const packagingFee = calculateSilentBoxPackagingFee(orderItems, products, settings.silentBoxPackagingFee);
-  const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + packagingFee;
+  const otherProductsShippingFee = calculateOtherProductsShippingFee(orderItems, products, settings.otherProductsShippingFee);
+  const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0) + packagingFee + otherProductsShippingFee;
   const orderId = `ord-${randomUUID().slice(0, 8)}`;
 
   const order = {
@@ -116,6 +117,7 @@ export async function POST(request: Request) {
     status: "pending_payment",
     items: orderItems,
     packagingFee,
+    otherProductsShippingFee,
     total,
     currency: "IRT",
     createdAt: new Date().toISOString(),

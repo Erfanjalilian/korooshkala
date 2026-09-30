@@ -30,6 +30,7 @@ export type Product = {
 export type Category = { slug: string; name: string; image?: string };
 export type StoreSettings = {
   silentBoxPackagingFee: number;
+  otherProductsShippingFee: number;
   rubikaId: string;
   whatsappId: string;
 };
@@ -91,6 +92,7 @@ export const readUsers = () => readJson<User[]>("users.json", []);
 export const readOrders = () => readJson<Order[]>("orders.json", []);
 export const defaultStoreSettings: StoreSettings = {
   silentBoxPackagingFee: 350_000,
+  otherProductsShippingFee: 150_000,
   rubikaId: "",
   whatsappId: "",
 };
@@ -106,6 +108,17 @@ export function calculateSilentBoxPackagingFee(
   return items.reduce((total, item) => {
     const product = products.find((current) => current.id === item.productId);
     return total + (product?.categorySlug === "سایلنت-باکس" ? item.quantity * unitFee : 0);
+  }, 0);
+}
+
+export function calculateOtherProductsShippingFee(
+  items: Array<{ productId: string; quantity: number }>,
+  products: Product[],
+  unitFee: number,
+) {
+  return items.reduce((total, item) => {
+    const product = products.find((current) => current.id === item.productId);
+    return total + (product && product.categorySlug !== "سایلنت-باکس" ? item.quantity * unitFee : 0);
   }, 0);
 }
 

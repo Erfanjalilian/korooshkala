@@ -21,7 +21,7 @@ export default function CartPage() {
   const [discountsLoaded, setDiscountsLoaded] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number } | null>(null);
+  const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number; otherProductsFee: number; otherProductsQuantity: number } | null>(null);
   const estimateKey = JSON.stringify(items.map(({ productId, quantity }) => [productId, quantity]));
 
   useEffect(() => {
@@ -51,8 +51,8 @@ export default function CartPage() {
       signal: controller.signal,
     }).then(async (response) => {
       if (!response.ok) return;
-      const estimate = await response.json() as { packagingFee: number; packagingQuantity: number };
-      setPackagingEstimate({ key: estimateKey, fee: estimate.packagingFee, quantity: estimate.packagingQuantity });
+      const estimate = await response.json() as { packagingFee: number; packagingQuantity: number; otherProductsShippingFee: number; otherProductsQuantity: number };
+      setPackagingEstimate({ key: estimateKey, fee: estimate.packagingFee, quantity: estimate.packagingQuantity, otherProductsFee: estimate.otherProductsShippingFee, otherProductsQuantity: estimate.otherProductsQuantity });
     }).catch(() => undefined);
 
     return () => controller.abort();
@@ -99,6 +99,8 @@ export default function CartPage() {
   const currentEstimate = packagingEstimate?.key === estimateKey ? packagingEstimate : null;
   const packagingFee = currentEstimate?.fee ?? 0;
   const packagingQuantity = currentEstimate?.quantity ?? 0;
+  const otherProductsFee = currentEstimate?.otherProductsFee ?? 0;
+  const otherProductsQuantity = currentEstimate?.otherProductsQuantity ?? 0;
 
   if (!loaded || checkingAuth) {
     return <div className="mx-auto max-w-7xl px-4 py-16 text-center text-sm text-[#6B7280]">در حال آماده‌سازی سبد خرید...</div>;
@@ -156,7 +158,8 @@ export default function CartPage() {
               <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>نایلون ضربه‌گیر ({packagingQuantity} عدد)</span><strong className="text-[#111827]">{formatPrice(packagingFee)}</strong></div>
               <p className="mt-3 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#6B7280]">برای هر محصول سایلنت باکس، مبلغ {formatPrice(packagingFee / packagingQuantity)} بابت نایلون ضربه‌گیر دریافت می‌شود.</p>
             </> : null}
-            <div className="mt-3 flex items-center justify-between border-t border-[#E5E7EB] pt-3 text-sm font-bold text-[#111827]"><span>مبلغ قابل پرداخت</span><strong className="text-[#2563EB]">{formatPrice(total + packagingFee)}</strong></div>
+            {otherProductsQuantity > 0 ? <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]"><span>هزینه ارسال سایر محصولات ({otherProductsQuantity} عدد)</span><strong className="text-[#111827]">{formatPrice(otherProductsFee)}</strong></div> : null}
+            <div className="mt-3 flex items-center justify-between border-t border-[#E5E7EB] pt-3 text-sm font-bold text-[#111827]"><span>مبلغ قابل پرداخت</span><strong className="text-[#2563EB]">{formatPrice(total + packagingFee + otherProductsFee)}</strong></div>
             <Link href="/checkout" className="mt-5 flex h-12 w-full items-center justify-center rounded-xl bg-[#2563EB] text-sm font-bold text-white hover:bg-[#7C3AED]">ادامه ثبت سفارش</Link>
           </aside>
         </div>

@@ -194,6 +194,14 @@ export async function PATCH(request: Request) {
       nextSettings.silentBoxPackagingFee = packagingFee;
     }
 
+    if ("otherProductsShippingFee" in body) {
+      const shippingFee = Number(body.otherProductsShippingFee);
+      if (!Number.isSafeInteger(shippingFee) || shippingFee < 0) {
+        return NextResponse.json({ error: "هزینه باید عدد صحیح و نامنفی باشد." }, { status: 400 });
+      }
+      nextSettings.otherProductsShippingFee = shippingFee;
+    }
+
     for (const key of ["rubikaId", "whatsappId"] as const) {
       if (!(key in body)) continue;
       const value = body[key];

@@ -314,7 +314,7 @@ type DashboardData = {
   users: User[];
   orders: Order[];
   pages: Pages;
-  settings: { silentBoxPackagingFee: number; rubikaId: string; whatsappId: string };
+  settings: { silentBoxPackagingFee: number; otherProductsShippingFee: number; rubikaId: string; whatsappId: string };
 };
 type Tab =
   | "overview"
@@ -493,7 +493,7 @@ export default function AdminDashboard() {
             <OrdersPanel data={data} onRefresh={loadData} />
           ) : null}
           {activeTab === "shipping" ? (
-            <ShippingSettings key={data.settings.silentBoxPackagingFee} settings={data.settings} onRefresh={loadData} onSaved={() => setMessage("هزینه نایلون ضربه‌گیر ذخیره شد.")} />
+            <ShippingSettings key={`${data.settings.silentBoxPackagingFee}:${data.settings.otherProductsShippingFee}`} settings={data.settings} onRefresh={loadData} onSaved={() => setMessage("هزینه‌های ارسال ذخیره شدند.")} />
           ) : null}
           {activeTab === "social" ? (
             <SocialSettings
@@ -543,8 +543,9 @@ function SocialSettings({
   return (
     <Panel title="راه‌های ارتباط در پیام‌رسان‌ها">
       <form onSubmit={save} className="grid max-w-xl gap-4">
+        <p className="text-sm leading-6 text-[#6B7280]">این اطلاعات مقصد کلیک روی لوگوهای روبیکا و واتساپ در فوتر سایت هستند.</p>
         <label className="grid gap-2 text-sm font-semibold text-[#111827]">
-          آیدی روبیکا
+          آیدی روبیکا، بدون @
           <input
             type="text"
             autoComplete="off"
@@ -556,7 +557,7 @@ function SocialSettings({
           />
         </label>
         <label className="grid gap-2 text-sm font-semibold text-[#111827]">
-          شماره واتساپ با کد کشور
+          شماره واتساپ همراه کد کشور
           <input
             type="tel"
             autoComplete="tel"
@@ -586,7 +587,8 @@ function ShippingSettings({
   onRefresh: () => Promise<void>;
   onSaved: () => void;
 }) {
-  const [fee, setFee] = useState(settings.silentBoxPackagingFee);
+  const [silentBoxFee, setSilentBoxFee] = useState(settings.silentBoxPackagingFee);
+  const [otherProductsFee, setOtherProductsFee] = useState(settings.otherProductsShippingFee);
   const [saving, setSaving] = useState(false);
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
@@ -595,7 +597,7 @@ function ShippingSettings({
     const response = await fetch("/api/admin?resource=settings", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ silentBoxPackagingFee: fee }),
+      body: JSON.stringify({ silentBoxPackagingFee: silentBoxFee, otherProductsShippingFee: otherProductsFee }),
     });
     setSaving(false);
     if (response.ok) {
@@ -605,12 +607,16 @@ function ShippingSettings({
   };
 
   return (
-    <Panel title="هزینه نایلون ضربه‌گیر">
+    <Panel title="هزینه ارسال محصولات">
       <form onSubmit={save} className="grid max-w-xl gap-4">
-        <p className="text-sm leading-6 text-[#6B7280]">این مبلغ برای هر محصول از دسته‌بندی سایلنت باکس به سفارش اضافه می‌شود.</p>
+        <p className="text-sm leading-6 text-[#6B7280]">هزینه‌ها به‌ازای هر واحد محصول به مبلغ سفارش اضافه می‌شوند.</p>
         <label className="grid gap-2 text-sm font-semibold text-[#111827]">
-          مبلغ به تومان
-          <input type="number" min={0} step={1} required value={fee} onChange={(event) => setFee(Number(event.target.value))} className={inputClass} />
+          هزینه نایلون ضربه‌گیر سایلنت‌باکس، به تومان
+          <input type="number" min={0} step={1} required value={silentBoxFee} onChange={(event) => setSilentBoxFee(Number(event.target.value))} className={inputClass} />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-[#111827]">
+          هزینه ارسال سایر محصولات، به تومان
+          <input type="number" min={0} step={1} required value={otherProductsFee} onChange={(event) => setOtherProductsFee(Number(event.target.value))} className={inputClass} />
         </label>
         <button type="submit" disabled={saving} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#2563EB] text-sm font-bold text-white disabled:opacity-60">
           <Save size={17} />

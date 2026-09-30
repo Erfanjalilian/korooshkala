@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { calculateSilentBoxPackagingFee, readProducts, readStoreSettings } from "@/lib/store";
+import { calculateOtherProductsShippingFee, calculateSilentBoxPackagingFee, readProducts, readStoreSettings } from "@/lib/store";
 
 export const runtime = "nodejs";
 
@@ -24,10 +24,16 @@ export async function POST(request: Request) {
     const product = products.find((current) => current.id === item.productId);
     return total + (product?.categorySlug === "سایلنت-باکس" ? item.quantity : 0);
   }, 0);
+  const otherProductsQuantity = normalizedItems.reduce((total, item) => {
+    const product = products.find((current) => current.id === item.productId);
+    return total + (product && product.categorySlug !== "سایلنت-باکس" ? item.quantity : 0);
+  }, 0);
 
   return NextResponse.json({
     packagingQuantity,
     packagingFee: calculateSilentBoxPackagingFee(normalizedItems, products, settings.silentBoxPackagingFee),
+    otherProductsQuantity,
+    otherProductsShippingFee: calculateOtherProductsShippingFee(normalizedItems, products, settings.otherProductsShippingFee),
     unitFee: settings.silentBoxPackagingFee,
   });
 }

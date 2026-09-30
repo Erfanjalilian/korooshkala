@@ -5,5 +5,8 @@ export const runtime = "nodejs";
 
 export async function GET() {
   const settings = await readStoreSettings();
-  return NextResponse.json({ silentBoxPackagingFee: settings.silentBoxPackagingFee });
+  return NextResponse.json({
+    silentBoxPackagingFee: settings.silentBoxPackagingFee,
+    otherProductsShippingFee: settings.otherProductsShippingFee,
+  });
 }

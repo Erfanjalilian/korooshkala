@@ -77,7 +77,7 @@ export default function CheckoutPage() {
   const [selectedProvince, setSelectedProvince] = useState("");
   const [shippingProfile, setShippingProfile] = useState<ShippingProfile>(emptyShippingProfile);
   const [shippingMethod, setShippingMethod] = useState<"tipax" | "bus">("tipax");
-  const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number } | null>(null);
+  const [packagingEstimate, setPackagingEstimate] = useState<{ key: string; fee: number; quantity: number; otherProductsFee: number; otherProductsQuantity: number } | null>(null);
   const estimateKey = JSON.stringify(items.map(({ productId, quantity }) => [productId, quantity]));
 
   const total = useMemo(
@@ -87,6 +87,8 @@ export default function CheckoutPage() {
   const currentEstimate = packagingEstimate?.key === estimateKey ? packagingEstimate : null;
   const packagingFee = currentEstimate?.fee ?? 0;
   const packagingQuantity = currentEstimate?.quantity ?? 0;
+  const otherProductsFee = currentEstimate?.otherProductsFee ?? 0;
+  const otherProductsQuantity = currentEstimate?.otherProductsQuantity ?? 0;
 
   useEffect(() => {
     const loadCart = async () => {
@@ -137,8 +139,8 @@ export default function CheckoutPage() {
       signal: controller.signal,
     }).then(async (response) => {
       if (!response.ok) return;
-      const estimate = await response.json() as { packagingFee: number; packagingQuantity: number };
-      setPackagingEstimate({ key: estimateKey, fee: estimate.packagingFee, quantity: estimate.packagingQuantity });
+      const estimate = await response.json() as { packagingFee: number; packagingQuantity: number; otherProductsShippingFee: number; otherProductsQuantity: number };
+      setPackagingEstimate({ key: estimateKey, fee: estimate.packagingFee, quantity: estimate.packagingQuantity, otherProductsFee: estimate.otherProductsShippingFee, otherProductsQuantity: estimate.otherProductsQuantity });
     }).catch(() => undefined);
 
     return () => controller.abort();
@@ -339,9 +341,13 @@ export default function CheckoutPage() {
               </div>
               <p className="mt-3 rounded-xl bg-[#F8FAFC] p-3 text-xs leading-6 text-[#6B7280]">برای هر محصول سایلنت باکس، مبلغ {formatPrice(packagingFee / packagingQuantity)} بابت نایلون ضربه‌گیر دریافت می‌شود.</p>
             </> : null}
+            {otherProductsQuantity > 0 ? <div className="mt-3 flex items-center justify-between text-sm text-[#6B7280]">
+              <span>هزینه ارسال سایر محصولات ({otherProductsQuantity} عدد)</span>
+              <strong className="text-[#111827]">{formatPrice(otherProductsFee)}</strong>
+            </div> : null}
             <div className="mt-5 flex items-center justify-between border-t border-[#E5E7EB] pt-4 text-lg font-extrabold text-[#111827]">
               <span>مبلغ نهایی</span>
-              <span className="text-[#2563EB]">{formatPrice(total + packagingFee)}</span>
+              <span className="text-[#2563EB]">{formatPrice(total + packagingFee + otherProductsFee)}</span>
             </div>
           </div>
         </aside>
