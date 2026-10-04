@@ -97,7 +97,10 @@ export async function GET() {
     readPages(),
     readStoreSettings(),
   ]);
-  return NextResponse.json({ products, categories, users, orders, pages, settings });
+  const newestOrdersFirst = [...orders].sort(
+    (first, second) => Date.parse(second.createdAt) - Date.parse(first.createdAt),
+  );
+  return NextResponse.json({ products, categories, users, orders: newestOrdersFirst, pages, settings });
 }
 
 export async function POST(request: Request) {
