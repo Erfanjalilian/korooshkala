@@ -270,6 +270,7 @@ type Product = {
 type Category = { slug: string; name: string; image?: string };
 type User = {
   id: string;
+  phone?: string;
   email: string;
   name: string;
   role: string;
@@ -284,6 +285,7 @@ type Order = {
   createdAt: string;
   shipping?: {
     fullName?: string;
+    phone?: string;
     postalCode?: string;
     address?: string;
     province?: string;
@@ -421,7 +423,7 @@ export default function AdminDashboard() {
       <header className="mb-7 flex flex-col gap-4 rounded-[2rem] bg-gradient-to-l from-[#172554] via-[#1D4ED8] to-[#2563EB] p-6 text-white shadow-[0_18px_45px_rgba(29,78,216,0.2)] sm:flex-row sm:items-end sm:justify-between sm:p-8">
         <div>
           <p className="text-sm font-semibold text-blue-100">
-            JAHANKALA / ADMIN1383
+            JAHANKALA / ADMIN1361
           </p>
           <h1 className="mt-2 text-3xl font-extrabold">پنل مدیریت فروشگاه</h1>
           <p className="mt-2 text-sm text-blue-100">
@@ -1053,6 +1055,9 @@ function OrdersPanel({
     });
     await onRefresh();
   };
+  const ordererPhones = new Map(
+    data.users.map((user): [string, string | undefined] => [user.id, user.phone]),
+  );
   return (
     <Panel title="مدیریت سفارش‌ها">
       <div className="grid gap-3">
@@ -1067,6 +1072,12 @@ function OrdersPanel({
                 <p className="mt-1 text-xs text-[#6B7280]">
                   کاربر: {order.userId} |{" "}
                   {new Date(order.createdAt).toLocaleDateString("fa-IR")}
+                </p>
+                <p className="mt-1 text-xs text-[#6B7280]">
+                  شماره سفارش‌دهنده:{" "}
+                  <span dir="ltr">
+                    {order.shipping?.phone || ordererPhones.get(order.userId) || "ثبت نشده"}
+                  </span>
                 </p>
               </div>
               <div className="flex items-center gap-4">
