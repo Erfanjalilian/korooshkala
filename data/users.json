@@ -26,8 +26,92 @@
     "id": "usr-cd10b886",
     "phone": "09213570389",
     "email": "",
+    "name": "عرفان جلیلیان",
+    "role": "customer",
+    "createdAt": "2026-09-23T11:02:49.530Z",
+    "shippingProfile": {
+      "firstName": "عرفان",
+      "lastName": "جلیلیان",
+      "phone": "09213570389",
+      "postalCode": "1234567891",
+      "address": "تهران خیابان بهبودی نرسیده به خیابان ستارخان کوچه ی واعظی پلاک ۱۲",
+      "province": "تهران",
+      "city": "تهران"
+    }
+  },
+  {
+    "id": "usr-67dbee3a",
+    "phone": "09124541307",
+    "email": "",
+    "name": "سیاوش شم آبادی",
+    "role": "customer",
+    "createdAt": "2026-09-26T11:37:02.950Z",
+    "shippingProfile": {
+      "firstName": "سیاوش",
+      "lastName": "شم آبادی",
+      "phone": "09124541307",
+      "postalCode": "1371914535",
+      "address": "شاداباد کوی ۱۷ شهریور خ سرحدی جنوبی کوچه چوپان",
+      "province": "تهران",
+      "city": "تهران"
+    }
+  },
+  {
+    "id": "usr-966bb1fe",
+    "phone": "09399786960",
+    "email": "",
     "name": "کاربر جدید",
     "role": "customer",
-    "createdAt": "2026-09-23T11:02:49.530Z"
+    "createdAt": "2026-09-28T06:38:18.082Z"
+  },
+  {
+    "id": "usr-1c5949c3",
+    "phone": "09059047100",
+    "email": "",
+    "name": "حصام مرادی",
+    "role": "customer",
+    "createdAt": "2026-10-04T08:12:13.683Z",
+    "shippingProfile": {
+      "firstName": "حصام",
+      "lastName": "مرادی",
+      "phone": "09059047100",
+      "postalCode": "1122334455",
+      "address": "سبزوار خیابان باهنر باهنر 14 شهریار شهریار 9 پلاک 27",
+      "province": "خراسان رضوی",
+      "city": "سبزوار"
+    }
+  },
+  {
+    "id": "usr-eaa956da",
+    "phone": "09123543911",
+    "email": "",
+    "name": "کاربر جدید",
+    "role": "customer",
+    "createdAt": "2026-10-05T17:00:52.525Z"
+  },
+  {
+    "id": "usr-9d39e922",
+    "phone": "09124589051",
+    "email": "",
+    "name": "کاربر جدید",
+    "role": "customer",
+    "createdAt": "2026-10-06T05:49:53.024Z"
+  },
+  {
+    "id": "usr-db86d471",
+    "phone": "09125504709",
+    "email": "",
+    "name": "علی اکبر امینی",
+    "role": "customer",
+    "createdAt": "2026-10-06T16:41:35.302Z",
+    "shippingProfile": {
+      "firstName": "علی اکبر",
+      "lastName": "امینی",
+      "phone": "09125504709",
+      "postalCode": "1191676135",
+      "address": "خیابان وحدت اسلامی کوچه مقدس خیابانی کوچه ابوالفضل حمامی نبش بن بست دبستان پلاک 2 واحد 5",
+      "province": "تهران",
+      "city": "تهران"
+    }
   }
 ]
