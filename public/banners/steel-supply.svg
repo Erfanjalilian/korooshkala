@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="520" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#27272A"/>
-      <stop offset="1" stop-color="#09090B"/>
+      <stop stop-color="#64748B"/>
+      <stop offset="1" stop-color="#1E293B"/>
     </linearGradient>
     <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
       <stop stop-color="#E4E4E7"/>
@@ -19,7 +19,7 @@
   </defs>
   <path fill="url(#bg)" d="M0 0h1600v520H0z"/>
   <path fill="url(#grid)" d="M0 0h1600v520H0z"/>
-  <path d="M0 430 560 335l1040 105v80H0v-90Z" fill="#18181B"/>
+  <path d="M0 430 560 335l1040 105v80H0v-90Z" fill="#1E293B"/>
   <path d="m0 432 720-110 880 105" stroke="#52525B" stroke-opacity=".45" stroke-width="2"/>
   <g opacity=".95">
     <path d="M825 130h570l-68 55H757l68-55Z" fill="#D4D4D8"/>

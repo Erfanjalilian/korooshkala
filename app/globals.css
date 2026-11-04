@@ -1,41 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: dark;
-  --page-background: #09090b;
-  --surface: #18181b;
-  --surface-raised: #202024;
-  --surface-border: #3f3f46;
-  --foreground: #f4f4f5;
-  --muted-foreground: #a1a1aa;
+  color-scheme: light;
+  --page-background: #fffaf3;
+  --surface: #ffffff;
+  --surface-raised: #fff4e6;
+  --surface-border: #e7e5e4;
+  --foreground: #292524;
+  --muted-foreground: #78716c;
 }
 
 body {
   min-height: 100vh;
   background-color: var(--page-background);
-  background-image: radial-gradient(ellipse at top, #18181b 0, #09090b 48rem);
+  background-image:
+    radial-gradient(ellipse at 12% 0%, rgb(251 146 60 / 10%), transparent 34rem),
+    radial-gradient(ellipse at 92% 10%, rgb(56 189 248 / 9%), transparent 32rem);
   color: var(--foreground);
 }
 
-body [class~="bg-white"],
-body [class~="bg-[#F8FAFC]"],
-body [class~="bg-[#F5F7FA]"],
-body [class~="bg-[#EEF2FF]"],
-body [class~="bg-[#EFF6FF]"],
-body [class~="bg-[#F0FDF4]"],
-body [class~="bg-[#E0F2FE]"],
-body [class~="bg-[#DBEAFE]"],
-body [class~="bg-[#DCFCE7]"],
-body [class~="bg-[#EDE9FE]"] {
-  background-color: var(--surface) !important;
-}
-
 body [class~="bg-white/95"] {
-  background-color: rgb(24 24 27 / 95%) !important;
+  background-color: rgb(255 255 255 / 95%) !important;
 }
 
 body [class~="bg-white/80"] {
-  background-color: rgb(39 39 42 / 80%) !important;
+  background-color: rgb(255 255 255 / 80%) !important;
 }
 
 body [class~="hover:bg-[#F8FAFC]"]:hover,
@@ -47,16 +36,16 @@ body [class~="hover:bg-[#BAE6FD]"]:hover {
 
 body [class~="from-[#DBEAFE]"],
 body [class~="from-[#EEF2FF]"] {
-  --tw-gradient-from: #27272a !important;
+  --tw-gradient-from: #e0f2fe !important;
 }
 
 body [class~="via-[#EEF2FF]"] {
-  --tw-gradient-via: #202024 !important;
+  --tw-gradient-via: #fff7ed !important;
 }
 
 body [class~="to-[#F5F7FA]"],
 body [class~="to-[#EDE9FE]"] {
-  --tw-gradient-to: #18181b !important;
+  --tw-gradient-to: #ffffff !important;
 }
 
 body [class~="text-[#111827]"] {
@@ -77,19 +66,49 @@ body [class~="border-[#BFDBFE]"],
 body [class~="border-[#BBF7D0]"],
 body [class~="border-[#BAE6FD]"],
 body [class~="border-[#93C5FD]"] {
-  border-color: #3f3f46 !important;
+  border-color: #cbd5e1 !important;
 }
 
 input,
 textarea,
 select {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 .category-card {
   position: relative;
   isolation: isolate;
   --category-glow: 249 115 22;
+}
+
+.category-slider-track {
+  display: flex;
+  width: max-content;
+  animation: category-slider-scroll 40s linear infinite;
+}
+
+.category-slider-group {
+  display: flex;
+  flex: none;
+  width: max-content;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-inline: 0.5rem;
+}
+
+.category-slider:hover .category-slider-track,
+.category-slider:focus-within .category-slider-track {
+  animation-play-state: paused;
+}
+
+@keyframes category-slider-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .category-grid > .category-card:nth-child(6n + 2) {
@@ -177,5 +196,17 @@ select {
 @media (prefers-reduced-motion: reduce) {
   .category-card::before {
     animation: none;
+  }
+
+  .category-slider {
+    overflow-x: auto;
+  }
+
+  .category-slider-track {
+    animation: none;
+  }
+
+  .category-slider-group[aria-hidden="true"] {
+    display: none;
   }
 }

@@ -21,7 +21,7 @@ export default function MobileHeader({
 
   return (
     <div className="lg:hidden">
-      <div className="flex h-[88px] items-center justify-between px-4">
+      <div className="relative flex h-[78px] items-center justify-between px-4">
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
@@ -33,16 +33,20 @@ export default function MobileHeader({
             {isMenuOpen ? <X size={21} /> : <Menu size={21} />}
           </button>
 
-          <Link href="/" aria-label="صفحه اصلی" className="flex shrink-0 items-center py-2">
-            <Image
-              src="/logo/kourosh-steel.svg"
-              alt="لوگوی کوروش کالا، فروش آهن‌آلات"
-              width={64}
-              height={64}
-              className="size-16"
-            />
-          </Link>
         </div>
+        <Link
+          href="/"
+          aria-label="صفحه اصلی"
+          className="absolute left-4 top-1/2 flex size-[4.5rem] -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border-2 border-[#FED7AA] bg-white shadow-md"
+        >
+          <Image
+            src="/logo/IMG_20261104_175835_543.jpg"
+            alt="لوگوی روشن سپهر آماد صنعت"
+            width={890}
+            height={1280}
+            className="size-full object-cover [object-position:center_20%]"
+          />
+        </Link>
 
       </div>
 

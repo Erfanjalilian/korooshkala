@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" fill="none">
   <defs>
     <linearGradient id="background" x1="800" y1="0" x2="800" y2="700" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#27272A"/>
-      <stop offset=".62" stop-color="#18181B"/>
-      <stop offset="1" stop-color="#09090B"/>
+      <stop stop-color="#64748B"/>
+      <stop offset=".62" stop-color="#334155"/>
+      <stop offset="1" stop-color="#1E293B"/>
     </linearGradient>
     <linearGradient id="beam" x1="660" y1="292" x2="1450" y2="620" gradientUnits="userSpaceOnUse">
       <stop stop-color="#E4E4E7"/>
@@ -21,11 +21,11 @@
       <stop offset="1" stop-color="#EA580C"/>
     </linearGradient>
     <linearGradient id="floor" x1="800" y1="438" x2="800" y2="700" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#27272A"/>
-      <stop offset="1" stop-color="#09090B"/>
+      <stop stop-color="#475569"/>
+      <stop offset="1" stop-color="#1E293B"/>
     </linearGradient>
     <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
-      <path d="M64 0H0v64" stroke="#A1A1AA" stroke-opacity=".08"/>
+      <path d="M64 0H0v64" stroke="#E0F2FE" stroke-opacity=".12"/>
     </pattern>
     <filter id="shadow" x="540" y="185" width="1100" height="500" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
       <feGaussianBlur stdDeviation="18"/>
@@ -36,7 +36,7 @@
   <path d="M0 520 520 402l1080 110v188H0V520Z" fill="url(#floor)"/>
   <path d="m0 526 690-105 910 92" stroke="#52525B" stroke-opacity=".36" stroke-width="2"/>
   <path d="m660 480 940 102M840 438l760 83M1040 415l560 62" stroke="#71717A" stroke-opacity=".23" stroke-width="2"/>
-  <ellipse cx="1114" cy="554" fill="#000" fill-opacity=".72" rx="480" ry="52" filter="url(#shadow)"/>
+  <ellipse cx="1114" cy="554" fill="#0F172A" fill-opacity=".48" rx="480" ry="52" filter="url(#shadow)"/>
   <path d="M815 198h660l-84 70H731l84-70Z" fill="url(#beamTop)" stroke="#D4D4D8" stroke-opacity=".65" stroke-width="2"/>
   <path d="M731 268h660v44H731v-44Z" fill="#71717A"/>
   <path d="M1391 268 1475 198v44l-84 70v-44Z" fill="#3F3F46"/>

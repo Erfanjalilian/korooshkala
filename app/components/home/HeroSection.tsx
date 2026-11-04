@@ -22,7 +22,7 @@ export default function HeroSection() {
         }}
       >
         {/* Overlay برای خوانایی متن */}
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-l from-black/60 via-black/35 to-black/20" />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-l from-slate-950/35 via-slate-950/15 to-transparent" />
 
         {/* افکت نور روی عکس */}
         <div className="pointer-events-none absolute inset-0 -z-10 opacity-20 [background-image:radial-gradient(circle_at_15%_20%,white_0,transparent_28%),radial-gradient(circle_at_90%_80%,white_0,transparent_32%)]" />

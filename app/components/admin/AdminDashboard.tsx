@@ -102,9 +102,9 @@ function ProductFormModal({
                 .find((category) => category.slug === selectedCategorySlug)
                 ?.subcategories?.map((group) => (
                   <optgroup key={group.slug} label={group.name}>
-                    {group.items.map((item) => (
+                    {getLeafSubcategories(group.items).map((item) => (
                       <option key={item.slug} value={item.slug}>
-                        {item.name}
+                        {item.path.join(" / ")}
                       </option>
                     ))}
                   </optgroup>
@@ -312,9 +312,25 @@ type Category = {
   subcategories?: {
     slug: string;
     name: string;
-    items: { slug: string; name: string }[];
+    items: CategorySubcategory[];
   }[];
 };
+type CategorySubcategory = {
+  slug: string;
+  name: string;
+  items?: CategorySubcategory[];
+};
+
+const getLeafSubcategories = (
+  items: CategorySubcategory[],
+  parentNames: string[] = [],
+): Array<CategorySubcategory & { path: string[] }> =>
+  items.flatMap((item) => {
+    const path = [...parentNames, item.name];
+    return item.items?.length
+      ? getLeafSubcategories(item.items, path)
+      : [{ ...item, path }];
+  });
 type User = {
   id: string;
   phone?: string;

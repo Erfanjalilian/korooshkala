@@ -151,7 +151,7 @@ Siavash.m2020@gmail.com              </p>
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-[#E5E7EB] pt-5 text-xs text-[#9CA3AF] sm:flex-row sm:items-center sm:justify-between">
-          
+          <p>مدیر پروژه سیاوش: 09124541307</p>
           <p>طراحی‌شده توسط عرفان جلیلیان</p>
         </div>
       </div>

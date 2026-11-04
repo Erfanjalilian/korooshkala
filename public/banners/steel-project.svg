@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1500" y2="520" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#18181B"/>
-      <stop offset=".56" stop-color="#27272A"/>
-      <stop offset="1" stop-color="#09090B"/>
+      <stop stop-color="#64748B"/>
+      <stop offset=".56" stop-color="#334155"/>
+      <stop offset="1" stop-color="#1E293B"/>
     </linearGradient>
     <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1">
       <stop stop-color="#E4E4E7"/>
@@ -20,7 +20,7 @@
   </defs>
   <path fill="url(#bg)" d="M0 0h1600v520H0z"/>
   <path fill="url(#grid)" d="M0 0h1600v520H0z"/>
-  <path d="M0 440 640 330l960 118v72H0v-80Z" fill="#09090B" fill-opacity=".7"/>
+  <path d="M0 440 640 330l960 118v72H0v-80Z" fill="#0F172A" fill-opacity=".48"/>
   <path d="M755 420V150h465v270M820 420V212h335v208M755 150h465M820 212h335" stroke="url(#beam)" stroke-width="18"/>
   <path d="M890 212v208m132-208v208m132-208v208" stroke="#A1A1AA" stroke-opacity=".62" stroke-width="9"/>
   <path d="m755 150 66 62m399-62-65 62M820 212l70 68m265-68-65 68" stroke="#D4D4D8" stroke-opacity=".48" stroke-width="6"/>

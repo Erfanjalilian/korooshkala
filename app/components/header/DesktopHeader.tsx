@@ -31,7 +31,7 @@ export default function DesktopHeader() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   return (
-    <div className="hidden h-24 items-center justify-between px-6 lg:flex xl:px-12">
+    <div className="relative hidden h-24 items-center justify-between px-6 lg:flex xl:px-12">
       {/* Left */}
       <div className="flex items-center gap-3">
         <div className="group/menu relative">
@@ -92,21 +92,18 @@ export default function DesktopHeader() {
         </div>
       </div>
 
-      {/* Center */}
       <Link
         href="/"
-        className="absolute left-1/2 flex -translate-x-1/2 items-center py-2"
+        className="absolute left-6 top-1/2 flex size-21 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border-2 border-[#FED7AA] bg-white shadow-md xl:left-10"
         aria-label="صفحه اصلی"
       >
-        <div className="flex items-center gap-2">
-          <Image
-            src="/logo/kourosh-steel.svg"
-            alt="لوگوی کوروش کالا، فروش آهن‌آلات"
-            width={80}
-            height={80}
-            className="h-20 w-20"
-          />
-        </div>
+        <Image
+          src="/logo/IMG_20261104_175835_543.jpg"
+          alt="لوگوی روشن سپهر آماد صنعت"
+          width={890}
+          height={1280}
+          className="size-full object-cover [object-position:center_20%]"
+        />
       </Link>
 
     </div>

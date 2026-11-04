@@ -41,7 +41,28 @@ type Category = {
   slug: string;
   name: string;
   image?: string;
-  subcategories?: { slug: string; name: string; items: { slug: string; name: string }[] }[];
+  subcategories?: CategorySubcategoryGroup[];
+};
+type CategorySubcategory = {
+  slug: string;
+  name: string;
+  items?: CategorySubcategory[];
+};
+type CategorySubcategoryGroup = {
+  slug: string;
+  name: string;
+  items: CategorySubcategory[];
+};
+
+const findSubcategory = (
+  items: CategorySubcategory[],
+  slug: string,
+): CategorySubcategory | undefined => {
+  for (const item of items) {
+    if (item.slug === slug) return item;
+    const nestedMatch = item.items ? findSubcategory(item.items, slug) : undefined;
+    if (nestedMatch) return nestedMatch;
+  }
 };
 
 type ApiResponse = {
@@ -133,7 +154,14 @@ export default function ProductCatalog({
     .find((item) => item.slug === category)
     ?.subcategories
     ?.flatMap((group) => group.items)
-    .find((item) => item.slug === subcategory);
+    .reduce<CategorySubcategory | undefined>(
+      (match, item) => match ?? (item.slug === subcategory
+        ? item
+        : item.items
+          ? findSubcategory(item.items, subcategory)
+          : undefined),
+      undefined,
+    );
 
   const categoryFilter = (
     <div className="grid gap-1">

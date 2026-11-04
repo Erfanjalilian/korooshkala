@@ -28,7 +28,11 @@ export type Product = {
   isDiscounted?: boolean;
 };
 
-export type CategorySubcategory = { slug: string; name: string };
+export type CategorySubcategory = {
+  slug: string;
+  name: string;
+  items?: CategorySubcategory[];
+};
 export type CategorySubcategoryGroup = {
   slug: string;
   name: string;

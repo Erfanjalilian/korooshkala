@@ -7,7 +7,7 @@ export default function ServiceBanner() {
       className="relative isolate mt-10 overflow-hidden rounded-3xl border border-[#52525B] bg-cover bg-center px-6 py-7 sm:mt-12 sm:px-10 sm:py-9"
       style={{ backgroundImage: "url('/banners/steel-delivery.svg')" }}
     >
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#09090B]/95 via-[#09090B]/80 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/75 via-slate-950/50 to-transparent" />
       <div dir="ltr" className="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
         <div dir="rtl" className="max-w-xl">
           <span className="inline-flex items-center gap-2 text-xs font-bold text-orange-300">
