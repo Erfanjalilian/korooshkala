@@ -41,13 +41,9 @@ export default function HeroSection() {
             کیفیت فولاد، پایهٔ هر سازهٔ ماندگار
           </h1>
 
-          <p className="mt-4 max-w-lg text-sm leading-7 text-white/80 sm:text-base">
-            انواع مقاطع فولادی و آهن‌آلات را با اطمینان از کوروش کالا تهیه کنید.
-          </p>
-
           <Link
             href="/products"
-            className="mt-7 inline-flex h-12 items-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-[#2563EB] transition hover:bg-[#F8FAFC] hover:text-[#7C3AED] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+            className="mt-4 inline-flex h-12 items-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-[#2563EB] transition hover:bg-[#F8FAFC] hover:text-[#7C3AED] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40 sm:mt-5"
           >
             مشاهده آهن‌آلات
             <ArrowLeft aria-hidden="true" size={18} />
