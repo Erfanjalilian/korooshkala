@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, Menu, ShoppingCart, User } from "lucide-react";
+import { ChevronLeft, Menu } from "lucide-react";
 import { useState } from "react";
 import CategoryDropdown from "@/app/components/header/CategoryDropdown";
-import CartCount from "@/app/components/header/CartCount";
-import { useStoredAuthUser } from "@/app/components/auth/auth-storage";
 
 const navigationItems = [
   {
@@ -30,7 +28,7 @@ const navigationItems = [
 
 export default function DesktopHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const authUser = useStoredAuthUser();
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   return (
     <div className="hidden h-24 items-center justify-between px-6 lg:flex xl:px-12">
@@ -58,22 +56,36 @@ export default function DesktopHeader() {
           >
             {navigationItems.map((item) => (
               <div key={item.title} className="group/product relative">
-                <Link
-                  href={item.href}
-                  className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-[#111827] transition hover:bg-[#F8FAFC] hover:text-[#2563EB]"
-                >
-                  <span>{item.title}</span>
-
-                  {item.hasCategories && (
+                {item.hasCategories ? (
+                  <button
+                    type="button"
+                    onClick={() => setCategoriesOpen((open) => !open)}
+                    aria-expanded={categoriesOpen}
+                    className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-right text-sm font-medium text-[#111827] transition hover:bg-[#F8FAFC] hover:text-[#2563EB]"
+                  >
+                    <span>{item.title}</span>
                     <ChevronLeft
                       aria-hidden="true"
                       size={16}
-                      className="shrink-0 text-[#7C3AED]"
+                      className={`shrink-0 text-[#7C3AED] transition-transform ${categoriesOpen ? "rotate-180" : ""}`}
                     />
-                  )}
-                </Link>
+                  </button>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-[#111827] transition hover:bg-[#F8FAFC] hover:text-[#2563EB]"
+                  >
+                    <span>{item.title}</span>
+                  </Link>
+                )}
 
-                {item.hasCategories && <CategoryDropdown />}
+                {item.hasCategories && categoriesOpen ? (
+                  <CategoryDropdown variant="desktop" onNavigate={() => {
+                    setCategoriesOpen(false);
+                    setMenuOpen(false);
+                  }} />
+                ) : null}
               </div>
             ))}
           </div>
@@ -88,39 +100,15 @@ export default function DesktopHeader() {
       >
         <div className="flex items-center gap-2">
           <Image
-            src="/logo/IMG_20260918_171528_557.jpg"
-            alt="لوگوی فروشگاه"
+            src="/logo/kourosh-steel.svg"
+            alt="لوگوی کوروش کالا، فروش آهن‌آلات"
             width={80}
             height={80}
-            className="h-20 w-20 rounded-full object-cover"
+            className="h-20 w-20"
           />
         </div>
       </Link>
 
-      {/* Right */}
-      <div className="flex items-center gap-3">
-        <Link
-          href="/cart"
-          aria-label="سبد خرید"
-          className="relative flex h-11 items-center gap-2 rounded-xl border border-[#E5E7EB] px-4 text-sm font-medium text-[#111827] transition hover:border-[#2563EB] hover:text-[#2563EB]"
-        >
-          <ShoppingCart size={20} />
-
-          <span>سبد خرید</span>
-
-          <CartCount />
-        </Link>
-
-        <Link
-          href={authUser ? "/account" : "/auth"}
-          aria-label="ورود و ثبت نام"
-          className="flex h-11 items-center gap-2 rounded-xl bg-[#2563EB] px-4 text-sm font-semibold text-white transition hover:bg-[#7C3AED]"
-        >
-          <User size={19} />
-
-          <span>{authUser?.phone || "ورود به فروشگاه"}</span>
-        </Link>
-      </div>
     </div>
   );
 }

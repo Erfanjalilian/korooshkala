@@ -24,6 +24,7 @@ type Product = {
   compareAtPrice: number;
   category: string;
   categorySlug: string;
+  subcategorySlug?: string;
   brand: string;
   stock: number;
   rating: number;
@@ -36,7 +37,12 @@ type Product = {
   isDiscounted?: boolean;
 };
 
-type Category = { slug: string; name: string; image?: string };
+type Category = {
+  slug: string;
+  name: string;
+  image?: string;
+  subcategories?: { slug: string; name: string; items: { slug: string; name: string }[] }[];
+};
 
 type ApiResponse = {
   products: Product[];
@@ -63,11 +69,13 @@ const getDiscountPercent = (price: number, compareAtPrice: number) =>
 
 interface ProductCatalogProps {
   initialCategory?: string;
+  initialSubcategory?: string;
   initialQuery?: string;
 }
 
 export default function ProductCatalog({
   initialCategory,
+  initialSubcategory,
   initialQuery,
 }: ProductCatalogProps) {
   const [products, setProducts] = useState<Product[]>([]);
@@ -75,6 +83,7 @@ export default function ProductCatalog({
   const [query, setQuery] = useState(initialQuery ?? "");
   const [activeQuery, setActiveQuery] = useState(initialQuery ?? "");
   const [category, setCategory] = useState(initialCategory ?? "all");
+  const [subcategory, setSubcategory] = useState(initialSubcategory ?? "");
   const [sort, setSort] = useState("featured");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -86,6 +95,7 @@ export default function ProductCatalog({
 
     if (activeQuery) params.set("q", activeQuery);
     if (category !== "all") params.set("category", category);
+    if (subcategory) params.set("subcategory", subcategory);
     if (sort !== "featured") params.set("sort", sort);
 
     fetch(`/api/products?${params.toString()}`, {
@@ -109,7 +119,7 @@ export default function ProductCatalog({
       })
 
     return () => controller.abort();
-  }, [activeQuery, category, sort]);
+  }, [activeQuery, category, subcategory, sort]);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -119,6 +129,11 @@ export default function ProductCatalog({
   const uniqueCategories = Array.from(
     new Map(categories.map((item) => [item.slug, item])).values(),
   );
+  const activeSubcategory = categories
+    .find((item) => item.slug === category)
+    ?.subcategories
+    ?.flatMap((group) => group.items)
+    .find((item) => item.slug === subcategory);
 
   const categoryFilter = (
     <div className="grid gap-1">
@@ -126,6 +141,7 @@ export default function ProductCatalog({
         type="button"
         onClick={() => {
           setCategory("all");
+          setSubcategory("");
           setMobileFiltersOpen(false);
         }}
         className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-right text-sm transition ${
@@ -145,6 +161,7 @@ export default function ProductCatalog({
             type="button"
             onClick={() => {
               setCategory(item.slug);
+              setSubcategory("");
               setMobileFiltersOpen(false);
             }}
             className={`flex items-center gap-2 rounded-xl px-3 py-2.5 text-right text-sm transition ${
@@ -248,7 +265,9 @@ export default function ProductCatalog({
             <div>
               <p className="text-xs font-bold text-[#7C3AED]">موجود در فروشگاه</p>
               <h2 id="catalog-title" className="mt-1 text-xl font-extrabold text-[#111827]">
-                {loading ? "در حال دریافت..." : `${products.length} محصول برای شما`}
+                {loading
+                  ? "در حال دریافت..."
+                  : `${products.length} محصول${activeSubcategory ? ` در ${activeSubcategory.name}` : " برای شما"}`}
               </h2>
             </div>
             <label className="flex items-center gap-2 text-sm text-[#6B7280]">

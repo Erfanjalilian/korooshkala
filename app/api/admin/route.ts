@@ -13,6 +13,7 @@ import {
   writeJson,
   type Product,
 } from "@/lib/store";
+import { isAuthorizedAdminRequest, responseWithAdminUnauthorized } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
@@ -54,6 +55,7 @@ async function readProductForm(formData: FormData, current?: Product): Promise<P
     formData.get("categorySlug"),
     categories.find((item) => item.name === category)?.slug ?? current?.categorySlug ?? slugify(category),
   );
+  const subcategorySlug = textValue(formData.get("subcategorySlug"), current?.subcategorySlug);
 
   return {
     id: current?.id ?? `prd-${randomUUID().slice(0, 8)}`,
@@ -68,6 +70,7 @@ async function readProductForm(formData: FormData, current?: Product): Promise<P
     currency: "IRR",
     category,
     categorySlug,
+    subcategorySlug: subcategorySlug || undefined,
     brand: textValue(formData.get("brand"), current?.brand),
     stock: numberValue(formData.get("stock"), current?.stock),
     rating: ratingValue(formData.get("rating"), current?.rating ?? 0),
@@ -88,7 +91,11 @@ async function readProductForm(formData: FormData, current?: Product): Promise<P
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const [products, categories, users, orders, pages, settings] = await Promise.all([
     readProducts(),
     readCategories(),
@@ -104,6 +111,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const resource = new URL(request.url).searchParams.get("resource");
 
   if (resource === "products") {
@@ -130,6 +141,10 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const params = new URL(request.url).searchParams;
   const resource = params.get("resource");
   const id = params.get("id");
@@ -150,7 +165,7 @@ export async function PATCH(request: Request) {
     const formData = await request.formData();
     const name = textValue(formData.get("name"), current.name);
     const updated = {
-      slug: current.slug,
+      ...current,
       name,
       image: await saveImage(formData.get("image")) ?? current.image,
     };
@@ -226,6 +241,10 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const params = new URL(request.url).searchParams;
   const resource = params.get("resource");
   const id = params.get("id");

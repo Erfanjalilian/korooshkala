@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
+import { isAuthorizedAdminRequest, responseWithAdminUnauthorized } from "@/lib/admin-auth";
 import { getDigikalaConfig } from "@/lib/digikala/config";
 import { readDigikalaAuthState, writeDigikalaAuthState } from "@/lib/digikala/storage";
 
 export const runtime = "nodejs";
 
-export async function POST() {
+export async function POST(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   try {
     const state = await readDigikalaAuthState();
     const refreshToken = state.refreshToken;

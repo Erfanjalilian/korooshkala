@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <linearGradient id="steel" x1="42" y1="31" x2="119" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAFAFA"/>
+      <stop offset=".48" stop-color="#A1A1AA"/>
+      <stop offset="1" stop-color="#52525B"/>
+    </linearGradient>
+    <linearGradient id="ember" x1="54" y1="105" x2="107" y2="57" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F97316"/>
+      <stop offset="1" stop-color="#FBBF24"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="77" fill="#09090B"/>
+  <circle cx="80" cy="80" r="72.5" stroke="#52525B" stroke-width="2"/>
+  <circle cx="80" cy="80" r="62" stroke="#27272A"/>
+  <path d="M43 43h74v17H89v40h28v17H43v-17h28V60H43V43Z" fill="url(#steel)" stroke="#E4E4E7" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M80 60v40" stroke="#3F3F46" stroke-width="3"/>
+  <path d="m105 38 3.8 10.2L119 52l-10.2 3.8L105 66l-3.8-10.2L91 52l10.2-3.8L105 38Z" fill="url(#ember)" stroke="#09090B" stroke-width="2" stroke-linejoin="round"/>
+  <path d="m49 111 2.4 6.6L58 120l-6.6 2.4L49 129l-2.4-6.6L40 120l6.6-2.4L49 111Z" fill="#F97316"/>
+  <path d="M52 132h56" stroke="#F97316" stroke-linecap="round" stroke-width="3"/>
+</svg>

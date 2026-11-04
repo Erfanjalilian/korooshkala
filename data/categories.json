@@ -1,57 +1,476 @@
 [
   {
-    "slug": "digital",
-    "name": "لوازم دیجیتال و الکتریکی",
-    "image": "/uploads/1789817309903-5f3fb04e-b839-46f8-a9c4-f41b30f899d9.jpg"
+    "slug": "rebar",
+    "name": "میلگرد",
+    "image": "/categories/rebar.svg",
+    "subcategories": [
+      {
+        "slug": "types",
+        "name": "نوع میلگرد",
+        "items": [
+          { "slug": "ribbed", "name": "میلگرد آجدار" },
+          { "slug": "plain", "name": "میلگرد ساده" },
+          { "slug": "coil", "name": "میلگرد کلاف" },
+          { "slug": "thermal", "name": "میلگرد حرارتی" },
+          { "slug": "bed", "name": "میلگرد بستر" },
+          { "slug": "alloy", "name": "میلگرد آلیاژی" },
+          { "slug": "coupler", "name": "کوپلر" }
+        ]
+      },
+      {
+        "slug": "selected-sizes",
+        "name": "سایزهای منتخب میلگرد",
+        "items": [
+          { "slug": "size-8", "name": "میلگرد ۸" },
+          { "slug": "size-10", "name": "میلگرد ۱۰" },
+          { "slug": "size-12", "name": "میلگرد ۱۲" },
+          { "slug": "size-14", "name": "میلگرد ۱۴" },
+          { "slug": "size-16", "name": "میلگرد ۱۶" },
+          { "slug": "size-18", "name": "میلگرد ۱۸" },
+          { "slug": "size-20", "name": "میلگرد ۲۰" },
+          { "slug": "size-22", "name": "میلگرد ۲۲" },
+          { "slug": "size-25", "name": "میلگرد ۲۵" },
+          { "slug": "size-28", "name": "میلگرد ۲۸" },
+          { "slug": "size-32", "name": "میلگرد ۳۲" }
+        ]
+      },
+      {
+        "slug": "selected-brands",
+        "name": "برندهای منتخب میلگرد",
+        "items": [
+          { "slug": "isfahan", "name": "میلگرد اصفهان" },
+          { "slug": "neyshabur", "name": "میلگرد نیشابور" },
+          { "slug": "mianeh", "name": "میلگرد میانه" },
+          { "slug": "zafar-bonab", "name": "میلگرد ظفر بناب" },
+          { "slug": "fayco", "name": "میلگرد فایکو" },
+          { "slug": "rad-hamedan", "name": "میلگرد راد همدان" },
+          { "slug": "bafgh", "name": "میلگرد بافق" },
+          { "slug": "anahita", "name": "میلگرد آناهیتا" },
+          { "slug": "zagros", "name": "میلگرد زاگرس" },
+          { "slug": "abarkooh", "name": "میلگرد ابرکوه" },
+          { "slug": "shahroud", "name": "میلگرد شاهرود" },
+          { "slug": "shahin-bonab", "name": "میلگرد شاهین بناب" },
+          { "slug": "ahvaz", "name": "میلگرد اهواز" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "watches-accessories",
-    "name": "قهوه و خشکبار",
-    "image": "/uploads/1789817337361-970919d7-6c1a-4c1e-aad5-b2d893f088ce.jpg"
+    "slug": "profile",
+    "name": "پروفیل",
+    "image": "/categories/profile.svg",
+    "subcategories": [
+      {
+        "slug": "profile-types",
+        "name": "انواع پروفیل",
+        "items": [
+          { "slug": "building-profile", "name": "پروفیل ساختمانی" },
+          { "slug": "column-profile", "name": "پروفیل ستونی" },
+          { "slug": "corrugated-profile", "name": "پروفیل کنگره" },
+          { "slug": "industrial-profile", "name": "پروفیل صنعتی" },
+          { "slug": "z-profile", "name": "پروفیل Z" },
+          { "slug": "galvanized-profile", "name": "پروفیل گالوانیزه" },
+          { "slug": "lightweight-profile", "name": "پروفیل سبک" },
+          { "slug": "stainless-profile", "name": "پروفیل استیل" },
+          { "slug": "aluminum-profile", "name": "پروفیل آلومینیوم" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "home",
-    "name": "لوازم خانه و آشپزخانه",
-    "image": "/uploads/1789817376627-17bd3d12-6feb-4a5d-8ba3-9aaecc4329eb.jpg"
+    "slug": "sheet",
+    "name": "ورق",
+    "image": "/categories/sheet.svg",
+    "subcategories": [
+      {
+        "slug": "hot-sheet",
+        "name": "ورق گرم",
+        "items": [
+          { "slug": "black-sheet", "name": "ورق سیاه" },
+          { "slug": "a283-sheet", "name": "ورق A283" },
+          { "slug": "st52-sheet", "name": "ورق ST52" },
+          { "slug": "a516-sheet", "name": "ورق A516" },
+          { "slug": "a36-sheet", "name": "ورق A36" },
+          { "slug": "a131-sheet", "name": "ورق A131" },
+          { "slug": "17mn4-sheet", "name": "ورق 17MN4" },
+          { "slug": "ck45-sheet", "name": "ورق CK45" },
+          { "slug": "wear-resistant-sheet", "name": "ورق ضد سایش" },
+          { "slug": "checkered-sheet", "name": "ورق آجدار" },
+          { "slug": "pickled-sheet", "name": "ورق اسیدشویی" },
+          { "slug": "slab", "name": "اسلب" },
+          { "slug": "black-perforated-sheet", "name": "ورق پانچ سیاه" }
+        ]
+      },
+      {
+        "slug": "cold-coated-sheet",
+        "name": "ورق سرد و پوشش‌دار",
+        "items": [
+          { "slug": "galvanized-sheet", "name": "ورق گالوانیزه" },
+          { "slug": "oiled-sheet", "name": "ورق روغنی" },
+          { "slug": "colored-sheet", "name": "ورق رنگی" },
+          { "slug": "roofing-sheet", "name": "ورق شیروانی" },
+          { "slug": "tinplate-sheet", "name": "ورق قلع اندود" },
+          { "slug": "aluzinc-sheet", "name": "ورق آلوزینک" },
+          { "slug": "galvalume-sheet", "name": "ورق گالوالوم" },
+          { "slug": "galvanized-steel-deck", "name": "ورق عرشه فولادی گالوانیزه" },
+          { "slug": "deck-stud", "name": "گل میخ عرشه" },
+          { "slug": "electrostatic-colored-sheet", "name": "ورق رنگی الکترواستاتیک" },
+          { "slug": "corrugated-sheet", "name": "ورق کرکره" },
+          { "slug": "colored-corrugated-sheet", "name": "ورق کرکره رنگی" }
+        ]
+      },
+      {
+        "slug": "stainless-sheet",
+        "name": "استیل",
+        "items": [
+          { "slug": "stainless-steel-sheet", "name": "ورق استیل" },
+          { "slug": "industrial-stainless-sheet", "name": "ورق استیل صنعتی" },
+          { "slug": "decorative-stainless-sheet", "name": "ورق استیل دکوراتیو" }
+        ]
+      },
+      {
+        "slug": "non-steel-sheet",
+        "name": "غیر فولادی",
+        "items": [
+          { "slug": "fiberglass-sheet", "name": "ورق فایبرگلاس" },
+          { "slug": "polycarbonate-sheet", "name": "ورق پلی کربنات" },
+          { "slug": "geomembrane-sheet", "name": "ورق ژئوممبران" },
+          { "slug": "geotextile-sheet", "name": "ورق ژئوتکستایل" }
+        ]
+      },
+      {
+        "slug": "sandwich-panel",
+        "name": "ساندویچ پانل",
+        "items": [
+          { "slug": "sandwich-panel-general", "name": "ساندویچ پانل" },
+          { "slug": "roof-sandwich-panel", "name": "ساندویچ پانل سقفی" },
+          { "slug": "wall-sandwich-panel", "name": "ساندویچ پانل دیواری" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "clothing",
-    "name": "محصولات خودرو",
-    "image": "/uploads/1789817435403-1065bdbd-f1ac-4818-8988-1199d2327a88.jpg"
+    "slug": "angle-channel",
+    "name": "نبشی و ناودانی",
+    "image": "/categories/angle-channel.svg",
+    "subcategories": [
+      {
+        "slug": "angle",
+        "name": "نبشی",
+        "items": [
+          { "slug": "angle-general", "name": "نبشی" },
+          { "slug": "angle-size-3", "name": "نبشی سایز ۳" },
+          { "slug": "angle-size-4", "name": "نبشی سایز ۴" },
+          { "slug": "angle-size-5", "name": "نبشی سایز ۵" }
+        ]
+      },
+      {
+        "slug": "channel",
+        "name": "ناودانی",
+        "items": [
+          { "slug": "channel-general", "name": "ناودانی" },
+          { "slug": "channel-building", "name": "ناودانی ساختمانی" },
+          { "slug": "channel-european", "name": "ناودانی اروپایی" }
+        ]
+      },
+      {
+        "slug": "wall-post",
+        "name": "وال‌پست",
+        "items": [
+          { "slug": "wall-post-general", "name": "وال پست" }
+        ]
+      },
+      {
+        "slug": "tee-bar",
+        "name": "سپری",
+        "items": [
+          { "slug": "tee-bar-general", "name": "سپری" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "coffee-drinks",
-    "name": "تجهيزات نظارتی",
-    "image": "/uploads/1789817459360-a29ec0b7-1c99-42fa-ae29-fd764b5b2e1d.jpg"
+    "slug": "beam",
+    "name": "تیرآهن",
+    "image": "/categories/beam.svg",
+    "subcategories": [
+      {
+        "slug": "beam-types",
+        "name": "انواع تیرآهن",
+        "items": [
+          { "slug": "beam-general", "name": "تیرآهن" },
+          { "slug": "h-beam", "name": "هاش" },
+          { "slug": "h-beam-light", "name": "هاش سبک" },
+          { "slug": "h-beam-heavy", "name": "هاش سنگین" },
+          { "slug": "honeycomb-beam", "name": "تیرآهن لانه زنبوری" },
+          { "slug": "rail", "name": "ریل" },
+          { "slug": "mining-rail", "name": "ریل معدنی" },
+          { "slug": "crane-rail", "name": "ریل جرثقیلی" },
+          { "slug": "elevator-rail", "name": "ریل آسانسوری" }
+        ]
+      },
+      {
+        "slug": "selected-beam-sizes",
+        "name": "سایزهای منتخب",
+        "items": [
+          { "slug": "beam-size-12", "name": "تیرآهن ۱۲" },
+          { "slug": "beam-size-14", "name": "تیرآهن ۱۴" },
+          { "slug": "beam-size-16", "name": "تیرآهن ۱۶" },
+          { "slug": "beam-size-18", "name": "تیرآهن ۱۸" },
+          { "slug": "beam-size-20", "name": "تیرآهن ۲۰" },
+          { "slug": "beam-size-22", "name": "تیرآهن ۲۲" },
+          { "slug": "beam-size-24", "name": "تیرآهن ۲۴" },
+          { "slug": "beam-size-27", "name": "تیرآهن ۲۷" },
+          { "slug": "beam-size-30", "name": "تیرآهن ۳۰" }
+        ]
+      },
+      {
+        "slug": "selected-beam-brands",
+        "name": "برندهای منتخب",
+        "items": [
+          { "slug": "fayco-beam", "name": "تیرآهن فایکو" },
+          { "slug": "kermanshah-beam", "name": "تیرآهن کرمانشاه" },
+          { "slug": "yazd-beam", "name": "تیرآهن یزد" },
+          { "slug": "aryan-steel-beam", "name": "تیرآهن آریان فولاد" },
+          { "slug": "khayyam-neyshabur-beam", "name": "تیرآهن خیام نیشابور" },
+          { "slug": "mahan-beam", "name": "تیرآهن ماهان" },
+          { "slug": "atlas-beam", "name": "تیرآهن اطلس" },
+          { "slug": "bonab-beam", "name": "تیرآهن بناب" },
+          { "slug": "ahvaz-beam", "name": "تیرآهن اهواز" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "beauty-health",
-    "name": "لوازم آرایشی و بهداشتی",
-    "image": "/uploads/1789817488615-0d6ac215-2168-47b4-9349-641071281712.jpg"
+    "slug": "pipe",
+    "name": "لوله",
+    "image": "/categories/pipe.svg",
+    "subcategories": [
+      {
+        "slug": "pipe-types",
+        "name": "انواع لوله",
+        "items": [
+          { "slug": "welded-pipe", "name": "لوله درزدار" },
+          { "slug": "scaffolding-pipe", "name": "لوله داربست" },
+          { "slug": "scaffolding-accessories", "name": "لوازم داربستی" },
+          { "slug": "russian-wood-plank", "name": "تخته روسی" },
+          { "slug": "water-test-pipe", "name": "لوله تست آب" },
+          { "slug": "domestic-gas-pipe", "name": "لوله گاز خانگی" },
+          { "slug": "api-pipe", "name": "لوله API" },
+          { "slug": "well-casing-pipe", "name": "لوله جدار چاه" },
+          { "slug": "galvanized-pipe", "name": "لوله گالوانیزه" },
+          { "slug": "greenhouse-pipe", "name": "لوله گلخانه" },
+          { "slug": "seamless-pipe", "name": "لوله بدون درز" },
+          { "slug": "mannesmann-pipe", "name": "لوله مانیسمان" },
+          { "slug": "thick-wall-pipe", "name": "لوله گوشتدار" }
+        ]
+      },
+      {
+        "slug": "stainless-copper-aluminum-pipe",
+        "name": "لوله استیل، مس و آلومینیوم",
+        "items": [
+          { "slug": "stainless-pipe", "name": "لوله استیل" },
+          { "slug": "industrial-stainless-pipe", "name": "لوله استیل صنعتی" },
+          { "slug": "decorative-stainless-pipe", "name": "لوله استیل دکوراتیو" },
+          { "slug": "food-grade-stainless-pipe", "name": "لوله استیل صنایع غذایی" },
+          { "slug": "copper-pipe", "name": "لوله مسی" },
+          { "slug": "aluminum-pipe", "name": "لوله آلومینیومی" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "اسباب-بازی",
-    "name": "اسباب‌ بازی",
-    "image": "/uploads/1789817516956-52a432cb-155b-46a4-b3ba-23bb265061c3.jpg"
+    "slug": "stainless",
+    "name": "استیل",
+    "image": "/categories/stainless.svg",
+    "subcategories": [
+      {
+        "slug": "stainless-sheets",
+        "name": "ورق استیل",
+        "items": [
+          { "slug": "stainless-sheet", "name": "ورق استیل" },
+          { "slug": "industrial-stainless-sheet", "name": "ورق استیل صنعتی" },
+          { "slug": "decorative-stainless-sheet", "name": "ورق استیل دکوراتیو" }
+        ]
+      },
+      {
+        "slug": "stainless-sections",
+        "name": "لوله و پروفیل استیل",
+        "items": [
+          { "slug": "stainless-pipe", "name": "لوله استیل" },
+          { "slug": "stainless-profile", "name": "پروفیل استیل" }
+        ]
+      },
+      {
+        "slug": "stainless-bars",
+        "name": "مقاطع استیل",
+        "items": [
+          { "slug": "stainless-rebar", "name": "میلگرد استیل" },
+          { "slug": "stainless-angle", "name": "نبشی استیل" },
+          { "slug": "stainless-channel", "name": "ناودانی استیل" }
+        ]
+      },
+      {
+        "slug": "stainless-wire-products",
+        "name": "محصولات سیمی استیل",
+        "items": [
+          { "slug": "stainless-welding-wire", "name": "سیم جوش استیل" },
+          { "slug": "stainless-wire", "name": "سیم مفتول استیل" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "سایلنت-باکس",
-    "name": "سایلنت باکس",
-    "image": "/uploads/1789817207828-ce2575ee-e1b8-4700-ac45-8142b393fd8d.webp"
+    "slug": "grating-belt",
+    "name": "گریتینگ و تسمه",
+    "image": "/categories/grating-belt.svg",
+    "subcategories": [
+      {
+        "slug": "grating",
+        "name": "گریتینگ",
+        "items": [
+          { "slug": "grating-general", "name": "گریتینگ" },
+          { "slug": "belt-in-belt", "name": "تسمه در تسمه" },
+          { "slug": "belt-in-rebar", "name": "تسمه در میلگرد" },
+          { "slug": "belt-in-square-bar", "name": "تسمه در چهارپهلو" },
+          { "slug": "belt-in-half-belt", "name": "تسمه در نیم تسمه" }
+        ]
+      },
+      {
+        "slug": "belt-types",
+        "name": "تسمه",
+        "items": [
+          { "slug": "belt-general", "name": "تسمه" },
+          { "slug": "machined-belt", "name": "تسمه ماشین کاری" },
+          { "slug": "factory-belt", "name": "تسمه فابریک" },
+          { "slug": "rolled-belt", "name": "تسمه نوردی" }
+        ]
+      },
+      {
+        "slug": "square-bar",
+        "name": "چهارپهلو",
+        "items": [
+          { "slug": "square-bar-general", "name": "چهارپهلو" },
+          { "slug": "normal-square-bar", "name": "چهارپهلو نرمال" },
+          { "slug": "bright-square-bar", "name": "چهارپهلو ترانس" },
+          { "slug": "alloy-square-bar", "name": "چهارپهلو آلیاژی" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "ظروف-یک-بار-مصرف",
-    "name": "ظروف یک بار مصرف",
-    "image": "/uploads/1789817413184-60f47cbc-a988-4c2d-9400-3287903cd623.jpg"
+    "slug": "equipment",
+    "name": "تجهیزات",
+    "image": "/categories/equipment.svg",
+    "subcategories": [
+      {
+        "slug": "connections",
+        "name": "اتصالات",
+        "items": [
+          { "slug": "fitting-reducer", "name": "تبدیل" },
+          { "slug": "fitting-nipple", "name": "سردنده" },
+          { "slug": "fitting-tee", "name": "سه راه فلزی" },
+          { "slug": "fitting-elbow", "name": "زانو" },
+          { "slug": "deck-stud", "name": "گل میخ عرشه فولادی" },
+          { "slug": "fitting-coupling", "name": "بوشن" },
+          { "slug": "fitting-gasket", "name": "گسکت" },
+          { "slug": "fitting-vibration-isolator", "name": "لرزه گیر" },
+          { "slug": "fitting-weld-cap", "name": "کپ جوشی" }
+        ]
+      },
+      {
+        "slug": "flanges",
+        "name": "فلنج",
+        "items": [
+          { "slug": "flange-general", "name": "فلنج" },
+          { "slug": "flange-weld-neck", "name": "فلنج گلودار" },
+          { "slug": "flange-slip-on", "name": "فلنج اسلیپون" }
+        ]
+      },
+      {
+        "slug": "welding-cutting",
+        "name": "جوشکاری و برش",
+        "items": [
+          { "slug": "electrode", "name": "الکترود" },
+          { "slug": "welding-wire", "name": "سیم جوش" },
+          { "slug": "grinding-disc", "name": "صفحه سنگ" }
+        ]
+      },
+      {
+        "slug": "other-equipment",
+        "name": "سایر تجهیزات",
+        "items": [
+          { "slug": "russian-wood-plank", "name": "تخته روسی" }
+        ]
+      },
+      {
+        "slug": "wire-cable",
+        "name": "سیم و کابل",
+        "items": [
+          { "slug": "wire-cable-general", "name": "سیم و کابل" },
+          { "slug": "stranded-wire", "name": "سیم افشان" },
+          { "slug": "flexible-cable", "name": "کابل افشان" },
+          { "slug": "underground-cable", "name": "کابل زمینی" },
+          { "slug": "shielded-cable", "name": "کابل شیلدار" },
+          { "slug": "telecommunication-cable", "name": "کابل مخابراتی" },
+          { "slug": "fire-alarm-cable", "name": "کابل اعلام حریق" },
+          { "slug": "network-cable", "name": "کابل شبکه" },
+          { "slug": "fiber-optic-cable", "name": "کابل فیبر نوری" },
+          { "slug": "aluminum-cable", "name": "کابل آلومینیوم" },
+          { "slug": "copper-cable", "name": "کابل مسی" }
+        ]
+      }
+    ]
   },
   {
-    "slug": "فن-حلزونی-تربو",
-    "name": "فن حلزونی تربو",
-    "image": "/uploads/1789843103430-70fe58cd-73e4-4994-9785-6732bb288cce.jpg"
-  },
-  {
-    "slug": "ساخت-سایت-فروشگاهی",
-    "name": "«ساخت سایت حرفه‌ای؛ اقتصادی، اقساطی»",
-    "image": "/uploads/1791225789077-40ebdfb3-4781-4ed6-a94f-ad01d6d1a664.jpg"
+    "slug": "wire-products",
+    "name": "محصولات مفتولی",
+    "image": "/categories/wire-products.svg",
+    "subcategories": [
+      {
+        "slug": "wire-mesh",
+        "name": "توری",
+        "items": [
+          { "slug": "mesh-general", "name": "توری" },
+          { "slug": "mesh-fence", "name": "فنس توری" },
+          { "slug": "mesh-pressed", "name": "توری پرسی" },
+          { "slug": "mesh-metal", "name": "توری فلزی" },
+          { "slug": "mesh-chicken", "name": "توری مرغی" },
+          { "slug": "mesh-farangi", "name": "توری فرنگی" },
+          { "slug": "mesh-gabion", "name": "گابیون" },
+          { "slug": "mesh-chain-link", "name": "توری حصاری" },
+          { "slug": "mesh-diamond", "name": "توری لوزی" }
+        ]
+      },
+      {
+        "slug": "barbed-wire",
+        "name": "سیم خاردار",
+        "items": [
+          { "slug": "barbed-wire-general", "name": "سیم خاردار" },
+          { "slug": "barbed-wire-razor", "name": "سیم خاردار سوزنی" },
+          { "slug": "barbed-wire-tabrizi", "name": "سیم خاردار تبری" },
+          { "slug": "barbed-wire-coil", "name": "سیم خاردار حلقوی" },
+          { "slug": "barbed-wire-linear", "name": "سیم خاردار خطی" }
+        ]
+      },
+      {
+        "slug": "wire",
+        "name": "سیم و مفتول",
+        "items": [
+          { "slug": "wire-general", "name": "سیم مفتول" },
+          { "slug": "rebar-tying-wire", "name": "سیم آرماتور بندی" }
+        ]
+      },
+      {
+        "slug": "other-wire-products",
+        "name": "سایر محصولات مفتولی",
+        "items": [
+          { "slug": "rabitz", "name": "رابیتس" },
+          { "slug": "welded-wire-mesh", "name": "مش" },
+          { "slug": "shaft", "name": "شفت" },
+          { "slug": "shaft-st37", "name": "شفت ST37" }
+        ]
+      }
+    ]
   }
 ]

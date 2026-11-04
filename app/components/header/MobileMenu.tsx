@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
+import { useState } from "react";
+import CategoryDropdown from "@/app/components/header/CategoryDropdown";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -12,6 +14,8 @@ export default function MobileMenu({
   isOpen,
   onClose,
 }: MobileMenuProps) {
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+
   if (!isOpen) return null;
 
   return (
@@ -55,13 +59,24 @@ export default function MobileMenu({
             صفحه اصلی
           </Link>
 
-          <Link
-            href="/products"
-            onClick={onClose}
-            className="block rounded-xl px-4 py-3 text-sm font-medium text-[#111827] transition hover:bg-[#F8FAFC] hover:text-[#2563EB]"
-          >
-            محصولات
-          </Link>
+          <div>
+            <button
+              type="button"
+              onClick={() => setCategoriesOpen((open) => !open)}
+              aria-expanded={categoriesOpen}
+              className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-right text-sm font-medium text-[#111827] transition hover:bg-[#F8FAFC] hover:text-[#2563EB]"
+            >
+              محصولات
+              <ChevronDown
+                aria-hidden="true"
+                size={16}
+                className={`transition-transform ${categoriesOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+            {categoriesOpen ? (
+              <CategoryDropdown variant="inline" onNavigate={onClose} />
+            ) : null}
+          </div>
 
           <Link
             href="/about"

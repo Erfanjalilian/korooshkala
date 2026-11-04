@@ -13,6 +13,7 @@ export type Product = {
   currency?: string;
   category: string;
   categorySlug: string;
+  subcategorySlug?: string;
   brand: string;
   stock: number;
   rating: number;
@@ -27,7 +28,18 @@ export type Product = {
   isDiscounted?: boolean;
 };
 
-export type Category = { slug: string; name: string; image?: string };
+export type CategorySubcategory = { slug: string; name: string };
+export type CategorySubcategoryGroup = {
+  slug: string;
+  name: string;
+  items: CategorySubcategory[];
+};
+export type Category = {
+  slug: string;
+  name: string;
+  image?: string;
+  subcategories?: CategorySubcategoryGroup[];
+};
 export type StoreSettings = {
   silentBoxPackagingFee: number;
   otherProductsShippingFee: number;

@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
+import { isAuthorizedAdminRequest, responseWithAdminUnauthorized } from "@/lib/admin-auth";
 import { readProducts } from "@/lib/store";
 import { buildDigikalaQueue, normalizeDigikalaSyncStatus } from "@/lib/digikala/core";
 import { readDigikalaProductMappings, writeDigikalaProductMappings } from "@/lib/digikala/storage";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const [products, mappings] = await Promise.all([
     readProducts(),
     readDigikalaProductMappings(),
@@ -25,6 +30,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const payload = (await request.json()) as {
     action?: "product" | "all";
     localProductId?: string;

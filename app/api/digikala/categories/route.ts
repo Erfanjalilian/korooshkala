@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { readCategories } from "@/lib/store";
+import { isAuthorizedAdminRequest, responseWithAdminUnauthorized } from "@/lib/admin-auth";
 import {
   readDigikalaCategoryMappings,
   writeDigikalaCategoryMappings,
@@ -7,7 +8,11 @@ import {
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const [categories, mappings] = await Promise.all([
     readCategories(),
     readDigikalaCategoryMappings(),
@@ -21,6 +26,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!isAuthorizedAdminRequest(request)) {
+    return responseWithAdminUnauthorized();
+  }
+
   const payload = (await request.json()) as {
     localCategoryId?: string;
     localCategoryName?: string;

@@ -7,6 +7,7 @@ This project does not include a vendor OpenAPI specification file in the reposit
 Add these values to the server environment:
 
 ```bash
+ADMIN_SECRET=replace-with-a-long-random-server-side-secret
 DIGIKALA_BASE_URL=https://seller.digikala.com
 DIGIKALA_SANDBOX=true
 DIGIKALA_CLIENT_CODE=your-client-code
@@ -16,6 +17,10 @@ DIGIKALA_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
 DIGIKALA_ACCESS_TOKEN=server-side-only-access-token
 DIGIKALA_REFRESH_TOKEN=server-side-only-refresh-token
 ```
+
+Administrative routes under `/admin1361`, `/api/admin`, `/api/digikala/sync`, and `/api/digikala/categories` require a signed server-side admin session or a matching `Authorization: Bearer <ADMIN_SECRET>`/`x-admin-secret` header. The project does not expose the secret to any browser bundle.
+
+To sign in from a trusted server or script, call `POST /api/admin/login` with `{ "secret": "<ADMIN_SECRET>" }` or send the same value in the `x-admin-secret` header. The response sets a secure, HttpOnly cookie named `korooshkala_admin`.
 
 Important:
 - never expose tokens or private keys in the browser or frontend bundle

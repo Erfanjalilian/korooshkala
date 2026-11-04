@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body className="bg-[#F8FAFC] text-[#111827]">
+      <body className="bg-[#09090B] text-[#F4F4F5]">
         <Header />
 
         <main className="pb-20 lg:pb-0">{children}</main>

@@ -1,0 +1,17 @@
+private buildHeaders(token?: string, extraHeaders: Record<string, string> = {}) {
+    const headers = new Headers({
+      Accept: "application/json",
+      ...extraHeaders,
+    });
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    if (this.config.clientCode) {
+      headers.set("X-Digikala-Client-Code", this.config.clientCode);
+    }
+
+    return headers;
+  }
+

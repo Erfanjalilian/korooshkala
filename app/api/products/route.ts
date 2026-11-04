@@ -11,6 +11,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = normalizeSearchValue(searchParams.get("q"));
   const category = searchParams.get("category") ?? "all";
+  const subcategory = searchParams.get("subcategory");
   const sort = searchParams.get("sort") ?? "featured";
 
   let filteredProducts = productRecords.filter((product) => {
@@ -21,8 +22,9 @@ export async function GET(request: Request) {
       product.brand,
     ].some((value) => normalizeSearchValue(value).includes(query));
     const matchesCategory = category === "all" || product.categorySlug === category;
+    const matchesSubcategory = !subcategory || product.subcategorySlug === subcategory;
 
-    return matchesQuery && matchesCategory;
+    return matchesQuery && matchesCategory && matchesSubcategory;
   });
 
   filteredProducts = [...filteredProducts].sort((first, second) => {

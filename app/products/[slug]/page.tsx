@@ -161,7 +161,7 @@ export default async function ProductDetailsPage({
             </p>
           </div>
 
-          <ProductDetailActions product={product} />
+          <ProductDetailActions />
 
           <div className="mt-6 grid gap-3 border-t border-[#E5E7EB] pt-5 text-xs text-[#6B7280] sm:grid-cols-2">
             <p className="flex items-center gap-2">

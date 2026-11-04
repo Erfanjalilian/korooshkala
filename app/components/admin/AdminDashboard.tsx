@@ -17,6 +17,13 @@ function ProductFormModal({
     Boolean(product.isDiscounted || product.compareAtPrice > product.price),
   );
   const [fileName, setFileName] = useState("");
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState(
+    categories.find((category) => category.name === product.category)?.slug ??
+      product.categorySlug,
+  );
+  const [selectedSubcategorySlug, setSelectedSubcategorySlug] = useState(
+    product.subcategorySlug ?? "",
+  );
 
   return (
     <div
@@ -66,12 +73,42 @@ function ProductFormModal({
               defaultValue={product.category}
               className={inputClass}
               required
+              onChange={(event) => {
+                const nextCategory = categories.find(
+                  (category) => category.name === event.target.value,
+                );
+                setSelectedCategorySlug(nextCategory?.slug ?? "");
+                setSelectedSubcategorySlug("");
+              }}
             >
               {categories.map((category) => (
                 <option key={category.slug} value={category.name}>
                   {category.name}
                 </option>
               ))}
+            </select>
+          </label>
+          <input type="hidden" name="categorySlug" value={selectedCategorySlug} />
+          <label className="grid gap-2 text-sm font-semibold text-[#111827]">
+            زیرمجموعه
+            <select
+              name="subcategorySlug"
+              value={selectedSubcategorySlug}
+              onChange={(event) => setSelectedSubcategorySlug(event.target.value)}
+              className={inputClass}
+            >
+              <option value="">بدون زیرمجموعه</option>
+              {categories
+                .find((category) => category.slug === selectedCategorySlug)
+                ?.subcategories?.map((group) => (
+                  <optgroup key={group.slug} label={group.name}>
+                    {group.items.map((item) => (
+                      <option key={item.slug} value={item.slug}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
             </select>
           </label>
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 py-3 text-sm font-bold text-[#111827]">
@@ -255,6 +292,7 @@ type Product = {
   compareAtPrice: number;
   category: string;
   categorySlug: string;
+  subcategorySlug?: string;
   brand: string;
   stock: number;
   rating: number;
@@ -267,7 +305,16 @@ type Product = {
   isHot?: boolean;
   isDiscounted?: boolean;
 };
-type Category = { slug: string; name: string; image?: string };
+type Category = {
+  slug: string;
+  name: string;
+  image?: string;
+  subcategories?: {
+    slug: string;
+    name: string;
+    items: { slug: string; name: string }[];
+  }[];
+};
 type User = {
   id: string;
   phone?: string;
@@ -338,6 +385,7 @@ const emptyProduct = (): Product => ({
   compareAtPrice: 0,
   category: "",
   categorySlug: "",
+  subcategorySlug: "",
   brand: "",
   stock: 0,
   rating: 0,
@@ -367,12 +415,39 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [authRequired, setAuthRequired] = useState(false);
+  const [adminSecret, setAdminSecret] = useState("");
+  const [authSubmitting, setAuthSubmitting] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
     const response = await fetch("/api/admin", { cache: "no-store" });
-    if (response.ok) setData((await response.json()) as DashboardData);
+    if (response.ok) {
+      setAuthRequired(false);
+      setData((await response.json()) as DashboardData);
+    } else if (response.status === 401) {
+      setAuthRequired(true);
+    }
     setLoading(false);
+  };
+
+  const handleAdminLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!adminSecret.trim()) return;
+    setAuthSubmitting(true);
+    const response = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret: adminSecret.trim() }),
+    });
+    setAuthSubmitting(false);
+    if (response.ok) {
+      setAuthRequired(false);
+      setAdminSecret("");
+      await loadData();
+      return;
+    }
+    setMessage("ناموفق: رمز مدیر نامعتبر است.");
   };
 
   useEffect(() => {
@@ -410,6 +485,36 @@ export default function AdminDashboard() {
       await loadData();
     }
   };
+
+  if (authRequired) {
+    return (
+      <div className="mx-auto flex min-h-[70vh] max-w-lg items-center justify-center px-4">
+        <form onSubmit={handleAdminLogin} className="w-full rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-lg">
+          <p className="text-sm font-bold text-[#2563EB]">ADMIN1361</p>
+          <h2 className="mt-2 text-2xl font-extrabold text-[#111827]">ورود مدیر</h2>
+          <p className="mt-2 text-sm text-[#6B7280]">برای دسترسی به پنل، رمز سرور ADMIN_SECRET را وارد کنید.</p>
+          <label className="mt-5 grid gap-2 text-sm font-semibold text-[#111827]">
+            رمز مدیر
+            <input
+              type="password"
+              value={adminSecret}
+              onChange={(event) => setAdminSecret(event.target.value)}
+              className="h-11 rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] px-3 text-sm outline-none focus:border-[#2563EB]"
+              placeholder="ADMIN_SECRET"
+            />
+          </label>
+          <button
+            type="submit"
+            disabled={authSubmitting || !adminSecret.trim()}
+            className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#2563EB] text-sm font-bold text-white disabled:opacity-60"
+          >
+            {authSubmitting ? "در حال ورود..." : "ورود به پنل"}
+          </button>
+          {message ? <p className="mt-4 text-sm font-semibold text-red-600">{message}</p> : null}
+        </form>
+      </div>
+    );
+  }
 
   if (loading || !data)
     return (

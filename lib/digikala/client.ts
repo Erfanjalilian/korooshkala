@@ -50,11 +50,15 @@ export class DigikalaClient {
     return headers;
   }
 
-  private async requestInternal(endpoint: string, options: DigikalaRequestOptions = {}): Promise<Response> {
+private async requestInternal(endpoint: string, options: DigikalaRequestOptions = {}): Promise<Response> {
+    if (!this.config.enabled && !options.isAuthRequest) {
+      throw new Error("Digikala integration is not configured. Set the server-side Digikala credentials before enabling live sync.");
+    }
+
     const token = options.isAuthRequest ? tokenState.accessToken : tokenState.accessToken ?? this.config.accessToken;
     const response = await fetch(this.buildUrl(endpoint), {
       ...options,
-      headers: this.buildHeaders(token, Object.fromEntries(new Headers(options.headers as HeadersInit).entries())),
+      headers: this.buildHeaders(token, Object.fromEntries(new Headers(options.headers ?? {}).entries())),
     });
 
     if (!response.ok) {
@@ -104,12 +108,12 @@ export class DigikalaClient {
   }
 
   async refreshAccessToken() {
-    if (!this.config.refreshToken && !tokenState.refreshToken) {
-      throw new Error("Digikala refresh token is not configured.");
-    }
-
     const refreshToken = tokenState.refreshToken ?? this.config.refreshToken;
     const accessToken = tokenState.accessToken ?? this.config.accessToken ?? "";
+
+    if (!refreshToken) {
+      throw new Error("Digikala refresh token is not configured.");
+    }
 
     const response = await fetch(this.buildUrl("/open-api/v1/auth/refresh-token"), {
       method: "POST",
@@ -145,10 +149,9 @@ export class DigikalaClient {
       ? Date.parse(data.access_token_expires_at.date)
       : NaN;
 
-    tokenState.expiresAt =
-      Number.isFinite(expiresAt)
-        ? expiresAt
-        : Date.now() + 3600 * 1000;
+    tokenState.expiresAt = Number.isFinite(expiresAt)
+      ? expiresAt
+      : Date.now() + 3600 * 1000;
 
     return payload;
   }
@@ -178,13 +181,13 @@ export class DigikalaClient {
       ? Date.parse(data.access_token_expires_at.date)
       : NaN;
 
-    tokenState.expiresAt =
-      Number.isFinite(expiresAt)
-        ? expiresAt
-        : Date.now() + 3600 * 1000;
+    tokenState.expiresAt = Number.isFinite(expiresAt)
+      ? expiresAt
+      : Date.now() + 3600 * 1000;
 
     return payload;
   }
 }
 
 export const digikalaClient = new DigikalaClient();
+

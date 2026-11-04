@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Grid2X2, Home, ShoppingCart, User } from "lucide-react";
+import { Grid2X2, Home } from "lucide-react";
 
 interface MobileBottomNavProps {
   categoriesOpen: boolean;
@@ -18,16 +18,6 @@ const navigationItems = [
     title: "دسته‌بندی",
     icon: Grid2X2,
   },
-  {
-    title: "سبد خرید",
-    href: "/cart",
-    icon: ShoppingCart,
-  },
-  {
-    title: "پروفایل",
-    href: "/auth",
-    icon: User,
-  },
 ];
 
 export default function MobileBottomNav({
@@ -39,7 +29,7 @@ export default function MobileBottomNav({
       aria-label="ناوبری موبایل"
       className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E5E7EB] bg-white/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-[0_-8px_24px_rgba(17,24,39,0.08)] backdrop-blur lg:hidden"
     >
-      <div className="mx-auto grid max-w-md grid-cols-4">
+      <div className="mx-auto grid max-w-md grid-cols-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
 

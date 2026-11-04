@@ -19,16 +19,23 @@ const parseBoolean = (value: string | undefined, fallback = false) => {
 export const getDigikalaConfig = (): DigikalaConfig => {
   const baseUrl = (process.env.DIGIKALA_BASE_URL ?? "https://seller.digikala.com").replace(/\/+$/, "");
   const privateKey = process.env.DIGIKALA_PRIVATE_KEY?.trim();
+  const clientCode = process.env.DIGIKALA_CLIENT_CODE?.trim();
+  const clientId = process.env.DIGIKALA_CLIENT_ID?.trim();
+  const clientSecret = process.env.DIGIKALA_CLIENT_SECRET?.trim();
+  const accessToken = process.env.DIGIKALA_ACCESS_TOKEN?.trim();
+  const refreshToken = process.env.DIGIKALA_REFRESH_TOKEN?.trim();
+  const hasExplicitCredentials = Boolean(clientCode && clientId && clientSecret && (privateKey || process.env.DIGIKALA_PRIVATE_KEY_PATH));
+  const hasStoredTokens = Boolean(accessToken && refreshToken);
 
   return {
-    enabled: Boolean(process.env.DIGIKALA_CLIENT_CODE || process.env.DIGIKALA_CLIENT_ID || baseUrl),
+    enabled: hasExplicitCredentials || hasStoredTokens,
     baseUrl,
-    clientCode: process.env.DIGIKALA_CLIENT_CODE?.trim(),
-    clientId: process.env.DIGIKALA_CLIENT_ID?.trim(),
-    clientSecret: process.env.DIGIKALA_CLIENT_SECRET?.trim(),
+    clientCode,
+    clientId,
+    clientSecret,
     privateKey,
-    accessToken: process.env.DIGIKALA_ACCESS_TOKEN?.trim(),
-    refreshToken: process.env.DIGIKALA_REFRESH_TOKEN?.trim(),
+    accessToken,
+    refreshToken,
     sandbox: parseBoolean(process.env.DIGIKALA_SANDBOX, true),
   };
 };

@@ -9,10 +9,9 @@ import SpecialOffers from "@/app/components/home/SpecialOffers";
 import NewestProducts from "@/app/components/home/NewestProducts";
 import HottestProducts from "@/app/components/home/HottestProducts";
 import FinalBanner from "@/app/components/home/FinalBanner";
-import PopularBrands from "@/app/components/home/PopularBrands";
 
 export default function HeroSection() {
-  const heroImage = "/logo/IMG_20260918_171528_557.jpg";
+  const heroImage = "/iron-materials-banner.svg";
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
@@ -35,22 +34,22 @@ export default function HeroSection() {
         <div className="relative z-10 flex max-w-2xl flex-col items-start">
           <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/90 backdrop-blur-sm">
             <Sparkles aria-hidden="true" size={14} />
-            تجربه‌ای تازه برای خرید
+            فروش تخصصی آهن‌آلات
           </span>
 
           <h1 className="max-w-xl text-3xl font-extrabold leading-[1.35] sm:text-4xl lg:text-5xl">
-            هر چیزی که نیاز داری، همینجاست
+            کیفیت فولاد، پایهٔ هر سازهٔ ماندگار
           </h1>
 
           <p className="mt-4 max-w-lg text-sm leading-7 text-white/80 sm:text-base">
-            به دنیای محصولات متنوع ما سر بزن و محصول مورد علاقه‌ات را پیدا کن.
+            انواع مقاطع فولادی و آهن‌آلات را با اطمینان از کوروش کالا تهیه کنید.
           </p>
 
           <Link
             href="/products"
             className="mt-7 inline-flex h-12 items-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-[#2563EB] transition hover:bg-[#F8FAFC] hover:text-[#7C3AED] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
           >
-            مشاهده محصولات
+            مشاهده آهن‌آلات
             <ArrowLeft aria-hidden="true" size={18} />
           </Link>
 
@@ -85,7 +84,6 @@ export default function HeroSection() {
       <NewestProducts />
       <HottestProducts />
       <FinalBanner />
-      <PopularBrands />
     </div>
   );
 }

@@ -79,8 +79,36 @@ export const writeDigikalaCategoryMappings = (value: DigikalaCategoryMapping[]) 
 export const readDigikalaSyncLogs = () => readJson<Array<Record<string, unknown>>>("sync-logs.json", []);
 export const writeDigikalaSyncLogs = (value: Array<Record<string, unknown>>) => writeJson("sync-logs.json", value);
 
-export const readDigikalaAuthState = () =>
-  readJson<DigikalaAuthState>("auth-state.json", { id: "default", status: "INACTIVE" });
+export const readDigikalaAuthState = async () => {
+  const fallback: DigikalaAuthState = { id: "default", status: "INACTIVE" };
 
-export const writeDigikalaAuthState = (value: DigikalaAuthState) =>
-  writeJson("auth-state.json", value);
+  try {
+    const rawState = await readFile(path.join(dataDirectory, "auth-state.json"), "utf8");
+    const parsed = JSON.parse(rawState) as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return fallback;
+    }
+
+    const state = parsed as Partial<DigikalaAuthState>;
+    return {
+      ...fallback,
+      ...state,
+      id: state.id ?? "default",
+    };
+  } catch (error) {
+    const isMissing = Boolean(error && typeof error === "object" && "code" in error && error.code === "ENOENT");
+    if (isMissing) {
+      return fallback;
+    }
+
+    throw new Error("Digikala auth state file is empty or malformed. Restore the file or delete it and reconfigure the server-side credentials.");
+  }
+};
+
+export const writeDigikalaAuthState = (value: DigikalaAuthState) => {
+  if (!value || typeof value !== "object" || !value.id) {
+    throw new Error("Digikala auth state is empty or invalid.");
+  }
+
+  return writeJson("auth-state.json", value);
+};
