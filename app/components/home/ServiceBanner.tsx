@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ArrowLeft, Factory, Truck } from "lucide-react";
+import { Factory, Truck } from "lucide-react";
 
 export default function ServiceBanner() {
   return (
@@ -22,20 +21,13 @@ export default function ServiceBanner() {
           </p>
         </div>
 
-        <div dir="rtl" className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div dir="rtl">
           <div className="flex items-center gap-3 text-sm font-semibold text-white">
             <span className="flex size-11 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-orange-300">
               <Truck aria-hidden="true" size={23} strokeWidth={1.8} />
             </span>
             هماهنگی ارسال به محل پروژه
           </div>
-          <Link
-            href="/products"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 text-sm font-bold text-white transition hover:bg-orange-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300/30"
-          >
-            مشاهده مقاطع فولادی
-            <ArrowLeft aria-hidden="true" size={17} />
-          </Link>
         </div>
       </div>
     </section>

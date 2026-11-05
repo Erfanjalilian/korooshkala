@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" fill="none">
+  <defs>
+    <linearGradient id="al-bg" x1="0" y1="0" x2="1600" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#155E75"/>
+      <stop offset=".48" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#0B1120"/>
+    </linearGradient>
+    <linearGradient id="al-metal" x1="110" y1="210" x2="870" y2="580" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset=".22" stop-color="#94A3B8"/>
+      <stop offset=".48" stop-color="#E2E8F0"/>
+      <stop offset=".72" stop-color="#64748B"/>
+      <stop offset="1" stop-color="#CBD5E1"/>
+    </linearGradient>
+    <linearGradient id="al-edge" x1="130" y1="400" x2="800" y2="540" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E2E8F0"/>
+      <stop offset="1" stop-color="#475569"/>
+    </linearGradient>
+    <radialGradient id="al-glow" cx="0" cy="0" r="1" gradientTransform="matrix(510 260 -220 432 405 320)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67E8F9" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#67E8F9" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="al-grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0v56" stroke="#E0F2FE" stroke-opacity=".08"/>
+    </pattern>
+    <filter id="al-shadow" x="80" y="350" width="930" height="310" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+  <path fill="url(#al-bg)" d="M0 0h1600v700H0z"/>
+  <path fill="url(#al-grid)" d="M0 0h1600v700H0z"/>
+  <path fill="url(#al-glow)" d="M0 0h1050v700H0z"/>
+  <path d="M0 582 480 490l560 95v115H0V582Z" fill="#07111F" fill-opacity=".72"/>
+  <ellipse cx="474" cy="573" fill="#020617" fill-opacity=".48" rx="415" ry="50" filter="url(#al-shadow)"/>
+  <path d="m148 474 505-220 256 75-512 228-249-83Z" fill="#334155" stroke="#E2E8F0" stroke-opacity=".28" stroke-width="3"/>
+  <path d="m148 474 249 83v37l-249-84v-36Z" fill="#475569"/>
+  <path d="m397 557 512-228v37L397 594v-37Z" fill="#1E293B"/>
+  <path d="m190 429 489-212 214 63-496 216-207-67Z" fill="url(#al-metal)" stroke="#F8FAFC" stroke-opacity=".72" stroke-width="3"/>
+  <path d="m190 429 207 67v39l-207-69v-37Z" fill="#64748B"/>
+  <path d="m397 496 496-216v39L397 535v-39Z" fill="#334155"/>
+  <path d="m276 388 412-179 97 28-414 180-95-29Z" fill="#CBD5E1" stroke="#F8FAFC" stroke-width="2"/>
+  <path d="m276 388 95 29v34l-95-31v-32Z" fill="#64748B"/>
+  <path d="m371 417 414-180v34L371 451v-34Z" fill="#475569"/>
+  <path d="m314 528 507-220 78 22-511 223-74-25Z" fill="url(#al-edge)" stroke="#E2E8F0" stroke-opacity=".55" stroke-width="2"/>
+  <path d="m314 528 74 25v29l-74-26v-28Z" fill="#475569"/>
+  <path d="m388 553 511-223v28L388 582v-29Z" fill="#1E293B"/>
+  <path d="M104 174h276" stroke="#67E8F9" stroke-linecap="round" stroke-width="5"/>
+  <path d="M104 194h164" stroke="#E2E8F0" stroke-opacity=".5" stroke-linecap="round" stroke-width="2"/>
+  <circle cx="884" cy="165" r="96" stroke="#67E8F9" stroke-opacity=".16" stroke-width="2"/>
+  <circle cx="884" cy="165" r="64" stroke="#67E8F9" stroke-opacity=".12" stroke-width="2"/>
+  <path d="M1010 533h220" stroke="#F97316" stroke-linecap="round" stroke-opacity=".72" stroke-width="4"/>
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" fill="none">
+  <defs>
+    <linearGradient id="ss-bg" x1="0" y1="0" x2="1600" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset=".43" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#0B1120"/>
+    </linearGradient>
+    <linearGradient id="ss-sheet" x1="120" y1="230" x2="880" y2="540" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset=".25" stop-color="#94A3B8"/>
+      <stop offset=".5" stop-color="#E2E8F0"/>
+      <stop offset=".74" stop-color="#64748B"/>
+      <stop offset="1" stop-color="#CBD5E1"/>
+    </linearGradient>
+    <radialGradient id="ss-glow" cx="0" cy="0" r="1" gradientTransform="matrix(440 220 -180 360 420 340)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5EEAD4" stop-opacity=".23"/>
+      <stop offset="1" stop-color="#5EEAD4" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="ss-grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0v60" stroke="#CCFBF1" stroke-opacity=".07"/>
+    </pattern>
+    <filter id="ss-shadow" x="50" y="380" width="970" height="270" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+  <path fill="url(#ss-bg)" d="M0 0h1600v700H0z"/>
+  <path fill="url(#ss-grid)" d="M0 0h1600v700H0z"/>
+  <path fill="url(#ss-glow)" d="M0 0h1030v700H0z"/>
+  <path d="M0 594 500 488l580 94v118H0V594Z" fill="#07111F" fill-opacity=".76"/>
+  <ellipse cx="510" cy="574" fill="#020617" fill-opacity=".48" rx="430" ry="48" filter="url(#ss-shadow)"/>
+  <path d="m126 470 526-218 282 68-536 228-272-78Z" fill="#334155" stroke="#E2E8F0" stroke-opacity=".4" stroke-width="3"/>
+  <path d="m126 470 272 78v37l-272-79v-36ZM398 548l536-228v37L398 585v-37Z" fill="#334155"/>
+  <path d="m158 424 515-213 250 61-521 217-244-65Z" fill="url(#ss-sheet)" stroke="#F8FAFC" stroke-opacity=".74" stroke-width="3"/>
+  <path d="m158 424 244 65v36l-244-66v-35ZM402 489l521-217v36L402 525v-36Z" fill="#475569"/>
+  <path d="m230 381 448-185 182 44-452 188-178-47Z" fill="#CBD5E1" stroke="#F8FAFC" stroke-opacity=".8" stroke-width="3"/>
+  <path d="m230 381 178 47v35l-178-47v-35ZM408 428l452-188v35L408 463v-35Z" fill="#475569"/>
+  <path d="m277 338 420-174 117 28-423 177-114-31Z" fill="url(#ss-sheet)" stroke="#F8FAFC" stroke-opacity=".65" stroke-width="2"/>
+  <path d="m277 338 114 31v31l-114-32v-30ZM391 369l423-177v30L391 400v-31Z" fill="#64748B"/>
+  <path d="M92 174h264" stroke="#5EEAD4" stroke-linecap="round" stroke-width="5"/>
+  <path d="M92 193h158" stroke="#E2E8F0" stroke-opacity=".52" stroke-linecap="round" stroke-width="2"/>
+  <circle cx="886" cy="166" r="100" stroke="#5EEAD4" stroke-opacity=".16" stroke-width="2"/>
+  <circle cx="886" cy="166" r="66" stroke="#5EEAD4" stroke-opacity=".1" stroke-width="2"/>
+  <path d="M1000 536h230" stroke="#F97316" stroke-opacity=".72" stroke-width="4"/>
+</svg>

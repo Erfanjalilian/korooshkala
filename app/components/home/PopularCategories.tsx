@@ -43,42 +43,25 @@ export default function PopularCategories() {
       </div>
 
       <div
-        dir="ltr"
+        dir="rtl"
         aria-label="دسته‌بندی‌های اصلی"
-        className="category-slider overflow-hidden py-3"
+        className="category-grid grid grid-cols-2 gap-x-4 gap-y-3 py-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
       >
-        <div dir="ltr" className="category-slider-track">
-          {[0, 1].map((copy) => (
-            <div
-              key={copy}
-              dir="rtl"
-              aria-hidden={copy === 1 ? true : undefined}
-              className="category-slider-group"
-            >
-              {categories.map((category) => (
-                <div
-                  key={`${copy}-${category.slug}`}
-                  dir="rtl"
-                  className="w-28 shrink-0 sm:w-32 lg:w-36"
-                >
-                  <CategoryCard
-                    title={category.name}
-                    image={category.image}
-                    subcategories={category.subcategories}
-                    subcategoriesExpanded={expandedCategory === category.slug}
-                    isDuplicate={copy === 1}
-                    onSubcategoriesToggle={
-                      category.subcategories?.length
-                        ? () => setExpandedCategory((current) => current === category.slug ? null : category.slug)
-                        : undefined
-                    }
-                    href={`/products?category=${encodeURIComponent(category.slug)}`}
-                  />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.slug}
+            title={category.name}
+            image={category.image}
+            subcategories={category.subcategories}
+            subcategoriesExpanded={expandedCategory === category.slug}
+            onSubcategoriesToggle={
+              category.subcategories?.length
+                ? () => setExpandedCategory((current) => current === category.slug ? null : category.slug)
+                : undefined
+            }
+            href={`/products?category=${encodeURIComponent(category.slug)}`}
+          />
+        ))}
       </div>
       {categories
         .filter((category) => category.slug === expandedCategory && category.subcategories?.length)

@@ -19,7 +19,7 @@ function SubcategoryNode({
   if (!item.items?.length) {
     return (
       <Link
-        href={`/products?category=${encodeURIComponent(categorySlug)}&subcategory=${encodeURIComponent(item.slug)}`}
+        href={`/categories/${encodeURIComponent(categorySlug)}/${encodeURIComponent(item.slug)}`}
         onClick={onNavigate}
         className="block rounded-lg px-2.5 py-2 text-xs text-[#475569] transition hover:bg-[#FFF4E6] hover:text-[#C2410C]"
       >

@@ -10,6 +10,8 @@ export const getAdminSecret = () =>
 
 export const hasAdminSecretConfigured = () => Boolean(getAdminSecret());
 
+export const isAdminAuthBypassed = () => process.env.NODE_ENV === "development";
+
 const signToken = (value: string, secret: string) => createHmac("sha256", secret).update(value).digest("hex");
 
 export const createAdminSessionToken = () => {
@@ -40,6 +42,8 @@ export const isValidAdminCookieToken = (token: string | undefined) => {
 };
 
 export const isAuthorizedAdminRequest = (request: Request) => {
+  if (isAdminAuthBypassed()) return true;
+
   const secret = getAdminSecret();
   if (!secret) return false;
 

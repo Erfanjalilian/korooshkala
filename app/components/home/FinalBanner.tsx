@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ArrowLeft, Boxes, Sparkles } from "lucide-react";
+import { Boxes, Sparkles } from "lucide-react";
 
 export default function FinalBanner() {
   return (
@@ -26,13 +25,6 @@ export default function FinalBanner() {
           <div className="hidden size-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-orange-300 sm:flex">
             <Boxes aria-hidden="true" size={32} strokeWidth={1.5} />
           </div>
-          <Link
-            href="/products"
-            className="inline-flex h-12 items-center gap-2 rounded-xl bg-orange-500 px-5 text-sm font-bold text-white transition hover:bg-orange-400 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-300/30"
-          >
-            مشاهده دسته‌بندی‌ها
-            <ArrowLeft aria-hidden="true" size={18} />
-          </Link>
         </div>
       </div>
     </section>

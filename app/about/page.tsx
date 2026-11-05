@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowLeft, Check, Heart, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { readPages } from "@/lib/store";
 
@@ -43,6 +44,11 @@ export default async function AboutPage() {
           </p>
         </div>
       </section>
+      {about.image ? (
+        <div className="relative mt-8 h-64 overflow-hidden rounded-3xl bg-white sm:h-96">
+          <Image src={about.image} alt={about.title} fill sizes="(max-width: 768px) 100vw, 1280px" className="object-cover" />
+        </div>
+      ) : null}
 
       <section className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-stretch">
         <article className="rounded-3xl border border-[#E5E7EB] bg-white p-6 sm:p-9">

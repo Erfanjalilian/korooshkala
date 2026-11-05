@@ -1,5 +1,6 @@
 import { Mail, MapPin, Phone, Clock } from "lucide-react";
 import { readPages } from "@/lib/store";
+import Image from "next/image";
 
 export default async function ContactPage() {
   const { contact } = await readPages();
@@ -16,6 +17,12 @@ export default async function ContactPage() {
         <h1 className="mt-3 text-3xl font-extrabold sm:text-4xl">{contact.title}</h1>
         <p className="mt-4 max-w-2xl text-sm leading-8 text-white/80">{contact.description}</p>
       </section>
+
+      {contact.image ? (
+        <div className="relative mt-8 h-64 overflow-hidden rounded-3xl bg-white sm:h-96">
+          <Image src={contact.image} alt={contact.title} fill sizes="(max-width: 768px) 100vw, 1280px" className="object-cover" />
+        </div>
+      ) : null}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <aside className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">

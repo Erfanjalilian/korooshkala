@@ -262,10 +262,12 @@ function ProductFormModal({
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
+import ContentManagement from "@/app/components/admin/ContentManagement";
 import {
   BookOpenText,
   Check,
   ChevronLeft,
+  FileText,
   LayoutDashboard,
   ListPlus,
   LoaderCircle,
@@ -363,7 +365,7 @@ type Order = {
   };
 };
 type Pages = {
-  about: { title: string; description: string };
+  about: { title: string; description: string; image?: string };
   contact: {
     email: string;
     phone: string;
@@ -371,7 +373,29 @@ type Pages = {
     hours: string;
     title: string;
     description: string;
+    image?: string;
   };
+};
+type FooterLink = { title: string; href: string };
+type Footer = {
+  brandTitle: string;
+  description: string;
+  quickLinksTitle: string;
+  customerLinksTitle: string;
+  contactTitle: string;
+  quickLinks: FooterLink[];
+  customerLinks: FooterLink[];
+  managerCredit: string;
+  designerCredit: string;
+};
+type CategoryPage = {
+  categorySlug: string;
+  subcategorySlug: string;
+  categoryName: string;
+  title: string;
+  description: string;
+  image: string;
+  phone: string;
 };
 type DashboardData = {
   products: Product[];
@@ -379,6 +403,8 @@ type DashboardData = {
   users: User[];
   orders: Order[];
   pages: Pages;
+  footer: Footer;
+  categoryPages: CategoryPage[];
   settings: { silentBoxPackagingFee: number; otherProductsShippingFee: number; rubikaId: string; whatsappId: string; telegramId: string };
 };
 type Tab =
@@ -389,7 +415,8 @@ type Tab =
   | "orders"
   | "shipping"
   | "social"
-  | "pages";
+  | "pages"
+  | "category-pages";
 
 const emptyProduct = (): Product => ({
   id: "",
@@ -421,12 +448,19 @@ const tabs: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
   { id: "orders", label: "سفارش‌ها", icon: ShoppingBag },
   { id: "shipping", label: "هزینه‌ها", icon: Truck },
   { id: "social", label: "شبکه‌های اجتماعی", icon: MessageCircle },
-  { id: "pages", label: "صفحه‌ها", icon: BookOpenText },
+  { id: "pages", label: "صفحه‌ها و فوتر", icon: BookOpenText },
+  { id: "category-pages", label: "جزئیات صفحات دسته‌بندی", icon: FileText },
 ];
 
-export default function AdminDashboard() {
+export default function AdminDashboard({
+  mode = "full",
+}: {
+  mode?: "full" | "content";
+}) {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [activeTab, setActiveTab] = useState<Tab>(
+    mode === "content" ? "category-pages" : "overview",
+  );
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -506,7 +540,7 @@ export default function AdminDashboard() {
     return (
       <div className="mx-auto flex min-h-[70vh] max-w-lg items-center justify-center px-4">
         <form onSubmit={handleAdminLogin} className="w-full rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-lg">
-          <p className="text-sm font-bold text-[#2563EB]">ADMIN1361</p>
+          <p className="text-sm font-bold text-[#2563EB]">ADMIN1383</p>
           <h2 className="mt-2 text-2xl font-extrabold text-[#111827]">ورود مدیر</h2>
           <p className="mt-2 text-sm text-[#6B7280]">برای دسترسی به پنل، رمز سرور ADMIN_SECRET را وارد کنید.</p>
           <label className="mt-5 grid gap-2 text-sm font-semibold text-[#111827]">
@@ -539,12 +573,16 @@ export default function AdminDashboard() {
       </div>
     );
 
+  const visibleTabs = mode === "content"
+    ? tabs.filter(({ id }) => id === "categories" || id === "social" || id === "pages" || id === "category-pages")
+    : tabs;
+
   return (
     <div className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
       <header className="mb-7 flex flex-col gap-4 rounded-[2rem] bg-gradient-to-l from-[#172554] via-[#1D4ED8] to-[#2563EB] p-6 text-white shadow-[0_18px_45px_rgba(29,78,216,0.2)] sm:flex-row sm:items-end sm:justify-between sm:p-8">
         <div>
           <p className="text-sm font-semibold text-blue-100">
-            JAHANKALA / ADMIN1361
+            KOROOSHKALA / ADMIN1383
           </p>
           <h1 className="mt-2 text-3xl font-extrabold">پنل مدیریت فروشگاه</h1>
           <p className="mt-2 text-sm text-blue-100">
@@ -562,7 +600,7 @@ export default function AdminDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-[15rem_1fr] lg:items-start">
         <nav className="grid grid-cols-2 gap-2 rounded-2xl border border-[#E5E7EB] bg-white p-2 shadow-sm lg:sticky lg:top-6 lg:grid-cols-1">
-          {tabs.map(({ id, label, icon: Icon }) => (
+          {visibleTabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               type="button"
@@ -591,7 +629,7 @@ export default function AdminDashboard() {
               </button>
             </div>
           ) : null}
-          {activeTab === "overview" ? <Overview data={data} /> : null}
+          {mode === "full" && activeTab === "overview" ? <Overview data={data} /> : null}
           {activeTab === "products" ? (
             <Products
               data={data}
@@ -627,7 +665,20 @@ export default function AdminDashboard() {
             />
           ) : null}
           {activeTab === "pages" ? (
-            <PagesPanel data={data} onRefresh={loadData} />
+            <ContentManagement
+              pages={data.pages}
+              footer={data.footer}
+              categoryPages={data.categoryPages}
+              section="pages"
+            />
+          ) : null}
+          {activeTab === "category-pages" ? (
+            <ContentManagement
+              pages={data.pages}
+              footer={data.footer}
+              categoryPages={data.categoryPages}
+              section="category-pages"
+            />
           ) : null}
         </main>
       </div>
@@ -1255,122 +1306,5 @@ function OrdersPanel({
         ))}
       </div>
     </Panel>
-  );
-}
-
-function PagesPanel({
-  data,
-  onRefresh,
-}: {
-  data: DashboardData;
-  onRefresh: () => Promise<void>;
-}) {
-  const [about, setAbout] = useState(data.pages.about);
-  const [contact, setContact] = useState(data.pages.contact);
-  const save = async (page: string, values: object) => {
-    await fetch("/api/admin?resource=pages", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ page, values }),
-    });
-    await onRefresh();
-  };
-  return (
-    <div className="grid gap-5 xl:grid-cols-2">
-      <Panel title="مدیریت صفحه درباره ما">
-        <div className="grid gap-4">
-          <label className="grid gap-2 text-sm font-semibold text-[#111827]">
-            عنوان اصلی
-            <input
-              value={about.title}
-              onChange={(event) =>
-                setAbout({ ...about, title: event.target.value })
-              }
-              className={inputClass}
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold text-[#111827]">
-            متن معرفی
-            <textarea
-              value={about.description}
-              onChange={(event) =>
-                setAbout({ ...about, description: event.target.value })
-              }
-              rows={7}
-              className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-sm outline-none focus:border-[#2563EB]"
-            />
-          </label>
-          <button
-            type="button"
-            onClick={() => void save("about", about)}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#2563EB] text-sm font-bold text-white"
-          >
-            <Save size={17} />
-            ذخیره درباره ما
-          </button>
-        </div>
-      </Panel>
-      <Panel title="مدیریت صفحه تماس با ما">
-        <div className="grid gap-4">
-          {(
-            [
-              "title",
-              "description",
-              "email",
-              "phone",
-              "address",
-              "hours",
-            ] as const
-          ).map((key) =>
-            key === "description" ? (
-              <label
-                key={key}
-                className="grid gap-2 text-sm font-semibold text-[#111827]"
-              >
-                توضیحات
-                <textarea
-                  value={contact[key]}
-                  onChange={(event) =>
-                    setContact({ ...contact, [key]: event.target.value })
-                  }
-                  rows={4}
-                  className="rounded-xl border border-[#E5E7EB] bg-[#F8FAFC] p-3 text-sm outline-none focus:border-[#2563EB]"
-                />
-              </label>
-            ) : (
-              <label
-                key={key}
-                className="grid gap-2 text-sm font-semibold text-[#111827]"
-              >
-                {key === "title"
-                  ? "عنوان"
-                  : key === "email"
-                    ? "ایمیل"
-                    : key === "phone"
-                      ? "تلفن"
-                      : key === "address"
-                        ? "نشانی"
-                        : "ساعات پاسخ‌گویی"}
-                <input
-                  value={contact[key]}
-                  onChange={(event) =>
-                    setContact({ ...contact, [key]: event.target.value })
-                  }
-                  className={inputClass}
-                />
-              </label>
-            ),
-          )}
-          <button
-            type="button"
-            onClick={() => void save("contact", contact)}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#2563EB] text-sm font-bold text-white"
-          >
-            <Save size={17} />
-            ذخیره تماس با ما
-          </button>
-        </div>
-      </Panel>
-    </div>
   );
 }

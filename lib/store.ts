@@ -152,8 +152,20 @@ export async function readCategories(): Promise<Category[]> {
 }
 
 export type PageContent = {
-  about: { title: string; description: string };
-  contact: { email: string; phone: string; address: string; hours: string; title: string; description: string };
+  about: { title: string; description: string; image?: string };
+  contact: { email: string; phone: string; address: string; hours: string; title: string; description: string; image?: string };
+};
+export type FooterLink = { title: string; href: string };
+export type FooterContent = {
+  brandTitle: string;
+  description: string;
+  quickLinksTitle: string;
+  customerLinksTitle: string;
+  contactTitle: string;
+  quickLinks: FooterLink[];
+  customerLinks: FooterLink[];
+  managerCredit: string;
+  designerCredit: string;
 };
 
 export const defaultPages: PageContent = {
@@ -171,4 +183,38 @@ export const defaultPages: PageContent = {
   },
 };
 
-export const readPages = () => readJson<PageContent>("pages.json", defaultPages);
+export const defaultFooter: FooterContent = {
+  brandTitle: "فروشگاه کوروش کالا",
+  description: "تجربه‌ای ساده، سریع و مطمئن برای پیدا کردن محصولاتی که دوستشان دارید.",
+  quickLinksTitle: "دسترسی سریع",
+  customerLinksTitle: "خدمات مشتریان",
+  contactTitle: "ارتباط با ما",
+  quickLinks: [
+    { title: "صفحه اصلی", href: "/" },
+    { title: "محصولات", href: "/products" },
+    { title: "درباره ما", href: "/about" },
+    { title: "تماس با ما", href: "/contact" },
+  ],
+  customerLinks: [
+    { title: "راهنمای خرید", href: "/guide" },
+    { title: "شرایط و روش ارسال", href: "/shipping" },
+    { title: "تست و مرجوعی کالا", href: "/returns" },
+    { title: "پرسش‌های متداول", href: "/faq" },
+    { title: "قوانین و مقررات", href: "/terms" },
+  ],
+  managerCredit: "مدیر پروژه سیاوش: 09124541307",
+  designerCredit: "طراحی‌شده توسط عرفان جلیلیان",
+};
+
+export async function readPages(): Promise<PageContent> {
+  const savedPages = await readJson<Partial<PageContent>>("pages.json", {});
+  return {
+    about: { ...defaultPages.about, ...savedPages.about },
+    contact: { ...defaultPages.contact, ...savedPages.contact },
+  };
+}
+
+export async function readFooter(): Promise<FooterContent> {
+  const savedFooter = await readJson<Partial<FooterContent>>("footer.json", {});
+  return { ...defaultFooter, ...savedFooter };
+}
