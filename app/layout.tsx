@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "کوروش کالا",
   description: "فروشگاه اینترنتی کوروش کالا",
   other: {
-    enamad: "65076408",
+    enamad: "59943728",
   },
 };
 
