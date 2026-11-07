@@ -126,16 +126,16 @@ export default async function Footer() {
                 referrerPolicy="origin"
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://trustseal.enamad.ir/?id=7781646&Code=VXMzZy5jqN38yQL0dTSTEE2FL6cdldXZ"
+                href="https://trustseal.enamad.ir/?id=8575206&Code=YxGfPEbac1aO9IjjLQk3FqqlPaw6Y7T3"
                 aria-label="مشاهده نماد اعتماد الکترونیکی"
                 className="inline-flex w-fit rounded-lg border border-[#E5E7EB] bg-white p-2 transition hover:border-[#2563EB]"
               >
                 <img
                   referrerPolicy="origin"
-                  src="https://trustseal.enamad.ir/logo.aspx?id=7781646&Code=VXMzZy5jqN38yQL0dTSTEE2FL6cdldXZ"
+                  src="https://trustseal.enamad.ir/logo.aspx?id=8575206&Code=YxGfPEbac1aO9IjjLQk3FqqlPaw6Y7T3"
                   alt="نماد اعتماد الکترونیکی"
                   style={{ cursor: "pointer" }}
-                  {...({ code: "VXMzZy5jqN38yQL0dTSTEE2FL6cdldXZ" } as Record<string, string>)}
+                  {...({ code: "YxGfPEbac1aO9IjjLQk3FqqlPaw6Y7T3" } as Record<string, string>)}
                 />
               </a>
             </div>

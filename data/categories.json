@@ -305,12 +305,12 @@
   },
   {
     "slug": "polyamine",
-    "name": "پلی آمین",
+    "name": "پلی‌آمید",
     "image": "/categories/polyamine.svg",
     "subcategories": [
       {
         "slug": "polyamine-products",
-        "name": "انواع محصولات پلی آمین",
+        "name": "انواع محصولات پلی‌آمید",
         "items": [
           {
             "slug": "polyamine-round-sheet",

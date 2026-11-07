@@ -1,30 +1,31 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Pause, Play, Sparkles } from "lucide-react";
 
 const slides = [
   {
-    eyebrow: "تأمین تخصصی آلومینیوم",
-    title: "آلومینیوم؛ سبک، مقاوم و آمادهٔ پروژه",
-    description: "از پروفیل تا ورق، مقاطع آلومینیومی موردنیاز صنعت و ساخت‌وساز را یک‌جا پیدا کنید.",
-    image: "/banners/aluminum-banner.svg",
-    imageAlt: "تصویرسازی مقاطع آلومینیومی در کنار ورق فلزی",
+    category: "استیل",
+    description: "ترکیب ماندگار درخشش و استحکام",
+    image: "/categories/stainless.svg",
+    imageAlt: "تصویر دسته‌بندی محصولات استیل",
+    href: "/products?category=stainless",
   },
   {
-    eyebrow: "تأمین مطمئن آهن‌آلات",
-    title: "پایه‌های محکم برای سازه‌های ماندگار",
-    description: "تیرآهن و مقاطع فولادی موردنیاز پروژه‌تان را با خیال آسوده بررسی و انتخاب کنید.",
-    image: "/banners/steel-beams-banner.svg",
-    imageAlt: "تصویرسازی تیرآهن‌های فولادی در فضای صنعتی",
+    category: "مس",
+    description: "رسانای قدرت، نماد اصالت و انتخابی ماندگار برای صنعت",
+    image: "/categories/copper-alloys.svg",
+    imageAlt: "تصویر دسته‌بندی محصولات مسی",
+    href: "/products?category=copper-alloys",
   },
   {
-    eyebrow: "تنوع ورق‌های فولادی",
-    title: "ورق فولادی؛ انتخابی دقیق برای هر کاربرد",
-    description: "برای پروژه‌های صنعتی و ساختمانی، ورق مناسب را در میان محصولات متنوع پیدا کنید.",
-    image: "/banners/steel-sheets-banner.svg",
-    imageAlt: "تصویرسازی ورق‌های فولادی روی هم چیده‌شده",
+    category: "پلی‌آمید",
+    description: "ترکیبی از استحکام، دوام و عملکرد برتر در صنعت",
+    image: "/categories/polyamine.svg",
+    imageAlt: "تصویر دسته‌بندی محصولات پلی‌آمید",
+    href: "/products?category=polyamine",
   },
 ];
 
@@ -61,7 +62,7 @@ export default function HeroSlider() {
 
   return (
     <section
-      aria-label="بنرهای فروش آلومینیوم و آهن‌آلات"
+      aria-label="دسته‌بندی‌های منتخب"
       aria-roledescription="اسلایدر"
       className="relative isolate h-[500px] overflow-hidden rounded-[2rem] bg-[#111827] text-white shadow-[0_18px_45px_rgba(37,99,235,0.18)] sm:h-[430px] lg:h-[410px]"
       dir="rtl"
@@ -75,35 +76,41 @@ export default function HeroSlider() {
             role="group"
             aria-hidden={!isActive}
             inert={!isActive}
-            aria-label={`${index + 1} از ${slides.length}`}
+            aria-label={`${slide.category}، اسلاید ${index + 1} از ${slides.length}`}
             aria-roledescription="اسلاید"
             className={`absolute inset-0 transition-opacity duration-700 ${
               isActive ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
             } motion-reduce:transition-none`}
           >
-            <Image
-              src={slide.image}
-              alt={slide.imageAlt}
-              fill
-              priority={index === 0}
-              sizes="(max-width: 768px) 100vw, 1280px"
-              className="object-cover object-left"
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-[#111827]/95 via-[#111827]/80 to-[#111827]/10 sm:from-[#111827]/95 sm:via-[#111827]/65 sm:to-[#111827]/5" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/70 via-transparent to-[#111827]/15" />
+            <div className="absolute inset-y-0 left-0 w-[40%] bg-gradient-to-br from-white to-slate-100">
+              <Image
+                src={slide.image}
+                alt={slide.imageAlt}
+                fill
+                priority={index === 0}
+                sizes="(max-width: 768px) 40vw, 512px"
+                className="object-contain p-3 sm:p-6 lg:p-8"
+              />
+            </div>
 
-            <div className="relative z-10 flex h-full flex-col items-start justify-center px-6 pb-12 pt-7 sm:px-10 lg:px-16">
+            <div className="relative z-10 flex h-full flex-col items-start justify-center pr-6 pb-12 pl-[42%] pt-7 sm:pr-10 sm:pl-[42%] lg:pr-16 lg:pl-[42%]">
               <div className="w-full max-w-2xl">
                 <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-orange-200/25 bg-orange-300/10 px-3 py-1.5 text-xs font-bold text-orange-200 backdrop-blur-sm">
                   <Sparkles aria-hidden="true" size={14} />
-                  {slide.eyebrow}
+                  دسته‌بندی منتخب
                 </p>
                 <h1 className="max-w-xl text-3xl font-extrabold leading-[1.4] sm:text-4xl lg:text-[2.75rem]">
-                  {slide.title}
+                  {slide.category}
                 </h1>
                 <p className="mt-3 max-w-lg text-sm leading-7 text-white/80 sm:text-base">
                   {slide.description}
                 </p>
+                <Link
+                  href={slide.href}
+                  className="mt-5 inline-flex rounded-xl bg-orange-400 px-4 py-2.5 text-sm font-bold text-[#111827] transition hover:bg-orange-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#111827]"
+                >
+                  مشاهده محصولات {slide.category}
+                </Link>
               </div>
             </div>
           </div>
