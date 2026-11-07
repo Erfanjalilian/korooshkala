@@ -396,6 +396,7 @@ type CategoryPage = {
   description: string;
   image: string;
   phone: string;
+  isCategoryArticle?: boolean;
 };
 type DashboardData = {
   products: Product[];

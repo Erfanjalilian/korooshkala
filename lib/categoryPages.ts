@@ -16,8 +16,32 @@ export type CategoryPageContent = {
   description: string;
   image: string;
   phone: string;
+  isCategoryArticle?: boolean;
 };
 type SavedCategoryPage = Pick<CategoryPageContent, "title" | "description" | "image" | "phone">;
+
+export const CATEGORY_ARTICLE_SLUG = "article";
+
+const categoryArticleDefaults: Record<
+  string,
+  Pick<SavedCategoryPage, "title" | "description">
+> = {
+  stainless: {
+    title: "استیل؛ ترکیب ماندگار درخشش و استحکام",
+    description:
+      "استیل با ظاهر درخشان و دوام بالا، انتخابی کاربردی برای پروژه‌های صنعتی و ساختمانی است.\n\nدر این دسته‌بندی می‌توانید محصولات استیل را بررسی کنید و برای دریافت راهنمایی و اطلاع از موجودی با ما تماس بگیرید.",
+  },
+  "copper-alloys": {
+    title: "مس؛ رسانای قدرت و نماد اصالت",
+    description:
+      "مس به‌دلیل رسانایی و ویژگی‌های کاربردی، جایگاه ویژه‌ای در صنایع مختلف دارد.\n\nمحصولات این دسته را بررسی کنید و برای انتخاب متناسب با نیاز پروژه و اطلاع از قیمت روز با ما در ارتباط باشید.",
+  },
+  polyamine: {
+    title: "پلی‌آمید؛ استحکام و عملکرد برتر در صنعت",
+    description:
+      "پلی‌آمید با ترکیب استحکام و دوام، گزینه‌ای مناسب برای کاربردهای متنوع صنعتی است.\n\nبرای آشنایی با محصولات این دسته‌بندی، دریافت اطلاعات بیشتر و استعلام موجودی با کارشناسان ما تماس بگیرید.",
+  },
+};
 
 const categoryPageKey = (categorySlug: string, subcategorySlug: string) =>
   `${categorySlug}/${subcategorySlug}`;
@@ -46,7 +70,11 @@ function findCategoryPagePath(
   subcategorySlug: string,
 ) {
   const category = categories.find((item) => item.slug === categorySlug);
-  if (!category?.image || !category.subcategories?.length) return null;
+  if (!category?.image) return null;
+  if (subcategorySlug === CATEGORY_ARTICLE_SLUG) {
+    return categoryArticleDefaults[categorySlug] ? { category } : null;
+  }
+  if (!category.subcategories?.length) return null;
 
   for (const group of category.subcategories) {
     const path = findLeafPath(group.items, subcategorySlug);
@@ -75,6 +103,21 @@ export async function readCategoryPageRecords(): Promise<CategoryPageContent[]> 
 
   for (const category of categories) {
     if (!category.image) continue;
+    const articleDefaults = categoryArticleDefaults[category.slug];
+    if (articleDefaults) {
+      const key = categoryPageKey(category.slug, CATEGORY_ARTICLE_SLUG);
+      const savedArticle = savedPages[key];
+      records.push({
+        categorySlug: category.slug,
+        subcategorySlug: CATEGORY_ARTICLE_SLUG,
+        categoryName: category.name,
+        ...articleDefaults,
+        ...savedArticle,
+        image: savedArticle?.image ?? category.image,
+        phone: savedArticle?.phone ?? pages.contact.phone,
+        isCategoryArticle: true,
+      });
+    }
     for (const leaf of collectCategoryLeaves(category)) {
       const key = categoryPageKey(category.slug, leaf.slug);
       const defaults: SavedCategoryPage = {

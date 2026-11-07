@@ -36,6 +36,7 @@ type CategoryPage = {
   description: string;
   image: string;
   phone: string;
+  isCategoryArticle?: boolean;
 };
 type Props = {
   pages: PageValues;
@@ -345,27 +346,27 @@ export default function ContentManagement({
       </section> : null}
 
       {section === "category-pages" ? <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5">
-        <h2 className="mb-5 text-lg font-extrabold text-[#111827]">مدیریت صفحه جزئیات دسته‌بندی‌ها</h2>
+        <h2 className="mb-5 text-lg font-extrabold text-[#111827]">مدیریت مقاله‌های اسلایدر و صفحات دسته‌بندی</h2>
         {selectedCategoryPage ? (
           <form onSubmit={saveCategoryPage} className="grid gap-4">
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
-              انتخاب دسته‌بندی نهایی
+              انتخاب مقاله یا صفحه
               <select value={selectedKey} onChange={(event) => { setSelectedKey(event.target.value); setCategoryImage(undefined); }} className={inputClass}>
                 {editableCategoryPages.map((page) => (
                   <option key={`${page.categorySlug}/${page.subcategorySlug}`} value={`${page.categorySlug}/${page.subcategorySlug}`}>
-                    {page.categoryName} — {page.title}
+                    {page.categoryName} — {page.isCategoryArticle ? "مقالهٔ اسلایدر" : page.title}
                   </option>
                 ))}
               </select>
             </label>
             <div className="grid gap-4 sm:grid-cols-2">
-              <TextField label="عنوان صفحه" value={selectedCategoryPage.title} required onChange={(title) => updateCategoryPage("title", title)} />
+              <TextField label={selectedCategoryPage.isCategoryArticle ? "عنوان مقاله" : "عنوان صفحه"} value={selectedCategoryPage.title} required onChange={(title) => updateCategoryPage("title", title)} />
               <TextField label="شماره تماس سفارش" type="tel" value={selectedCategoryPage.phone} required onChange={(phone) => updateCategoryPage("phone", phone)} />
             </div>
-            <TextField label="توضیحات صفحه" value={selectedCategoryPage.description} multiline rows={5} required onChange={(description) => updateCategoryPage("description", description)} />
+            <TextField label={selectedCategoryPage.isCategoryArticle ? "متن مقاله" : "توضیحات صفحه"} value={selectedCategoryPage.description} multiline rows={selectedCategoryPage.isCategoryArticle ? 12 : 5} required onChange={(description) => updateCategoryPage("description", description)} />
             <ImagePicker image={selectedCategoryPage.image} onChange={setCategoryImage} />
             <button type="submit" disabled={saving} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#2563EB] text-sm font-bold text-white disabled:opacity-60">
-              <Save size={17} /> ذخیره جزئیات دسته‌بندی
+              <Save size={17} /> ذخیره {selectedCategoryPage.isCategoryArticle ? "مقاله" : "جزئیات دسته‌بندی"}
             </button>
           </form>
         ) : (

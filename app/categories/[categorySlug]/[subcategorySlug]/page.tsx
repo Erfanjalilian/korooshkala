@@ -67,7 +67,7 @@ export default async function CategoryDetailPage({
           <h1 className="mt-3 text-2xl font-extrabold leading-10 text-[#292524] sm:text-3xl">
             {page.title}
           </h1>
-          <p className="mt-4 text-sm leading-8 text-[#57534E] sm:text-base">
+          <p className="mt-4 whitespace-pre-line text-sm leading-8 text-[#57534E] sm:text-base">
             {page.description}
           </p>
 
@@ -76,7 +76,7 @@ export default async function CategoryDetailPage({
             className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C2410C] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#9A3412] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200"
           >
             <Phone aria-hidden="true" size={18} />
-            برای سفارش تماس بگیرید
+            تماس با شمارهٔ {page.phone}
           </a>
         </div>
       </article>

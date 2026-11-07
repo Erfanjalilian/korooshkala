@@ -11,21 +11,21 @@ const slides = [
     description: "ترکیب ماندگار درخشش و استحکام",
     image: "/categories/stainless.svg",
     imageAlt: "تصویر دسته‌بندی محصولات استیل",
-    href: "/products?category=stainless",
+    href: "/categories/stainless/article",
   },
   {
     category: "مس",
     description: "رسانای قدرت، نماد اصالت و انتخابی ماندگار برای صنعت",
     image: "/categories/copper-alloys.svg",
     imageAlt: "تصویر دسته‌بندی محصولات مسی",
-    href: "/products?category=copper-alloys",
+    href: "/categories/copper-alloys/article",
   },
   {
     category: "پلی‌آمید",
     description: "ترکیبی از استحکام، دوام و عملکرد برتر در صنعت",
     image: "/categories/polyamine.svg",
     imageAlt: "تصویر دسته‌بندی محصولات پلی‌آمید",
-    href: "/products?category=polyamine",
+    href: "/categories/polyamine/article",
   },
 ];
 
@@ -109,7 +109,7 @@ export default function HeroSlider() {
                   href={slide.href}
                   className="mt-5 inline-flex rounded-xl bg-orange-400 px-4 py-2.5 text-sm font-bold text-[#111827] transition hover:bg-orange-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#111827]"
                 >
-                  مشاهده محصولات {slide.category}
+                  مشاهده
                 </Link>
               </div>
             </div>
