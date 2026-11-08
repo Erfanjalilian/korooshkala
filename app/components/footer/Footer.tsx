@@ -1,80 +1,26 @@
 import Link from "next/link";
-import Image from "next/image";
 import { connection } from "next/server";
-import { Mail, MapPin, Phone } from "lucide-react";
-import { readFooter, readPages, readStoreSettings } from "@/lib/store";
-
-const toEnglishDigits = (value: string) =>
-  value.replace(/[۰-۹٠-٩]/g, (digit) =>
-    String.fromCharCode(digit.charCodeAt(0) - (digit >= "٠" && digit <= "٩" ? 0x0660 : 0x06f0) + 48),
-  );
-
-function WhatsAppMark() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-9">
-      <path d="M12 2.2a9.7 9.7 0 0 0-8.3 14.7L2.4 22l5.2-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.5a7.7 7.7 0 0 1-3.9-1.1l-.3-.2-3 .8.8-2.9-.2-.3A7.8 7.8 0 1 1 12 19.7Zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.4-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.2 0-.3 0-.4 0-.1-.5-1.3-.7-1.8-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.4 3.8 3.3.5.2.9.4 1.2.4.5.2 1 .1 1.4.1.4-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.2-.4-.3Z" />
-    </svg>
-  );
-}
+import { MapPin, Phone } from "lucide-react";
+import { readFooter, readPages } from "@/lib/store";
 
 export default async function Footer() {
   await connection();
-  const [settings, pages, footer] = await Promise.all([
-    readStoreSettings(),
+  const [pages, footer] = await Promise.all([
     readPages(),
     readFooter(),
   ]);
-  const contact = pages.contact;
-  const rubikaId = settings.rubikaId.trim().replace(/^@/, "");
-  const whatsappNumber = toEnglishDigits(settings.whatsappId).replace(/\D/g, "");
-  const telegramId = settings.telegramId.trim().replace(/^@/, "");
 
   return (
     <footer className="mt-16 border-t border-[#E5E7EB] bg-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_0.8fr_0.8fr_1.2fr]">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_0.8fr_1.2fr]">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2" aria-label="صفحه اصلی">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-lg font-bold text-white">
-                M
-              </span>
-              <span className="text-xl font-extrabold text-[#111827]">{footer.brandTitle}</span>
+            <Link href="/" className="inline-flex items-center" aria-label="صفحه اصلی">
+              <span className="text-xl font-extrabold text-[#111827]">روشن سپهر آماد صنعت</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-7 text-[#6B7280]">
               {footer.description}
             </p>
-            <div className="mt-5 flex items-center gap-3">
-              <a
-                href={rubikaId ? `https://rubika.ir/${encodeURIComponent(rubikaId)}` : "/contact"}
-                target={rubikaId ? "_blank" : undefined}
-                rel={rubikaId ? "noopener noreferrer" : undefined}
-                aria-label="روبیکا"
-                className="flex size-14 items-center justify-center rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] transition hover:bg-[#DBEAFE]"
-              >
-                <Image src="/logo/rubikapng.parspng.com_-300x300.png" alt="" width={36} height={36} className="size-9 object-contain" />
-              </a>
-              <a
-                href={whatsappNumber ? `https://wa.me/${whatsappNumber}` : "/contact"}
-                target={whatsappNumber ? "_blank" : undefined}
-                rel={whatsappNumber ? "noopener noreferrer" : undefined}
-                aria-label="واتساپ"
-                className="flex size-14 items-center justify-center rounded-xl border border-[#BBF7D0] bg-[#F0FDF4] text-[#16A34A] transition hover:bg-[#DCFCE7]"
-              >
-                <WhatsAppMark />
-              </a>
-              <a
-                href={telegramId ? `https://t.me/${encodeURIComponent(telegramId)}` : "/contact"}
-                target={telegramId ? "_blank" : undefined}
-                rel={telegramId ? "noopener noreferrer" : undefined}
-                aria-label="تلگرام"
-                className="flex size-14 items-center justify-center rounded-xl border border-[#BAE6FD] bg-[#E0F2FE] text-[#0284C7] transition hover:bg-[#BAE6FD]"
-              >
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="size-9">
-                  <circle cx="12" cy="12" r="10" fill="currentColor" />
-                  <path d="m18.4 6.2-2.8 12.1c-.2.9-.7 1.1-1.4.7l-3.9-2.9-1.9 1.8c-.2.2-.4.4-.8.4l.3-4 7.3-6.6c.3-.3-.1-.4-.5-.2l-9 5.7-3.9-1.2c-.9-.3-.9-.9.2-1.4l15.2-5.9c.7-.3 1.3.2 1.2 1.5Z" fill="white" />
-                </svg>
-              </a>
-            </div>
           </div>
 
           <div>
@@ -93,34 +39,15 @@ export default async function Footer() {
           </div>
 
           <div>
-            <h2 className="text-sm font-extrabold text-[#111827]">{footer.customerLinksTitle}</h2>
-            <nav className="mt-4 grid gap-3">
-              {footer.customerLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-[#6B7280] transition hover:text-[#7C3AED]"
-                >
-                  {link.title}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          <div>
             <h2 className="text-sm font-extrabold text-[#111827]">{footer.contactTitle}</h2>
             <div className="mt-4 grid gap-4 text-sm text-[#6B7280]">
               <p className="flex items-start gap-3">
                 <MapPin aria-hidden="true" size={18} className="mt-0.5 shrink-0 text-[#2563EB]" />
-                {contact.address}
+                {pages.contact.address}
               </p>
               <p className="flex items-center gap-3">
                 <Phone aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
-                {contact.phone}
-              </p>
-              <p className="flex items-center gap-3">
-                <Mail aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
-                {contact.email}
+                {pages.contact.phone}
               </p>
               <a
                 referrerPolicy="origin"

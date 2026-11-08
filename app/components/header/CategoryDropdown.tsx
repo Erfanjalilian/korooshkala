@@ -69,13 +69,6 @@ export default function CategoryDropdown({
                 </button>
                 {expandedCategory === category.slug ? (
                   <div className="mx-2 mb-2 mt-1 rounded-xl border border-[#FED7AA] bg-[#FFFAF3] p-2">
-                    <Link
-                      href={`/products?category=${encodeURIComponent(category.slug)}`}
-                      onClick={onNavigate}
-                      className="mb-2 block rounded-lg px-2 py-2 text-xs font-bold text-[#C2410C] transition hover:bg-[#FFF4E6]"
-                    >
-                      مشاهده همهٔ {category.name}
-                    </Link>
                     <CategorySubcategoryTree
                       categorySlug={category.slug}
                       groups={category.subcategories}

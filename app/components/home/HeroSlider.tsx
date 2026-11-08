@@ -1,31 +1,33 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Pause, Play, Sparkles } from "lucide-react";
 
 const slides = [
   {
-    category: "استیل",
-    description: "ترکیب ماندگار درخشش و استحکام",
-    image: "/categories/stainless.svg",
-    imageAlt: "تصویر دسته‌بندی محصولات استیل",
-    href: "/categories/stainless/article",
+    category: "آلومینیوم",
+    description: "انواع مقاطع آلومینیومی را بررسی کنید و محصول مناسب پروژه‌تان را پیدا کنید.",
+    image: "/Images/IMG_20261108_182514_864.jpg",
+    imageAlt: "مقاطع گرد فلزی در انبار",
   },
   {
-    category: "مس",
-    description: "رسانای قدرت، نماد اصالت و انتخابی ماندگار برای صنعت",
-    image: "/categories/copper-alloys.svg",
-    imageAlt: "تصویر دسته‌بندی محصولات مسی",
-    href: "/categories/copper-alloys/article",
+    category: "تنوع مقاطع برای پروژه‌ها",
+    description: "محصولات موردنیازتان را پیدا کنید و مشخصاتشان را با هم مقایسه کنید.",
+    image: "/Images/IMG_20261108_182514_110.jpg",
+    imageAlt: "مقاطع فلزی تخت و مستطیلی در انبار",
   },
   {
-    category: "پلی‌آمید",
-    description: "ترکیبی از استحکام، دوام و عملکرد برتر در صنعت",
-    image: "/categories/polyamine.svg",
-    imageAlt: "تصویر دسته‌بندی محصولات پلی‌آمید",
-    href: "/categories/polyamine/article",
+    category: "انتخاب دقیق، خرید آسان",
+    description: "برای انتخاب محصول مناسب و دریافت راهنمایی، محصولات فروشگاه را ببینید.",
+    image: "/Images/IMG_20261108_182514_081.jpg",
+    imageAlt: "دسته‌ای از مقاطع فلزی در انبار",
+  },
+  {
+    category: "همراه تأمین پروژه‌های صنعتی",
+    description: "از بررسی محصولات تا انتخاب گزینهٔ مناسب، مسیر خرید را ساده‌تر کنید.",
+    image: "/Images/IMG_20261108_182513_821.jpg",
+    imageAlt: "ورق‌های فلزی در انبار",
   },
 ];
 
@@ -82,18 +84,17 @@ export default function HeroSlider() {
               isActive ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
             } motion-reduce:transition-none`}
           >
-            <div className="absolute inset-y-0 left-0 w-[40%] bg-gradient-to-br from-white to-slate-100">
-              <Image
-                src={slide.image}
-                alt={slide.imageAlt}
-                fill
-                priority={index === 0}
-                sizes="(max-width: 768px) 40vw, 512px"
-                className="object-contain p-3 sm:p-6 lg:p-8"
-              />
-            </div>
+            <Image
+              src={slide.image}
+              alt={slide.imageAlt}
+              fill
+              priority={index === 0}
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-slate-950/85 via-slate-950/55 to-slate-950/15" />
 
-            <div className="relative z-10 flex h-full flex-col items-start justify-center pr-6 pb-12 pl-[42%] pt-7 sm:pr-10 sm:pl-[42%] lg:pr-16 lg:pl-[42%]">
+            <div className="relative z-10 flex h-full flex-col items-start justify-center px-6 pb-12 pt-7 sm:px-10 lg:px-16">
               <div className="w-full max-w-2xl">
                 <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-orange-200/25 bg-orange-300/10 px-3 py-1.5 text-xs font-bold text-orange-200 backdrop-blur-sm">
                   <Sparkles aria-hidden="true" size={14} />
@@ -105,12 +106,6 @@ export default function HeroSlider() {
                 <p className="mt-3 max-w-lg text-sm leading-7 text-white/80 sm:text-base">
                   {slide.description}
                 </p>
-                <Link
-                  href={slide.href}
-                  className="mt-5 inline-flex rounded-xl bg-orange-400 px-4 py-2.5 text-sm font-bold text-[#111827] transition hover:bg-orange-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#111827]"
-                >
-                  مشاهده
-                </Link>
               </div>
             </div>
           </div>

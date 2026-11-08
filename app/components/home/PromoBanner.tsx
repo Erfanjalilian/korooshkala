@@ -1,11 +1,18 @@
 import { BadgeCheck } from "lucide-react";
+import Image from "next/image";
 
 export default function PromoBanner() {
   return (
     <section
       className="relative isolate mt-10 overflow-hidden rounded-3xl border border-[#52525B] bg-cover bg-center px-6 py-7 shadow-[0_8px_28px_rgba(0,0,0,0.25)] sm:mt-12 sm:px-10 sm:py-9"
-      style={{ backgroundImage: "url('/banners/steel-supply.svg')" }}
     >
+      <Image
+        src="/Images/IMG_20261108_182513_821.jpg"
+        alt=""
+        fill
+        sizes="(max-width: 1280px) 100vw, 1280px"
+        className="-z-20 object-cover"
+      />
       <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/75 via-slate-950/50 to-transparent" />
       <div dir="ltr" className="relative z-10 flex flex-col gap-6">
         <div dir="rtl" className="flex items-start gap-4">

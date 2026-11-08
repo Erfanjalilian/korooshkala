@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import CategoryCard from "@/app/components/home/CategoryCard";
 import CategorySubcategoryTree from "@/app/components/categories/CategorySubcategoryTree";
@@ -71,16 +70,10 @@ export default function PopularCategories() {
             ref={subcategoriesRef}
             className="mt-6 scroll-mt-28 rounded-2xl border border-[#FED7AA] bg-gradient-to-br from-[#FFF7ED] via-white to-[#EFF6FF] p-4 shadow-sm sm:p-6"
           >
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div className="mb-5">
               <h3 className="text-base font-extrabold text-[#292524]">
                 زیرمجموعه‌های {category.name}
               </h3>
-              <Link
-                href={`/products?category=${encodeURIComponent(category.slug)}`}
-                className="text-xs font-semibold text-[#C2410C] transition hover:text-[#EA580C]"
-              >
-                مشاهده همهٔ {category.name}
-              </Link>
             </div>
             <CategorySubcategoryTree
               categorySlug={category.slug}
