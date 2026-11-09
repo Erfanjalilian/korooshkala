@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { connection } from "next/server";
-import { MapPin, Phone } from "lucide-react";
+import { MapPin, MessageCircle, MessagesSquare, Phone, Send } from "lucide-react";
 import { readFooter, readPages } from "@/lib/store";
+
+const socialLinks = [
+  { name: "واتساپ", href: "https://wa.me/Rsamadsanat", Icon: MessageCircle },
+  { name: "روبیکا", href: "https://rubika.ir/Rsamadsanat", Icon: MessagesSquare },
+  { name: "تلگرام", href: "https://t.me/Rsamadsanat", Icon: Send },
+];
 
 export default async function Footer() {
   await connection();
@@ -49,6 +55,21 @@ export default async function Footer() {
                 <Phone aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
                 66391110
               </p>
+              <div className="grid gap-3">
+                {socialLinks.map(({ name, href, Icon }) => (
+                  <a
+                    key={name}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-fit items-center gap-3 transition hover:text-[#2563EB]"
+                  >
+                    <Icon aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
+                    <span>{name}</span>
+                    <span dir="ltr">@Rsamadsanat</span>
+                  </a>
+                ))}
+              </div>
               <a
                 referrerPolicy="origin"
                 target="_blank"

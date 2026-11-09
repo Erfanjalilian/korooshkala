@@ -21,13 +21,13 @@ export default function PromoBanner() {
           </div>
           <div>
             <p className="mb-1 text-xs font-bold text-orange-300">
-              تأمین تخصصی آهن‌آلات
+              تأمین تخصصی آلومینیوم
             </p>
             <h2 className="text-xl font-extrabold text-white sm:text-2xl">
-              مقاطع فولادی موردنیاز پروژه‌تان را پیدا کنید
+              مقاطع آلومینیومی موردنیاز پروژه‌تان را پیدا کنید
             </h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-white/75">
-              مشخصات و قیمت روز میلگرد، تیرآهن، ورق و دیگر آهن‌آلات را بررسی کنید.
+              مشخصات و قیمت روز انواع مقاطع و ورق آلومینیومی را بررسی کنید.
             </p>
           </div>
         </div>
