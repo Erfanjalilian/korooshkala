@@ -47,7 +47,7 @@ export default async function Footer() {
               </p>
               <p className="flex items-center gap-3">
                 <Phone aria-hidden="true" size={18} className="shrink-0 text-[#2563EB]" />
-                {pages.contact.phone}
+                66391110
               </p>
               <a
                 referrerPolicy="origin"

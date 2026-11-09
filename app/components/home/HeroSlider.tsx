@@ -6,28 +6,24 @@ import { ChevronLeft, ChevronRight, Pause, Play, Sparkles } from "lucide-react";
 
 const slides = [
   {
-    category: "آلومینیوم",
-    description: "انواع مقاطع آلومینیومی را بررسی کنید و محصول مناسب پروژه‌تان را پیدا کنید.",
-    image: "/Images/IMG_20261108_182514_864.jpg",
-    imageAlt: "مقاطع گرد فلزی در انبار",
+    title: "آلومینیوم؛سبکی،هوشمندانه،استحکام ماندگار،آینده‌ای درخشان",
+    image: `/Images/${encodeURI("آلومینیوم؛سبکی،هوشمندانه،استحکام ماندگار،آینده‌ای درخشان.jpg")}`,
   },
   {
-    category: "تنوع مقاطع برای پروژه‌ها",
-    description: "محصولات موردنیازتان را پیدا کنید و مشخصاتشان را با هم مقایسه کنید.",
-    image: "/Images/IMG_20261108_182514_110.jpg",
-    imageAlt: "مقاطع فلزی تخت و مستطیلی در انبار",
+    title: "استیل؛قدرتی ضد زنگ،کیفیتی ماندگار",
+    image: `/Images/${encodeURI("استیل؛قدرتی ضد زنگ،کیفیتی ماندگار.jpg")}`,
   },
   {
-    category: "انتخاب دقیق، خرید آسان",
-    description: "برای انتخاب محصول مناسب و دریافت راهنمایی، محصولات فروشگاه را ببینید.",
-    image: "/Images/IMG_20261108_182514_081.jpg",
-    imageAlt: "دسته‌ای از مقاطع فلزی در انبار",
+    title: "فولاد؛قدرتی که آینده را میسازد",
+    image: `/Images/${encodeURI("فولاد؛قدرتی که آینده را میسازد.jpg")}`,
   },
   {
-    category: "همراه تأمین پروژه‌های صنعتی",
-    description: "از بررسی محصولات تا انتخاب گزینهٔ مناسب، مسیر خرید را ساده‌تر کنید.",
-    image: "/Images/IMG_20261108_182513_821.jpg",
-    imageAlt: "ورق‌های فلزی در انبار",
+    title: "مس؛جریان قدرت در رگ های صنعت",
+    image: `/Images/${encodeURI("مس؛جریان قدرت در رگ های صنعت.jpg")}`,
+  },
+  {
+    title: "پلی آمید؛قدرت مهندسی در قلب صنعت",
+    image: `/Images/${encodeURI("پلی آمید؛قدرت مهندسی در قلب صنعت.jpg")}`,
   },
 ];
 
@@ -78,7 +74,7 @@ export default function HeroSlider() {
             role="group"
             aria-hidden={!isActive}
             inert={!isActive}
-            aria-label={`${slide.category}، اسلاید ${index + 1} از ${slides.length}`}
+            aria-label={`${slide.title}، اسلاید ${index + 1} از ${slides.length}`}
             aria-roledescription="اسلاید"
             className={`absolute inset-0 transition-opacity duration-700 ${
               isActive ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0"
@@ -86,7 +82,7 @@ export default function HeroSlider() {
           >
             <Image
               src={slide.image}
-              alt={slide.imageAlt}
+              alt={slide.title}
               fill
               priority={index === 0}
               sizes="100vw"
@@ -98,14 +94,11 @@ export default function HeroSlider() {
               <div className="w-full max-w-2xl">
                 <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-orange-200/25 bg-orange-300/10 px-3 py-1.5 text-xs font-bold text-orange-200 backdrop-blur-sm">
                   <Sparkles aria-hidden="true" size={14} />
-                  دسته‌بندی منتخب
+                  محصولات صنعتی
                 </p>
                 <h1 className="max-w-xl text-3xl font-extrabold leading-[1.4] sm:text-4xl lg:text-[2.75rem]">
-                  {slide.category}
+                  {slide.title}
                 </h1>
-                <p className="mt-3 max-w-lg text-sm leading-7 text-white/80 sm:text-base">
-                  {slide.description}
-                </p>
               </div>
             </div>
           </div>

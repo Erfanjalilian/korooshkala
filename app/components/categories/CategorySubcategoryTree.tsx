@@ -21,7 +21,7 @@ function SubcategoryNode({
       <Link
         href={`/categories/${encodeURIComponent(categorySlug)}/${encodeURIComponent(item.slug)}`}
         onClick={onNavigate}
-        className="block rounded-lg px-2.5 py-2 text-xs text-[#475569] transition hover:bg-[#FFF4E6] hover:text-[#C2410C]"
+        className="block rounded-lg px-2.5 py-2 text-sm font-semibold text-[#475569] transition hover:bg-[#FFF4E6] hover:text-[#C2410C]"
       >
         {item.name}
       </Link>
@@ -34,7 +34,7 @@ function SubcategoryNode({
         type="button"
         onClick={() => setExpanded((current) => !current)}
         aria-expanded={expanded}
-        className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-right text-xs font-semibold text-[#334155] transition hover:bg-[#FFF4E6] hover:text-[#C2410C]"
+        className="flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-right text-sm font-bold text-[#334155] transition hover:bg-[#FFF4E6] hover:text-[#C2410C]"
       >
         {item.name}
         <ChevronDown
